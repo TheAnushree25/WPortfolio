@@ -1,8 +1,9 @@
 'use client';
 
 import Image from 'next/image';
-import { useMotionValue, useTransform } from 'motion/react';
-import * as motion from 'motion/react-client';
+// motion/react-client bundles its own MotionValue type, so values from these hooks
+// only type-check against the motion components exported alongside them.
+import { motion, useMotionValue, useTransform } from 'motion/react';
 import { hero, images, site } from '@/content/site';
 import { ease } from '@/lib/motion';
 import { useSceneMotion } from '@/components/layout/CoverScene';

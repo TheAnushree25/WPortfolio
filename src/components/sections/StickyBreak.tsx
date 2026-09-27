@@ -1,8 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import { useMotionValue, useTransform } from 'motion/react';
-import * as motion from 'motion/react-client';
+// Same module as the hooks: motion/react-client declares a separate MotionValue type.
+import { motion, useMotionValue, useTransform } from 'motion/react';
 import { Grain } from '@/components/ui/Grain';
 import { useSceneMotion } from '@/components/layout/CoverScene';
 
