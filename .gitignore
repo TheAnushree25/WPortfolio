@@ -1,0 +1,21 @@
+node_modules/
+.next/
+out/
+build/
+coverage/
+.vercel/
+
+.env*
+!.env.example
+
+*.tsbuildinfo
+next-env.d.ts
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+.DS_Store
+Thumbs.db
+
+# Local layout dumps used while matching the reference site
+.analysis/

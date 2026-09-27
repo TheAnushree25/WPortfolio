@@ -1,0 +1,249 @@
+@import 'tailwindcss';
+
+/* ------------------------------------------------------------------ *
+ * Design tokens — sampled 1:1 from the reference composition.
+ * ------------------------------------------------------------------ */
+@theme {
+  --color-brand: #ff462e;
+  --color-brand-soft: #f9d3cd;
+  --color-brand-tint: #f7e3df;
+  --color-brand-wash: rgb(255 70 46 / 0.1);
+
+  --color-ink: #090909;
+  --color-ink-900: #1e1e1e;
+  --color-ink-800: #29292b;
+  --color-ink-700: #63615e;
+  --color-ink-500: #7f7f80;
+
+  --color-paper: #ffffff;
+  --color-paper-soft: #f9f9f9;
+  --color-cream: #f5f4f3;
+  --color-mist: #f7f7f7;
+  --color-line: #eaeaea;
+  --color-line-strong: #d9d9d9;
+
+  --font-sans:
+    var(--font-inter), 'Inter Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* Shell geometry: 1440 design width, 40px gutters, 1345px content. */
+  --spacing-gutter: 40px;
+  --spacing-shell: 1345px;
+
+  /* The reference divides every full-bleed section into five 285px columns. */
+  --grid-columns: 5;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+
+  --shadow-inset-hair: inset 0 0 4px 0 rgb(0 0 0 / 0.05);
+  --shadow-inset-hair-sm: inset 0 0 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-lift: 0 0 4px 0 rgb(0 0 0 / 0.05);
+}
+
+/* ------------------------------------------------------------------ *
+ * Base
+ * ------------------------------------------------------------------ */
+@layer base {
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html {
+    background: var(--color-brand);
+  }
+
+  body {
+    background: var(--color-brand);
+    color: var(--color-ink-900);
+    font-family: var(--font-sans);
+    font-optical-sizing: auto;
+    font-synthesis-weight: none;
+    overflow-x: clip;
+  }
+
+  /* Lenis drives the scroll; disable the native smooth behaviour so the two
+     never fight over the same wheel event. */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
+  ::selection {
+    background: var(--color-brand);
+    color: var(--color-paper-soft);
+  }
+
+  input,
+  textarea {
+    font-family: inherit;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: rgb(9 9 9 / 0.4);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Typography scale — every ramp below is a measured value from the
+ * reference (size / line-height / tracking), so headings stay identical.
+ * ------------------------------------------------------------------ */
+@utility text-display {
+  font-size: clamp(4.5rem, 18vw, 16.25rem);
+  line-height: 0.77;
+  letter-spacing: -0.0346em;
+  font-weight: 700;
+}
+
+@utility text-h1 {
+  font-size: clamp(3rem, 7.64vw, 6.875rem);
+  line-height: 0.818;
+  letter-spacing: -0.0273em;
+  font-weight: 600;
+}
+
+@utility text-h2 {
+  font-size: clamp(2.75rem, 6.25vw, 5.625rem);
+  line-height: 0.822;
+  letter-spacing: -0.0333em;
+  font-weight: 600;
+}
+
+@utility text-h3 {
+  font-size: clamp(1.875rem, 3.33vw, 3rem);
+  line-height: 1.083;
+  letter-spacing: -0.025em;
+  font-weight: 600;
+}
+
+@utility text-h4 {
+  font-size: clamp(1.625rem, 2.08vw, 1.875rem);
+  line-height: 1.167;
+  letter-spacing: -0.0333em;
+  font-weight: 700;
+}
+
+@utility text-stat {
+  font-size: clamp(4rem, 8.9vw, 8rem);
+  line-height: 1.156;
+  letter-spacing: -0.078em;
+  font-weight: 600;
+}
+
+@utility text-label {
+  font-size: 18px;
+  line-height: 26px;
+  letter-spacing: -0.1px;
+  font-weight: 500;
+}
+
+@utility text-body {
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: -0.1px;
+  font-weight: 500;
+}
+
+@utility text-title {
+  font-size: 18px;
+  line-height: 22px;
+  letter-spacing: -0.1px;
+  font-weight: 600;
+}
+
+@utility text-action {
+  font-size: 17px;
+  line-height: 20px;
+  letter-spacing: -0.1px;
+  font-weight: 500;
+}
+
+@utility text-meta {
+  font-size: 16px;
+  line-height: 22px;
+  letter-spacing: -0.1px;
+  font-weight: 500;
+}
+
+@utility text-small {
+  font-size: 15px;
+  line-height: 16px;
+  letter-spacing: -0.1px;
+  font-weight: 500;
+}
+
+@utility text-tag {
+  font-size: 15px;
+  line-height: 25px;
+  letter-spacing: -0.1px;
+  font-weight: 600;
+}
+
+@utility text-badge {
+  font-size: 14px;
+  line-height: 24px;
+  letter-spacing: -0.1px;
+  font-weight: 600;
+}
+
+@utility text-chip {
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: -0.1px;
+  font-weight: 700;
+}
+
+@utility text-eyebrow {
+  font-size: 11px;
+  line-height: 13px;
+  letter-spacing: 0.1px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* ------------------------------------------------------------------ *
+ * Layout helpers
+ * ------------------------------------------------------------------ */
+@utility shell {
+  width: 100%;
+  max-width: var(--spacing-shell);
+  margin-inline: auto;
+}
+
+/* Full-bleed section that keeps the 40px page gutter. */
+@utility gutter {
+  padding-inline: 20px;
+  @media (width >= 48rem) {
+    padding-inline: var(--spacing-gutter);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Motion
+ * ------------------------------------------------------------------ */
+@keyframes marquee-x {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(var(--marquee-shift, -50%), 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
