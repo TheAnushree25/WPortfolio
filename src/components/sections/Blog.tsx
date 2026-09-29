@@ -32,7 +32,7 @@ export function Blog() {
           >
             {blog.posts.map((post) => (
               <motion.article key={post.title} variants={riseIn}>
-                <Link href="#blog" className="group flex flex-col gap-5">
+                <Link href={post.href} className="group flex flex-col gap-5">
                   <span className="relative block aspect-[435/312] w-full overflow-hidden rounded-[10px] bg-cream">
                     <Image
                       src={post.src}

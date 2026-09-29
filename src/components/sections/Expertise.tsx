@@ -27,7 +27,7 @@ export function Expertise() {
             >
               <ParallaxImage
                 src={images.expertise}
-                alt="Man in side profile"
+                alt={expertise.alt}
                 className="aspect-[686/660] w-full rounded-[16px]"
                 distance={90}
                 sizes="(max-width: 1024px) 100vw, 686px"

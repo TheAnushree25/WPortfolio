@@ -25,14 +25,15 @@ export function Footer() {
         >
           <Image
             src={images.footer}
-            alt="Man wearing sunglasses"
+            alt=""
             fill
             sizes="100vw"
             className="object-cover object-center"
           />
           <span className="absolute inset-0 grid place-items-center">
             <span className="text-[clamp(3rem,9vw,7rem)] leading-none font-black tracking-[-0.04em] text-paper-soft mix-blend-difference">
-              VIPER<span className="text-brand">*</span>
+              {site.wordmark}
+              <span className="text-brand">{site.brandSuffix}</span>
             </span>
           </span>
         </motion.div>

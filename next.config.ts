@@ -2,12 +2,7 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   images: {
-    // Reference imagery is served from the Framer CDN. Swap these entries for your
-    // own host (or drop files into /public/images) once real assets are available.
-    remotePatterns: [
-      { protocol: 'https', hostname: 'framerusercontent.com' },
-      { protocol: 'https', hostname: 'images.unsplash.com' },
-    ],
+    // Every image ships from /public/images, so no remote hosts are allowed.
     formats: ['image/avif', 'image/webp'],
   },
 };

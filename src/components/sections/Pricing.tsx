@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { pricing } from '@/content/site';
+import { pricing, site } from '@/content/site';
 import { ease, riseIn, stagger, viewport } from '@/lib/motion';
 import { Chip, ProgressDots } from '@/components/ui/Badge';
 import { Divider } from '@/components/ui/Divider';
@@ -30,12 +30,12 @@ export function Pricing() {
               </div>
 
               <div className="flex items-center justify-center gap-[10px]">
-                <span className="text-label text-ink-800">Monthly</span>
+                <span className="text-label text-ink-800">{pricing.cycles.monthly}</span>
                 <button
                   type="button"
                   role="switch"
                   aria-checked={cycle === 'annual'}
-                  aria-label="Toggle annual billing"
+                  aria-label={`Show ${pricing.cycles.monthly.toLowerCase()} or ${pricing.cycles.annual.toLowerCase()}`}
                   onClick={() => setCycle((c) => (c === 'annual' ? 'monthly' : 'annual'))}
                   className="flex h-[30px] w-[58px] items-center rounded-full bg-brand p-[2px] shadow-[inset_0_0_4px_0_rgb(0_0_0_/_0.05)]"
                 >
@@ -45,10 +45,10 @@ export function Pricing() {
                     transition={{ type: 'spring', stiffness: 520, damping: 34 }}
                   />
                 </button>
-                <span className="text-label text-ink-800">Annual</span>
+                <span className="text-label text-ink-800">{pricing.cycles.annual}</span>
               </div>
 
-              <p className="text-label hidden text-right text-ink-800 md:block">©2025</p>
+              <p className="text-label hidden text-right text-ink-800 md:block">{site.year}</p>
             </div>
           </div>
 
@@ -92,9 +92,6 @@ export function Pricing() {
                           </motion.span>
                         </AnimatePresence>
                       </span>
-                      <span className="text-small pb-[3px] text-ink/60">
-                        /{cycle === 'annual' ? 'year' : 'month'}
-                      </span>
                     </div>
                     <ProgressDots active={plan.progress} />
                   </div>
@@ -113,16 +110,16 @@ export function Pricing() {
                   <p className="text-body max-w-[330px] text-ink-700">{plan.body}</p>
 
                   <div className="pt-2">
-                    <PillButton label="Subscribe Now" href={pricing.cta.href} tone="line" />
+                    <PillButton label={plan.cta.label} href={plan.cta.href} tone="line" />
                   </div>
                 </div>
 
                 <div className="relative flex flex-col gap-5 rounded-[10px] bg-line px-[26px] pt-[26px] pb-8 shadow-[inset_0_0_4px_0_rgb(0_0_0_/_0.05)]">
                   <p className="text-[18px] leading-6 font-medium tracking-[-0.1px] text-ink">
-                    What’s included
+                    {pricing.includedLabel}
                   </p>
                   <ul className="flex flex-col gap-[13px]">
-                    {pricing.features.map((feature) => (
+                    {plan.features.map((feature) => (
                       <li key={feature} className="flex items-center gap-[10px]">
                         <CheckDot />
                         <span className="text-meta text-ink/80">{feature}</span>

@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from 'react';
 import * as motion from 'motion/react-client';
-import { contact } from '@/content/site';
+import { contact, site } from '@/content/site';
 import { ease, fadeUp, stagger, viewport } from '@/lib/motion';
 import { PillButton } from '@/components/ui/PillButton';
 import { SectionHeader } from '@/components/ui/SectionHeader';
@@ -11,11 +11,19 @@ import { CheckDot } from './Services';
 export function Contact() {
   const [state, setState] = useState<'idle' | 'sending' | 'sent'>('idle');
 
+  // There is no backend: the note is composed into an email the visitor sends
+  // from their own mail app, so nothing is lost or stored on the way.
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const name = String(data.get('name') ?? '').trim();
+    const email = String(data.get('email') ?? '').trim();
+    const message = String(data.get('message') ?? '').trim();
+    const subject = encodeURIComponent(`Hello from ${name}`);
+    const body = encodeURIComponent(`${message}\n\n${name}\n${email}`);
     setState('sending');
-    // Wire this to your form endpoint (Resend, Formspree, a route handler…).
-    window.setTimeout(() => setState('sent'), 900);
+    window.location.href = `mailto:${site.email}?subject=${subject}&body=${body}`;
+    window.setTimeout(() => setState('sent'), 600);
   };
 
   return (
@@ -100,7 +108,7 @@ export function Contact() {
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ duration: 0.4, ease: ease.quint }}
                 >
-                  {state === 'sent' ? 'Thanks — I’ll be in touch' : state === 'sending' ? 'Sending…' : contact.submit}
+                  {state === 'sent' ? contact.sent : state === 'sending' ? 'Opening…' : contact.submit}
                 </motion.span>
               </motion.button>
             </motion.form>

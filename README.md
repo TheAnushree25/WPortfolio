@@ -1,8 +1,9 @@
-# Viper — Portfolio & Agency
+# Atlas Studios — Gulafsan Shaheen
 
-A hand-built replica of the Viper Framer template, rebuilt as a production Next.js
-application. Every colour, type ramp, spacing value and transition curve was sampled
-from the live reference rather than eyeballed.
+The portfolio of Gulafsan Shaheen, built on a hand-made Next.js replica of the Viper
+Framer template (the layout of gscreativestudio.framer.website). Every section, type
+ramp, spacing value and transition curve follows the reference; the words, imagery
+and the Atlas Studios palette are hers.
 
 ## Stack
 
@@ -61,31 +62,41 @@ src/
 
 ## Design tokens
 
-Sampled directly from the reference and declared in `src/app/globals.css`:
+The Atlas Studios palette, declared in `src/app/globals.css`:
 
-| Token                | Value     | Used for                              |
-| -------------------- | --------- | ------------------------------------- |
-| `--color-brand`      | `#ff462e` | Page background, CTAs, accents        |
-| `--color-ink`        | `#090909` | Dark sections, primary text on cream  |
-| `--color-ink-900`    | `#1e1e1e` | Display headings                      |
-| `--color-ink-800`    | `#29292b` | Labels and card titles                |
-| `--color-ink-700`    | `#63615e` | Body copy inside cream cards          |
-| `--color-ink-500`    | `#7f7f80` | Muted body copy on white              |
-| `--color-cream`      | `#f5f4f3` | Cards, buttons, sections              |
-| `--color-line`       | `#eaeaea` | Hairlines and chips                   |
-| `--color-brand-soft` | `#f9d3cd` | Checklist bullets                     |
+| Token                | Value     | Used for                                   |
+| -------------------- | --------- | ------------------------------------------ |
+| `--color-brand`      | `#095cfb` | Electric Blue — page ground, CTAs, accents |
+| `--color-royal`      | `#0838b9` | Royal Blue — hover                         |
+| `--color-sky`        | `#0a90fe` | Highlights                                 |
+| `--color-ink`        | `#020923` | Dark frames and primary text               |
+| `--color-ink-800`    | `#052179` | Labels and card titles                     |
+| `--color-ink-700`    | `#3a4d73` | Body copy inside cards                     |
+| `--color-ink-500`    | `#5c6d8f` | Muted body copy                            |
+| `--color-paper`      | `#f4f7ff` | Light sheets                               |
+| `--color-cream`      | `#ffffff` | Cards and banded sections                  |
+| `--color-line`       | `#d9e2f2` | Hairlines and chips                        |
+| `--color-brand-soft` | `#d6e4ff` | Checklist bullets                          |
 
 Type ramps live alongside them as `text-display`, `text-h1` … `text-eyebrow`, each
-carrying the exact size / line-height / tracking triple measured from the reference.
+carrying the size / line-height / tracking triple measured from the reference.
 
-## Swapping the imagery
+## Content and imagery
 
-`src/content/site.ts` is the only file that references image URLs. They currently point
-at the reference CDN so the build is visually identical out of the box. To use your own:
+`src/content/site.ts` holds every string, link and image path. Copy comes from
+Gulafsan's Canva portfolio and her AI Studio portfolio; project links open her Pitch
+decks, Figma prototypes and Google Slides.
 
-1. Drop files into `public/images/`.
-2. Replace the URL string in `site.ts` with `/images/your-file.jpg`.
-3. Remove the `framerusercontent.com` entry from `next.config.ts` if no longer needed.
+All images live in `public/images/`:
+
+- `work/`: project covers from her published decks and prototypes.
+- `logos/`: the logofolio marks, trimmed from her Canva portfolio.
+- `plates/`: logo plates and research covers composed from those assets.
+- `aurora*.jpg`, `work-collage.jpg`, `identity-wall.jpg`, `expertise.jpg`,
+  `logo-collage.jpg`: full-bleed frames composed from her work.
+
+To change a picture, drop a file into `public/images/` and point the matching
+entry in `site.ts` at it.
 
 ## Motion inventory
 
@@ -107,5 +118,7 @@ All motion is disabled under `prefers-reduced-motion`.
 
 ## Contact form
 
-`src/components/sections/Contact.tsx` currently simulates submission. Point `onSubmit`
-at a route handler or a service (Resend, Formspree, etc.) to make it live.
+`src/components/sections/Contact.tsx` has no backend: submitting composes the note
+into an email to gulafsan.shaheen@gmail.com in the visitor's own mail app. Point
+`onSubmit` at a route handler or a service (Resend, Formspree, etc.) to send it
+from the page instead.

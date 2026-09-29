@@ -70,7 +70,9 @@ type Project = (typeof portfolio.projects)[number];
 function ProjectCard({ project }: { project: Project }) {
   return (
     <Link
-      href="#work"
+      href={project.href}
+      target="_blank"
+      rel="noopener noreferrer"
       className="group relative flex flex-col gap-5 overflow-hidden rounded-[20px] bg-cream px-[10px] pt-[10px] pb-5"
     >
       <NoiseLayer />
