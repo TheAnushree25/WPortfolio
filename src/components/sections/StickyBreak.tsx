@@ -25,7 +25,7 @@ export function StickyBreak({ src, alt }: StickyBreakProps) {
   const y = useTransform(cover, [0, 1], ['-6%', '8%']);
 
   return (
-    <section className="relative h-full min-h-[640px] w-full overflow-hidden bg-ink">
+    <section data-nav-tone="dark" className="relative h-full min-h-[640px] w-full overflow-hidden bg-ink">
       <motion.div className="absolute inset-0" style={{ scale, y }}>
         <Image src={src} alt={alt} fill sizes="100vw" className="object-cover" />
       </motion.div>

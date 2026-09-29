@@ -19,18 +19,18 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Viper — Portfolio & Agency',
+  title: 'Atlas Studios — Gulafsan Shaheen',
   description:
-    'A digital designer based in Los Angeles, passionate about creating immersive visual experiences — from realistic renderings to dynamic animations and interactions.',
+    'Atlas Studios is the portfolio of Gulafsan Shaheen, an economics-trained designer building brands, UX and systems people remember — from field research to identity, packaging and digital experiences.',
   openGraph: {
-    title: 'Viper — Portfolio & Agency',
-    description: 'Digital design, 3D rendering and Framer development.',
+    title: 'Atlas Studios — Gulafsan Shaheen',
+    description: 'Brand identity, UX research and product design by Gulafsan Shaheen.',
     type: 'website',
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: '#ff462e',
+  themeColor: '#095cfb',
   width: 'device-width',
   initialScale: 1,
 };

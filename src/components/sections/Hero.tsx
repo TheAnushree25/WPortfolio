@@ -28,7 +28,7 @@ export function Hero() {
   const contentOpacity = useTransform(cover, [0, 0.7], [1, 0]);
 
   return (
-    <section id="home" className="relative flex h-full min-h-[640px] w-full items-end overflow-hidden bg-ink">
+    <section id="home" data-nav-tone="dark" className="relative flex h-full min-h-[640px] w-full items-end overflow-hidden bg-ink">
       {/* Blurred plate — sits under the sharp frame and travels further. */}
       <motion.div className="absolute inset-[-6%] blur-[5px]" style={{ y: blurY, scale: 1.08 }} aria-hidden>
         <Image src={images.hero} alt="" fill sizes="100vw" className="object-cover object-center" />
@@ -38,7 +38,7 @@ export function Hero() {
       <motion.div className="absolute inset-0" style={{ y: imageY, scale: imageScale }}>
         <Image
           src={images.hero}
-          alt="Portrait of the designer wearing wraparound sunglasses"
+          alt={hero.alt}
           fill
           priority
           sizes="100vw"
@@ -47,7 +47,7 @@ export function Hero() {
       </motion.div>
 
       {/* Dark wash + grain */}
-      <div className="absolute inset-0 bg-ink/80" />
+      <div className="absolute inset-0 bg-ink/45" />
       <Grain opacity={0.3} />
 
       {/* 7px brand rule pinned to the very top edge */}

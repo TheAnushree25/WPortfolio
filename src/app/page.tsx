@@ -1,4 +1,4 @@
-import { images } from '@/content/site';
+import { breaks, images } from '@/content/site';
 import { CoverScene } from '@/components/layout/CoverScene';
 import { Hero } from '@/components/sections/Hero';
 import { Intro } from '@/components/sections/Intro';
@@ -31,13 +31,13 @@ export default function HomePage() {
         <Approach />
       </CoverScene>
 
-      <CoverScene visual={<StickyBreak src={images.breakManSide} alt="Man in side profile" />}>
+      <CoverScene visual={<StickyBreak src={images.breakWork} alt={breaks.work} />}>
         <Portfolio />
         <Stats />
         <Services />
       </CoverScene>
 
-      <CoverScene visual={<StickyBreak src={images.breakWomanSide} alt="Woman in side pose" />}>
+      <CoverScene visual={<StickyBreak src={images.breakMarks} alt={breaks.marks} />}>
         <Benefits />
         <Testimonials />
         <Shots />
@@ -46,7 +46,7 @@ export default function HomePage() {
         <Faq />
       </CoverScene>
 
-      <CoverScene visual={<StickyBreak src={images.breakWoman} alt="Portrait study" />}>
+      <CoverScene visual={<StickyBreak src={images.breakClose} alt={breaks.close} />}>
         <Blog />
         <Contact />
         <Footer />

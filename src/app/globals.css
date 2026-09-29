@@ -1,26 +1,29 @@
 @import 'tailwindcss';
 
 /* ------------------------------------------------------------------ *
- * Design tokens — sampled 1:1 from the reference composition.
+ * Design tokens — the reference composition in the Atlas Studios
+ * palette. Electric Blue is the highlight, Royal Blue the hover.
  * ------------------------------------------------------------------ */
 @theme {
-  --color-brand: #ff462e;
-  --color-brand-soft: #f9d3cd;
-  --color-brand-tint: #f7e3df;
-  --color-brand-wash: rgb(255 70 46 / 0.1);
+  --color-brand: #095cfb;
+  --color-brand-soft: #d6e4ff;
+  --color-brand-tint: #e7efff;
+  --color-brand-wash: rgb(9 92 251 / 0.1);
+  --color-royal: #0838b9;
+  --color-sky: #0a90fe;
 
-  --color-ink: #090909;
-  --color-ink-900: #1e1e1e;
-  --color-ink-800: #29292b;
-  --color-ink-700: #63615e;
-  --color-ink-500: #7f7f80;
+  --color-ink: #020923;
+  --color-ink-900: #020923;
+  --color-ink-800: #052179;
+  --color-ink-700: #3a4d73;
+  --color-ink-500: #5c6d8f;
 
-  --color-paper: #ffffff;
-  --color-paper-soft: #f9f9f9;
-  --color-cream: #f5f4f3;
-  --color-mist: #f7f7f7;
-  --color-line: #eaeaea;
-  --color-line-strong: #d9d9d9;
+  --color-paper: #f4f7ff;
+  --color-paper-soft: #ffffff;
+  --color-cream: #ffffff;
+  --color-mist: #f4f7ff;
+  --color-line: #d9e2f2;
+  --color-line-strong: #aab8d6;
 
   --font-sans:
     var(--font-inter), 'Inter Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;

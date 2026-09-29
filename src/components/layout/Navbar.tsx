@@ -12,16 +12,26 @@ import { PillButton } from '@/components/ui/PillButton';
 /**
  * Fixed 54px nav inset 34px from every edge. It hides on downward scroll and
  * returns on the way back up; the active link is full opacity, the rest 50%.
+ * The wordmark and links stay white over the dark frames and turn ink over
+ * the light sheets, so they never vanish into the page behind them.
  */
 export function Navbar() {
   const { scrollY } = useScroll();
   const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
+  const [onLight, setOnLight] = useState(false);
 
   useMotionValueEvent(scrollY, 'change', (current) => {
     const previous = scrollY.getPrevious() ?? 0;
     setHidden(current > previous && current > 240);
+
+    const under = document
+      .elementsFromPoint(window.innerWidth / 2, 60)
+      .find((el) => !el.closest('header'));
+    setOnLight(Boolean(under && !under.closest('[data-nav-tone="dark"]')));
   });
+
+  const tone = onLight ? 'text-ink' : 'text-paper-soft';
 
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
@@ -38,8 +48,12 @@ export function Navbar() {
         transition={{ duration: 0.5, ease: ease.expo }}
       >
         <nav className="flex h-[54px] items-center justify-between">
-          <Link href="#home" className="text-[26px] leading-none font-black tracking-[-0.04em] text-paper-soft">
-            VIPER<span className="text-brand">*</span>
+          <Link
+            href="#home"
+            className={cn('text-[26px] leading-none font-black tracking-[-0.04em] transition-colors duration-500', tone)}
+          >
+            {site.wordmark}
+            <span className="text-brand">{site.brandSuffix}</span>
           </Link>
 
           <ul className="hidden items-center gap-[50px] lg:flex">
@@ -55,11 +69,11 @@ export function Navbar() {
                   <RollText
                     lineHeight={22}
                     gap={6}
-                    className="text-[18px] font-semibold tracking-[-0.1px] text-paper-soft"
+                    className={cn('text-[18px] font-semibold tracking-[-0.1px] transition-colors duration-500', tone)}
                   >
                     {item.label}
                   </RollText>
-                  <span className="text-[10px] leading-3 font-bold tracking-[-0.1px] text-paper-soft">
+                  <span className={cn('text-[10px] leading-3 font-bold tracking-[-0.1px] transition-colors duration-500', tone)}>
                     {item.index}
                   </span>
                 </Link>
@@ -97,7 +111,8 @@ export function Navbar() {
           >
             <div className="flex h-[54px] items-center justify-between">
               <span className="text-[26px] leading-none font-black tracking-[-0.04em] text-paper-soft">
-                VIPER<span className="text-ink">*</span>
+                {site.wordmark}
+                <span className="text-ink">{site.brandSuffix}</span>
               </span>
               <button
                 type="button"

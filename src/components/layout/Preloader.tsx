@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
+import { site } from '@/content/site';
 import { ease } from '@/lib/motion';
 
 /**
@@ -49,7 +50,8 @@ export function Preloader() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, ease: ease.expo }}
             >
-              VIPER<span className="text-paper-soft/60">*</span>
+              {site.wordmark}
+              <span className="text-paper-soft/60">{site.brandSuffix}</span>
             </motion.span>
           </motion.div>
         </motion.div>

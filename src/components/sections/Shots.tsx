@@ -40,13 +40,13 @@ export function Shots() {
 
 function Frame({ src, alt }: { src: string; alt: string }) {
   return (
-    <span className="group relative block h-[260px] w-[380px] overflow-hidden rounded-[10px] bg-cream">
+    <span className="group relative block h-[260px] w-[380px] overflow-hidden rounded-[10px] bg-cream shadow-[inset_0_0_4px_0_rgb(0_0_0_/_0.05)]">
       <Image
         src={src}
         alt={alt}
         fill
         sizes="380px"
-        className="object-cover transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.07]"
+        className="object-contain p-12 mix-blend-multiply transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.07]"
       />
     </span>
   );

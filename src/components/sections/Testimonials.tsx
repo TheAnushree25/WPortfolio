@@ -38,8 +38,12 @@ export function Testimonials() {
                 <NoiseLayer />
 
                 <div className="relative flex items-start justify-between">
-                  <span className="relative size-[50px] overflow-hidden rounded-full">
-                    <Image src={item.avatar} alt={item.name} fill sizes="50px" className="object-cover" />
+                  <span className="relative grid size-[50px] place-items-center overflow-hidden rounded-full bg-brand text-paper-soft">
+                    {'avatar' in item && typeof item.avatar === 'string' ? (
+                      <Image src={item.avatar} alt={item.name} fill sizes="50px" className="object-cover" />
+                    ) : (
+                      <Medal />
+                    )}
                   </span>
                   <span className="grid size-10 place-items-center rounded-full bg-line text-ink shadow-[inset_0_0_4px_0_rgb(0_0_0_/_0.05)] transition-transform duration-500 group-hover:-rotate-45">
                     <svg viewBox="0 0 16 16" fill="none" className="size-4" aria-hidden>
@@ -54,7 +58,7 @@ export function Testimonials() {
                   </span>
                 </div>
 
-                <span className="relative flex w-[120px]" aria-label="5 out of 5">
+                <span className="relative flex w-[120px]" aria-hidden>
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Star key={i} />
                   ))}
@@ -79,6 +83,17 @@ export function Testimonials() {
         </div>
       </div>
     </section>
+  );
+}
+
+/** Award mark shown where the reference places a client portrait. */
+function Medal() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className="size-6" aria-hidden>
+      <circle cx="12" cy="14" r="6" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M9 3h6l-1.5 5h-3L9 3Z" fill="currentColor" />
+      <path d="m12 11.2.9 1.8 2 .3-1.45 1.4.35 2-1.8-.95-1.8.95.35-2-1.45-1.4 2-.3.9-1.8Z" fill="currentColor" />
+    </svg>
   );
 }
 
