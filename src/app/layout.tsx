@@ -1,8 +1,7 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Red_Hat_Display } from 'next/font/google';
 import './globals.css';
 import { SmoothScroll } from '@/components/layout/SmoothScroll';
-import { Preloader } from '@/components/layout/Preloader';
 import { Cursor } from '@/components/layout/Cursor';
 import { Navbar } from '@/components/layout/Navbar';
 
@@ -18,6 +17,24 @@ const inter = Inter({
   axes: ['opsz'],
 });
 
+/**
+ * The landing and the sections after it. Red Hat Display is the closest open
+ * match to the Figma comp's geometric sans — same proportions and stroke weight.
+ */
+const redHat = Red_Hat_Display({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600'],
+  variable: '--font-red-hat',
+  display: 'swap',
+});
+
+/**
+ * Runs before first paint: decides whether the landing reel plays and keeps the
+ * page at the top while it does. Deep links and reduced motion skip straight to
+ * the slides. `src/lib/intro.ts` reads the flag it leaves on <html>.
+ */
+const introBootScript = `(function(){try{var d=document.documentElement;var skip=location.pathname!=='/'||!!location.hash||matchMedia('(prefers-reduced-motion: reduce)').matches;d.dataset.intro=skip?'skip':'playing';if(!skip&&'scrollRestoration' in history)history.scrollRestoration='manual';}catch(e){}})();`;
+
 export const metadata: Metadata = {
   title: 'Atlas Studios — Gulafsan Shaheen',
   description:
@@ -30,16 +47,19 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#095cfb',
+  themeColor: '#020923',
   width: 'device-width',
   initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={inter.variable}>
+    // The boot script writes data-intro onto <html> before React hydrates.
+    <html lang="en" className={`${inter.variable} ${redHat.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: introBootScript }} />
+      </head>
       <body>
-        <Preloader />
         <SmoothScroll />
         <Cursor />
         <Navbar />

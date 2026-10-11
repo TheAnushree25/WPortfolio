@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import Lenis from 'lenis';
+import { navigateTo, registerLenis } from '@/lib/scroll';
 
 /**
  * Inertial scrolling. The reference feels weighty rather than snappy, so the
@@ -18,6 +19,7 @@ export function SmoothScroll() {
       touchMultiplier: 1.6,
       smoothWheel: true,
     });
+    registerLenis(lenis);
 
     let raf = 0;
     const loop = (time: number) => {
@@ -34,7 +36,7 @@ export function SmoothScroll() {
       const target = document.querySelector(id);
       if (!target) return;
       event.preventDefault();
-      lenis.scrollTo(target as HTMLElement, { offset: -100 });
+      navigateTo(target as HTMLElement, -100);
     };
 
     document.addEventListener('click', onAnchorClick);
@@ -42,6 +44,7 @@ export function SmoothScroll() {
     return () => {
       document.removeEventListener('click', onAnchorClick);
       cancelAnimationFrame(raf);
+      registerLenis(null);
       lenis.destroy();
     };
   }, []);

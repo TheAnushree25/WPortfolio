@@ -1,4 +1,4 @@
-import type { Transition, Variants } from 'motion/react';
+import type { Variants } from 'motion/react';
 
 /** Bezier curves the reference uses for appear, hover and scroll transitions. */
 export const ease = {
@@ -9,40 +9,26 @@ export const ease = {
   inOut: [0.76, 0, 0.24, 1],
 } as const;
 
-/** Text and buttons roll their duplicate label up by exactly one line height. */
-export const rollTransition: Transition = { duration: 0.45, ease: ease.quint };
+export type CharMotion = { index: number; delay: number; step?: number };
 
-export const viewport = { once: true, amount: 0.25 } as const;
-export const viewportEarly = { once: true, amount: 0.12 } as const;
-
-/** Standard element reveal: fade + 30px rise. */
-export const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 30 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: ease.appear } },
+/**
+ * Each character rises out of a blur into focus, one after another — the
+ * landing statement's reveal, shared by every section's text. Once settled the
+ * filter is dropped, so hundreds of revealed characters cost nothing to paint.
+ */
+export const focusChar: Variants = {
+  hidden: { opacity: 0, y: '0.42em', filter: 'blur(10px)', transition: { duration: 0.35, ease: ease.appear } },
+  shown: ({ index, delay, step = 0.026 }: CharMotion) => ({
+    opacity: 1,
+    y: '0em',
+    filter: 'blur(0px)',
+    transition: { duration: 0.9, ease: ease.expo, delay: delay + index * step },
+    transitionEnd: { filter: 'none' },
+  }),
 };
 
-/** Softer variant used for long body copy. */
-export const fadeIn: Variants = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { duration: 0.9, ease: ease.appear } },
-};
-
-/** Cards and media tiles scale up very slightly as they fade in. */
-export const riseIn: Variants = {
-  hidden: { opacity: 0, y: 46, scale: 0.98 },
-  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.9, ease: ease.expo } },
-};
-
-/** Wrapper that walks its children in sequence. */
-export function stagger(step = 0.09, delay = 0): Variants {
-  return {
-    hidden: {},
-    show: { transition: { staggerChildren: step, delayChildren: delay } },
-  };
-}
-
-/** Per-word mask reveal used on the large display headings. */
-export const wordMask: Variants = {
-  hidden: { y: '110%' },
-  show: { y: '0%', transition: { duration: 0.9, ease: ease.expo } },
+/** The reduced-motion stand-in: a plain fade. */
+export const stillChar: Variants = {
+  hidden: { opacity: 0, transition: { duration: 0.3 } },
+  shown: ({ delay }: CharMotion) => ({ opacity: 1, transition: { duration: 0.6, delay } }),
 };

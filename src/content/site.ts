@@ -1,27 +1,3 @@
-/**
- * Single source of truth for every string and image on the page.
- *
- * Atlas Studios is the portfolio of Gulafsan Shaheen. Copy is drawn from her
- * Canva portfolio and her AI Studio portfolio. Project imagery comes from her
- * published decks and prototypes; the full-bleed plates in public/images are
- * composed from that same work.
- */
-
-const work = {
-  stockedgeResearch: 'https://pitch.com/public/9c92317f-4985-4a08-a5be-65e9e0d5912a',
-  stockedgeDesign: 'https://pitch.com/public/ef58a11b-1859-44a2-99f2-4549149f80bb',
-  cti: 'https://www.figma.com/proto/ZEl8VemUWm843WoPOwu6EC/CTI-REVAMPED-(Copy)?node-id=2007-27012&t=0F20GqNIeEnUHqAF-1&scaling=scale-down-width&content-scaling=fixed&page-id=2005%3A8578',
-  youngMinds:
-    'https://www.figma.com/proto/7eNGaoN0AaL35P8OrnffKL/Ux%2FUi-Case-study?node-id=1-118&scaling=scale-down-width&content-scaling=fixed&t=62e5rZhElc6J7VxF-1',
-  cosmetic:
-    'https://www.figma.com/proto/PPPBZN0jaLu2rdnZSGaWmG/adinewebber.com?type=design&node-id=502-455&t=muEACLRKVXNeLGRZ-1&scaling=scale-down-width&page-id=3%3A12&mode=design',
-  jnvkaa:
-    'https://www.figma.com/proto/tOZVcApGegIt0gKDQyjaRL/JNVKAA?type=design&node-id=3-661&t=ADEqNpw5RkGOlPr1-1&scaling=scale-down&page-id=0%3A1&starting-point-node-id=3%3A661&mode=design',
-  costory: 'https://docs.google.com/presentation/d/1vdPq-9ynStE31SmSWjrk--lCe8YXLx4kpwhRVvnYnfs/edit?usp=sharing',
-  xrink:
-    'https://www.figma.com/proto/lBEndNxT9uM32oZb0JYhuU/XRINK?type=design&node-id=66-5&t=Xv800S9yKSgxmPQ4-1&scaling=scale-down&page-id=66%3A2&mode=design',
-} as const;
-
 export const site = {
   name: 'Atlas Studios',
   owner: 'Gulafsan Shaheen',
@@ -35,516 +11,265 @@ export const site = {
   copyright: 'Copyright © Gulafsan Shaheen 2026',
 } as const;
 
-export const nav = [
-  { label: 'Home', index: '01', href: '#home' },
-  { label: 'About', index: '02', href: '#about' },
-  { label: 'Work', index: '03', href: '#work' },
-  { label: 'Research', index: '04', href: '#blog' },
-] as const;
-
-export const images = {
-  hero: '/images/aurora.jpg',
-  breakWork: '/images/work-collage.jpg',
-  breakMarks: '/images/identity-wall.jpg',
-  breakClose: '/images/aurora-mirror.jpg',
-  footer: '/images/work-collage.jpg',
-  expertise: '/images/expertise.jpg',
+/**
+ * Studio Mirage's header: two links and a contact pill. Each link lights its
+ * dot while the page is in its sections.
+ */
+export const nav = {
+  links: [
+    { label: 'Our works', href: '#work', sections: ['work'] },
+    { label: 'About us', href: '#about', sections: ['expertise', 'about', 'clients', 'process', 'testimonials'] },
+  ],
+  contact: { label: 'Contact us', href: '/contact' },
 } as const;
 
-export const breaks = {
-  work: 'Project screens from Stockedge, CTI, JNVKAA, Costory and The Young Minds',
-  marks: 'Twelve identity marks designed by Gulafsan Shaheen',
-  close: 'Aurora over a mountain ridge at night',
-} as const;
-
+/**
+ * The landing: the studio reel plays first, then two slides from the Atlas
+ * Studios Figma frames — the wordmark, and the emblem with the studio statement.
+ */
 export const hero = {
-  eyebrow: site.year,
-  title: site.wordmark,
-  intro: ['Hi, I am Gulafsan® — an', 'economics-trained designer building', 'brands, UX and systems people remember.'],
-  alt: 'Aurora breaking over a mountain ridge at night',
+  wordmark: site.wordmark,
+  statement: ['We are a 360 design', 'and tech studio'],
+  mission:
+    'We turn imagination into direction. Through research, strategy, and design, we create identities and digital experiences that make people pause, connect, and take the next step.',
+  scrollCue: 'Scroll',
+  emblem: 'Atlas Studios emblem',
+  reel: {
+    label: 'The Atlas Studio — turning imagination into direction',
+    src: '/video/atlas-intro-1080.mp4',
+    small: '/video/atlas-intro-720.mp4',
+    poster: '/images/atlas-intro-poster.jpg',
+    skip: 'Skip intro',
+    play: 'Play intro',
+    soundOn: 'Sound on',
+    soundOff: 'Sound off',
+  },
 } as const;
 
-export const intro = {
-  label: 'Hey, Just An Intro',
-  heading:
-    'An economics-trained designer, passionate about building brands that leave an indelible mark on hearts and minds. From field research to identity, packaging and digital experiences.®',
-  cta: { label: 'Get in touch', href: '#contact' },
+/**
+ * Selected work, shown as tall cards that travel sideways while the section is
+ * pinned. `focus` is the object-position that keeps each square shot's subject
+ * inside its 9:16 card.
+ */
+export const works = {
+  title: 'New perspectives. Made visible.',
+  tagline: 'Identity. Digital. Experience.',
+  cta: 'Explore the project',
+  close: 'Close project',
+  projects: [
+    { title: 'Kidcity', kind: 'Kids apparel · Identity & packaging', src: '/images/works/kidcity.jpg', focus: '50% 50%' },
+    { title: 'Fresh Feast', kind: 'Salad & juice bar · Identity & packaging', src: '/images/works/fresh-feast.jpg', focus: '50% 50%' },
+    { title: 'Spring Chu', kind: 'Natural spring water · Label design', src: '/images/works/spring-chu.jpg', focus: '50% 50%' },
+    { title: 'Teddy', kind: 'Hard cider · Label design', src: '/images/works/teddy.jpg', focus: '10% 50%' },
+    { title: 'Zenoxa', kind: 'Wellness wearable · Identity', src: '/images/works/zenoxa.jpg', focus: '50% 50%' },
+    { title: 'Dishoom', kind: 'Strong brew · Label design', src: '/images/works/dishoom.jpg', focus: '50% 50%' },
+    { title: 'Animal', kind: 'Dark beer · Label design', src: '/images/works/animal.jpg', focus: '30% 50%' },
+    { title: 'FreightEasy', kind: 'Logistics · Company deck', src: '/images/works/freighteasy.jpg', focus: '75% 50%' },
+  ],
+} as const;
+
+/** The studio's fields, set in columns after Studio Mirage's expertise listing. */
+export const practice = {
+  title: ['Our areas', 'of practice'],
   columns: [
     {
-      title: 'Research Before Form',
-      body: 'My background in economics lets me read the system before I shape the surface. Every identity begins as a question, a survey or a page of field notes.',
+      heading: 'Strategy',
+      items: ['Brand positioning', 'Audience research', 'Creative concepts', 'Brand narrative', 'Verbal identity'],
     },
     {
-      title: 'Collaborate with Me',
-      body: 'I’m eager to bring my creativity and passion to a new team. Whether it’s an identity, a package or a product, let’s tell visual stories together.',
+      heading: 'Identity',
+      items: ['Art direction', 'Logo design', 'Typography and colour', 'Packaging design', 'Brand guidelines', 'Visual systems'],
     },
-  ],
-  gallery: [
-    { alt: 'Aksharam Consultants logo', src: '/images/plates/aksharam.jpg' },
-    { alt: 'mistiWORK logo', src: '/images/plates/mistiwork.jpg' },
-    { alt: 'Wat’a’melon logo', src: '/images/plates/watamelon.jpg' },
+    {
+      heading: 'Digital',
+      items: ['User experience', 'Interface design', 'Website design', 'Interactive prototypes', 'Digital design systems'],
+    },
+    {
+      heading: 'Who we design for',
+      items: ['Emerging brands', 'Growing businesses', 'Product teams', 'Independent founders', 'Creative organisations'],
+    },
   ],
 } as const;
 
-export const wordmarks = [
-  'StockEdge',
-  'Young Minds',
-  'Shahidoon',
-  'Workers Bee',
-  'FreightEasy',
-  'Kidcity',
-  'Muller',
-  'Dzital',
-] as const;
+/** Who Atlas is, in two columns: the line on the left, the story on the right. */
+export const story = {
+  title: ['Imagination,', 'with direction.'],
+  paragraphs: [
+    'Atlas is the independent design practice of Gulafsan Shaheen, bringing together research, brand identity, and digital design.',
+    'An economics background shapes how we approach a brief: understanding choices, finding patterns, and asking what sits beneath the obvious.',
+    'We turn that understanding into a distinct visual language. An identity with character. An interface with clarity. A system that holds everything together.',
+    'From the first question to the final detail, every decision has a reason.',
+  ],
+} as const;
 
-export const approach = {
-  label: 'Approach Style',
-  code: '(AS® — 02)',
+/**
+ * Brands whose identities came out of the studio, as white marks in Studio
+ * Mirage's logo grid. Each file is the original logo reduced to one colour.
+ */
+export const partners = {
+  title: 'They trust us',
+  logos: [
+    { name: 'Aksharam Consultants', src: '/images/partners/aksharam.png', width: 804, height: 613 },
+    { name: 'Bachat Karta', src: '/images/partners/bachat-karta.png', width: 433, height: 137 },
+    { name: 'Jazbaat Humare', src: '/images/partners/jazbaat-humare.png', width: 267, height: 123 },
+    { name: 'mistiWORK', src: '/images/partners/mistiwork.png', width: 259, height: 167 },
+    { name: 'Gallaries of RRS', src: '/images/partners/rrs.png', width: 125, height: 184 },
+    { name: 'Socialize Here', src: '/images/partners/socialize-here.png', width: 179, height: 191 },
+    { name: 'Stay Proud', src: '/images/partners/stay-proud.png', width: 237, height: 175 },
+    { name: 'The Stupid Engineer', src: '/images/partners/stupid-engineer.png', width: 289, height: 188 },
+    { name: 'Wat’a’melon', src: '/images/partners/watamelon.png', width: 371, height: 324 },
+    { name: 'WorkerBees', src: '/images/partners/workers-bees.png', width: 262, height: 293 },
+  ],
+} as const;
+
+/**
+ * How a project runs, as Studio Mirage's stacking timeline cards. (Not named
+ * `process`: that would shadow Node's global wherever it is imported.)
+ */
+export const method = {
+  title: 'How we work',
+  steps: [
+    {
+      title: 'Understand',
+      text: 'We begin with the context. Your ambition, your audience, and the challenge the work needs to answer.',
+    },
+    {
+      title: 'Find direction',
+      text: 'We connect the research to a central idea. A point of view that guides what comes next.',
+    },
+    {
+      title: 'Explore & design',
+      text: 'We try directions, develop the visual language, and make prototypes you can respond to.',
+    },
+    {
+      title: 'Bring it together',
+      text: 'We develop the chosen direction across the agreed touchpoints, building consistency into the details.',
+    },
+    {
+      title: 'Test & resolve',
+      text: 'We question the choices, gather feedback, and refine the work until it feels clear and complete.',
+    },
+    {
+      title: 'Equip & hand over',
+      text: 'We prepare the files, guidelines, and design systems your team needs to use the work confidently.',
+    },
+  ],
+} as const;
+
+/**
+ * Placeholder testimonials in Studio Mirage's stacked glass cards — swap in
+ * real client words, names and photos before this goes live.
+ */
+export const testimonials = {
+  label: 'Testimonials',
   cards: [
     {
-      index: '01',
-      title: 'Research & Decode',
-      chip: 'FIRST',
-      body: 'Listening before designing — field notes, user conversations and quiet observation. Patterns become evidence, translated into the structured language of systems.',
-      progress: 1,
+      quote:
+        'Atlas found the idea we had been circling for months and gave it a shape. The new identity finally feels like us, and people notice it.',
+      name: 'Client name',
+      role: 'Founder — Company name',
+      initials: 'CN',
     },
     {
-      index: '02',
-      title: 'Position & Narrate',
-      chip: null,
-      body: 'Where the brand stands, and what it refuses to be. Story becomes the bridge between research and emotion — every brand is a sentence the world overhears.',
-      progress: 2,
+      quote:
+        'Every decision came with a reason. The research made the direction easy to agree on, and the design made it easy to love.',
+      name: 'Client name',
+      role: 'Marketing lead — Company name',
+      initials: 'CN',
     },
     {
-      index: '03',
-      title: 'Design & Scale',
-      chip: null,
-      body: 'Form follows feeling: typography, color and rhythm encode meaning. Then the identity becomes a modular system that scales across packaging, web and space.',
-      progress: 3,
-    },
-  ],
-  cta: { label: 'Contact now', href: '#contact' },
-  meters: [
-    { label: 'Research', value: 25 },
-    { label: 'Story', value: 60 },
-    { label: 'System', value: 100 },
-  ],
-} as const;
-
-export const portfolio = {
-  label: 'Featured Works',
-  code: '(AS® — 03)',
-  badge: 'Portfolio',
-  heading: 'Featured Portfolio®',
-  body: 'Internships, innovations and ideations — product interfaces, research studies and brand identities, each built on an understanding of people first.',
-  cta: { label: 'View resume', href: site.resume },
-  partnersNote: 'Also worked with these teams and brands:',
-  projects: [
-    {
-      title: 'Stockedge — UX Research',
-      year: 'Internship · 2022',
-      tags: ['Research', 'Usability'],
-      progress: 1,
-      src: '/images/work/stockedge-research.jpg',
-      alt: 'Stockedge usability testing report',
-      href: work.stockedgeResearch,
-    },
-    {
-      title: 'Stockedge — UI Iteration',
-      year: 'Internship · 2022',
-      tags: ['UI/UX', 'Ideation'],
-      progress: 1,
-      src: '/images/work/stockedge-design.jpg',
-      alt: 'Stockedge UI iteration deck',
-      href: work.stockedgeDesign,
-    },
-    {
-      title: 'CTI Website',
-      year: '2024',
-      tags: ['UI/UX', 'Development'],
-      progress: 2,
-      src: '/images/work/cti.jpg',
-      alt: 'CTI website — Delivery Ki Soch? CTI Ka Approach!',
-      href: work.cti,
-    },
-    {
-      title: 'The Young Minds',
-      year: 'Internship · 2022',
-      tags: ['Research', 'Sustainable'],
-      progress: 2,
-      src: '/images/work/young-minds.jpg',
-      alt: 'The Young Minds UX/UI case study',
-      href: work.youngMinds,
-    },
-    {
-      title: 'JNVKAA',
-      year: 'Personal project',
-      tags: ['UX/UI', 'Social'],
-      progress: 2,
-      src: '/images/work/jnvkaa.jpg',
-      alt: 'JNVKAA social network app screens',
-      href: work.jnvkaa,
-    },
-    {
-      title: 'Costory',
-      year: 'Personal project',
-      tags: ['UX/UI', 'Fintech'],
-      progress: 3,
-      src: '/images/work/costory.jpg',
-      alt: 'Costory financial tool app screens',
-      href: work.costory,
-    },
-    {
-      title: 'Cosmetic Website',
-      year: 'Personal project',
-      tags: ['Web', 'Ideation'],
-      progress: 3,
-      src: '/images/work/cosmetic-top.jpg',
-      alt: 'Cosmetic website landing page',
-      href: work.cosmetic,
-    },
-    {
-      title: 'Xrink',
-      year: 'Identity prototype',
-      tags: ['Logo', 'Brand'],
-      progress: 3,
-      src: '/images/plates/xrink.jpg',
-      alt: 'Xrink logo',
-      href: work.xrink,
+      quote:
+        'From the first workshop to the final files, the process felt calm and clear. Our team uses the guidelines every single day.',
+      name: 'Client name',
+      role: 'Product owner — Company name',
+      initials: 'CN',
     },
   ],
 } as const;
 
-export const stats = {
-  label: 'Stats & Facts',
-  heading:
-    'Economics taught me to read systems; fieldwork taught me to read people. Every number here is a study, a household or a paper behind the work.®',
-  items: [
-    { value: 12, suffix: '+', title: 'Field Studies', body: 'Research behind every brand decision.' },
-    { value: 400, suffix: '+', title: 'Households Surveyed', body: 'Across rural and semi-urban India.' },
-    { value: 7, suffix: '', title: 'Published Works', body: 'Including a best-paper award.' },
-  ],
-} as const;
-
-export const services = {
-  label: 'Core Services',
-  code: '(AS® — 05)',
-  heading: ['Core', 'Services®'],
-  body: 'From research to identity, I bring your brand to life with precision, empathy and a system behind every choice.',
-  bullets: ['Research-Led, Never Decorative', 'Systems That Scale'],
-  cta: { label: 'View about', href: '#about' },
-  items: [
-    {
-      title: 'Brand Identity & Logos',
-      kicker: 'Branding',
-      progress: 1,
-      src: '/images/plates/stay-proud.jpg',
-      alt: 'Stay Proud logo',
-    },
-    {
-      title: 'UX Research',
-      kicker: 'Research',
-      progress: 2,
-      src: '/images/work/stockedge-research.jpg',
-      alt: 'StockEdge usability testing report',
-    },
-    {
-      title: 'UI/UX Design',
-      kicker: 'Product',
-      progress: 3,
-      src: '/images/work/cti.jpg',
-      alt: 'CTI website design',
-    },
-    {
-      title: 'Web Design',
-      kicker: 'Digital',
-      progress: 3,
-      src: '/images/work/cosmetic-top.jpg',
-      alt: 'Cosmetic website design',
-    },
-  ],
-} as const;
-
-export const benefits = {
-  label: 'Benefits of Hiring Me',
-  code: '(AS® — 06)',
-  speed: {
-    title: 'It takes one good question to start a brand.',
-    body: 'Every identity begins with research',
-    src: '/images/logo-collage.jpg',
-    alt: 'Logos designed by Gulafsan Shaheen',
-  },
-  platform: {
-    eyebrow: 'From research to rollout in one mind',
-    title: 'All in one designer',
-    src: '/images/portrait.png',
-    alt: 'Portrait of Gulafsan Shaheen',
-  },
-  support: {
-    eyebrow: 'One method, every project',
-    title: '7 Movements',
-    body: 'Observe, decode, position, narrate, design, systemize and scale — from field notes to a living system.',
-    bg: '/images/aurora-soft.jpg',
-    src: '/images/avatar.png',
-    alt: 'Illustrated self-portrait of Gulafsan Shaheen',
-  },
-} as const;
-
-export const testimonials = {
-  label: 'Recognition',
-  code: '(AS® — 07)',
-  badge: 'Awards & Milestones',
-  heading: 'Quiet Wins, Loud Conviction.',
-  body: 'Papers, competitions and brand selections — the milestones behind the work, from national research conferences to inter-college design stages.',
-  cta: { label: 'View resume', href: site.resume },
-  items: [
-    {
-      quote: 'Recognised as Best Paper Presenter at a national research conference on socio-economic policy.',
-      name: 'Best Paper',
-      role: '2023',
-      company: 'National research conference',
-    },
-    {
-      quote: 'Fieldwork on food insecurity — household sampling and policy-gap analysis — published in academic journals.',
-      name: 'Published Research',
-      role: '2023',
-      company: 'Academic journals',
-    },
-    {
-      quote: 'Won Confluence XVI, an inter-college competition in design and strategic systems thinking.',
-      name: 'Confluence XVI',
-      role: '2022',
-      company: 'Winner',
-    },
-    {
-      quote: 'Design systems for Spring Chu, Dorikala and FreightEasy selected as featured brand work.',
-      name: 'Brand Selection',
-      role: '2024',
-      company: 'Spring Chu · Dorikala · FreightEasy',
-    },
-    {
-      quote: 'Behavioral-finance studies and dashboard interface models at StockEdge that informed real UX product decisions.',
-      name: 'StockEdge',
-      role: '2023',
-      company: 'UX research',
-    },
-  ],
-} as const;
-
-export const shots = {
-  label: 'Logofolio',
-  code: '(AS® — 08)',
-  badge: 'Identity Design',
-  heading: 'Every Mark Considered.',
-  body: 'Identity marks for small brands, studios and causes — each drawn to be recognised at a glance and remembered long after.',
-  cta: { label: 'Commission a mark', href: '#contact' },
-  gallery: [
-    { src: '/images/logos/aksharam.png', alt: 'Aksharam Consultants logo' },
-    { src: '/images/logos/workers-bees.png', alt: 'WorkerBees logo' },
-    { src: '/images/logos/mistiwork.png', alt: 'mistiWORK logo' },
-    { src: '/images/logos/stay-proud.png', alt: 'Stay Proud logo' },
-    { src: '/images/logos/socialize-here.png', alt: 'Socialize Here logo' },
-    { src: '/images/logos/watamelon.png', alt: 'Wat’a’melon logo' },
-    { src: '/images/logos/bachat-karta.png', alt: 'Bachat Karta logo' },
-    { src: '/images/logos/rrs.png', alt: 'Gallaries of RRS logo' },
-    { src: '/images/logos/jazbaat-humare.png', alt: 'Jazbaat Humare logo' },
-    { src: '/images/logos/ta-monogram.png', alt: 'Monogram study' },
-    { src: '/images/logos/xrink.png', alt: 'Xrink logo' },
-  ],
-} as const;
-
-export const expertise = {
-  label: 'Designer & Researcher',
-  code: '(AS® — 09)',
-  badge: 'Economics × Design',
-  heading: ['Expertise in', 'Brand Systems.'],
-  subheading: 'Research Made Visible®',
-  body: 'Trained in econometric analysis and toughened in raw fieldwork, I turn behavior into brand strategy — then into identities, packaging and interfaces people feel.',
-  cta: { label: 'View portfolio', href: '#work' },
-  rating: '12+ Field Studies',
-  alt: 'Stockedge, JNVKAA and CTI project covers',
-} as const;
-
-export const pricing = {
-  label: 'Experience',
-  badge: 'Trajectory',
-  heading: 'A Working Timeline.',
-  body: [
-    'From economics fieldwork to brand systems — every role added',
-    'a new way of seeing people, products and stories.',
-  ],
-  cta: { label: 'View resume', href: site.resume },
-  /** The switch flips each card between the role held and the years it ran. */
-  cycles: { monthly: 'Role', annual: 'Years' },
-  includedLabel: 'What I did',
-  plans: [
-    {
-      name: 'Independent Practice',
-      monthly: 'Systems Designer',
-      annual: '2024 — Now',
-      tag: 'NOW',
-      progress: 3,
-      body: 'Structuring luxury brand platforms, modular packaging and native platforms across India and Asia.',
-      cta: { label: 'See the work', href: '#work' },
-      features: [
-        'Luxury brand platforms',
-        'Modular packaging systems',
-        'Native digital platforms',
-        'Spring Chu · Dorikala · FreightEasy',
-        'Research-led strategy',
-        'India & Asia',
-      ],
-    },
-    {
-      name: 'StockEdge',
-      monthly: 'UX Researcher',
-      annual: '2023 — 2024',
-      tag: null,
-      progress: 2,
-      body: 'Leading behavioral-finance studies and data-dashboard interface models.',
-      cta: { label: 'Open the study', href: work.stockedgeResearch },
-      features: [
-        'Behavioral-finance studies',
-        'Usability testing report',
-        'Payment-journey research',
-        'UI iteration deck',
-        'Data-dashboard models',
-        'Cognitive-bias mapping',
-      ],
-    },
-    {
-      name: 'The Young Minds',
-      monthly: 'Creative Designer',
-      annual: '2022 — 2023',
-      tag: null,
-      progress: 1,
-      body: 'Reframing online learning environments and playful editorial systems.',
-      cta: { label: 'Open the case', href: work.youngMinds },
-      features: [
-        'UX/UI research',
-        'Interface design',
-        'Sustainable-design ideation',
-        'Online learning environments',
-        'Playful editorial systems',
-        'Internship case study',
-      ],
-    },
-  ],
-} as const;
-
-export const faq = {
-  label: 'FAQ',
-  items: [
-    {
-      index: '01',
-      question: 'What do you design?',
-      answer:
-        'Brand identities and logos, packaging, UX research and product interfaces — for brands that want to be understood before they are designed.',
-    },
-    {
-      index: '02',
-      question: 'How does economics shape the work?',
-      answer:
-        'It taught me to see the invisible architecture of social and financial systems. I use that lens to find the behavior a brand has to answer to, then design for it.',
-    },
-    {
-      index: '03',
-      question: 'What does a project look like?',
-      answer:
-        'Seven movements: observe, decode, position, narrate, design, systemize and scale — from field notes and interviews to an identity that works across every touchpoint.',
-    },
-    {
-      index: '04',
-      question: 'Do you run user research?',
-      answer:
-        'Yes — from household surveys and ethnography to usability testing. At StockEdge that meant behavioral-finance studies, a usability report and UI iterations.',
-    },
-    {
-      index: '05',
-      question: 'Where have you worked?',
-      answer:
-        'StockEdge as a UX researcher, The Young Minds as a creative designer, Shahidoon Softech as a digital designer, and in independent practice since 2024.',
-    },
-    {
-      index: '06',
-      question: 'Which tools do you use?',
-      answer: 'Figma for interfaces and prototypes; Pitch, Google Slides and Canva for research decks and brand stories.',
-    },
-    {
-      index: '07',
-      question: 'Are you open to new opportunities?',
-      answer:
-        'Yes. I’m eager to bring my creativity and passion to a new team, and confident I can make a meaningful contribution to it.',
-    },
-    {
-      index: '08',
-      question: 'How do I get in touch?',
-      answer: 'Email gulafsan.shaheen@gmail.com, message me on LinkedIn, or find me on Instagram at @a.gulafsan.',
-    },
-  ],
-} as const;
-
-export const blog = {
-  label: 'Research Archive',
-  code: '(AS® — 12)',
-  badge: 'Field Research',
-  heading: 'Understanding People.',
-  body: [
-    'Good design starts with understanding people. Trained in econometric analysis and toughened in raw',
-    'fieldwork — every brand begins as a question, a survey or a set of coded transcripts.',
-  ],
-  cta: { label: 'View resume', href: site.resume },
-  posts: [
-    {
-      title: 'Mapping Food Insecurity',
-      date: 'District-level econometric study',
-      tag: 'Policy',
-      src: '/images/plates/r-01.jpg',
-      alt: 'R-01 — Mapping Food Insecurity',
-      href: `mailto:${site.email}?subject=${encodeURIComponent('Research: Mapping Food Insecurity')}`,
-    },
-    {
-      title: 'Women, Work & Empowerment',
-      date: 'Fieldwork across semi-urban India',
-      tag: 'Ethnography',
-      src: '/images/plates/r-02.jpg',
-      alt: 'R-02 — Women, Work & Empowerment',
-      href: `mailto:${site.email}?subject=${encodeURIComponent('Research: Women, Work & Empowerment')}`,
-    },
-    {
-      title: 'Behavior in Retail Investing',
-      date: 'Cognitive-bias mapping for UX',
-      tag: 'UX Research',
-      src: '/images/plates/r-03.jpg',
-      alt: 'R-03 — Behavioral Patterns in Retail Investing',
-      href: `mailto:${site.email}?subject=${encodeURIComponent('Research: Behavioral Patterns in Retail Investing')}`,
-    },
-  ],
-} as const;
-
-export const contact = {
-  label: "Let's Work Together",
-  code: '(AS® — 13)',
-  badge: 'Contact Now',
-  heading: 'Let’s Tell Visual Stories.',
-  body: 'Let’s build something people remember. Reach out — I’d love to hear about your team, your brand and the questions behind it.',
-  bullets: ['Open to new roles & collaborations', 'Working across India & Asia'],
-  cta: { label: 'Open LinkedIn', href: site.linkedin },
-  submit: 'Submit Now',
-  sent: 'Your mail app is opening…',
-} as const;
-
+/**
+ * The closing scene and Studio Mirage's footer: the wordmark formed from sand
+ * over the globe, then where the studio works, the ways to start a project,
+ * the links and the credits.
+ */
 export const footer = {
-  heading: 'Stay connected®',
-  body: 'Building brands that leave an indelible mark on hearts and minds. Let’s stay connected — reach out anytime.',
-  cta: { label: 'View resume', href: site.resume },
-  badge: 'Brand & UX Designer',
-  links: [
-    { index: '01 /', label: 'Home', href: '#home' },
-    { index: '02 /', label: 'About', href: '#about' },
-    { index: '03 /', label: 'Work', href: '#work' },
-    { index: '04 /', label: 'Research', href: '#blog' },
-    { index: '05 /', label: 'Contact', href: '#contact' },
+  title: 'The Atlas Studio',
+  locations: [
+    { place: 'India', detail: 'Studio base' },
+    { place: 'Asia & beyond', detail: 'Remote collaborations' },
   ],
-  backToTop: '©Back to top',
+  contact: {
+    title: 'Ready to start your project?',
+    /** Opens the deck on the site and downloads the PDF in the same click. */
+    deck: { label: 'Get the deck', href: '/deck', pdf: '/docs/the-atlas-studio.pdf', file: 'The-Atlas-Studio.pdf' },
+    line: { label: 'Drop us a line', href: `mailto:${site.email}` },
+    talk: { label: 'Let’s talk', href: '/contact' },
+  },
+  links: [
+    { label: 'Instagram', href: site.instagram },
+    { label: 'LinkedIn', href: site.linkedin },
+    { label: 'Email', href: `mailto:${site.email}` },
+  ],
+  copyright: '© 2026 The Atlas Studio. All rights reserved.',
+  legal: {
+    label: 'Legal notice',
+    lines: [
+      'This site is published by Gulafsan Shaheen, The Atlas Studio.',
+      `Contact: ${site.email}`,
+      'Hosted by Vercel Inc. (vercel.com).',
+      'The work shown belongs to its respective owners; please ask before reproducing any of it.',
+    ],
+    close: 'Close',
+  },
+  email: site.email,
+  top: 'Return to the top',
+} as const;
+
+/** The white teaser at the very foot of the page. */
+export const nextPage = {
+  overline: 'Next page',
+  title: 'The ideas, realised.',
+  /** What the travelling line says; the link itself reads as the label. */
+  cta: 'You are one click away',
+  label: 'Explore our work',
+  href: '#work',
+  /** The reel's turning carousel, played above the sheet while it's hovered. */
+  clip: '/video/atlas-carousel.mp4',
+} as const;
+
+/** The deck, re-lit in the site's gradient by scripts/deck/retheme.py. */
+export const deck = {
+  title: 'The deck',
+  overline: 'The Atlas Studio',
+  intro: 'Thirteen pages on how the studio thinks and what it has made.',
+  pdf: '/docs/the-atlas-studio.pdf',
+  download: 'Download the PDF',
+  open: 'Open the PDF',
+  slides: Array.from({ length: 13 }, (_, i) => `/deck/slide-${String(i + 1).padStart(2, '0')}.webp`),
+} as const;
+
+/**
+ * The booking page, after Studio Mirage's Cal.com scheduler. With a Cal.com
+ * link set (NEXT_PUBLIC_CAL_LINK) the real scheduler loads; until then the
+ * same layout takes requests by email.
+ */
+export const booking = {
+  studio: 'The Atlas Studio',
+  title: 'Our next meeting',
+  duration: '45m',
+  minutes: 45,
+  location: 'Google Meet',
+  email: 'km.anushree25@gmail.com',
+  /** Start times in the studio's time zone (India, UTC+5:30), shown in each visitor's own. */
+  slots: ['11:00', '11:45', '12:30', '14:30', '15:15', '16:00', '16:45', '17:30'],
+  studioOffsetMinutes: 330,
+  /** How far ahead requests can be made, in days. */
+  horizon: 60,
+  form: { name: 'Your name', email: 'Email address', notes: 'Anything we should know?', back: 'Back', send: 'Request this time' },
+  sent: {
+    title: 'Your request is ready to send',
+    body: 'Your email app has opened with the time you picked. Send it, and we’ll confirm with a meeting link.',
+    again: 'Pick another time',
+  },
+  note: 'Requests go straight to the studio’s inbox.',
 } as const;
