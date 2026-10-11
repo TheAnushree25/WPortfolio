@@ -1,156 +1,115 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react';
+import { motion } from 'motion/react';
 import { nav, site } from '@/content/site';
+import { useIntroPlaying } from '@/lib/intro';
 import { ease } from '@/lib/motion';
 import { cn } from '@/lib/utils';
-import { RollText } from '@/components/ui/RollText';
-import { PillButton } from '@/components/ui/PillButton';
+
+/** After the reel hands over, the nav waits for the wordmark to land first. */
+const AFTER_INTRO = 1100;
 
 /**
- * Fixed 54px nav inset 34px from every edge. It hides on downward scroll and
- * returns on the way back up; the active link is full opacity, the rest 50%.
- * The wordmark and links stay white over the dark frames and turn ink over
- * the light sheets, so they never vanish into the page behind them.
+ * Studio Mirage's header: the wordmark on the left; on the right two links and
+ * a white contact pill with a turning glow behind it, over a band of graded
+ * blur that keeps it legible above anything scrolling beneath. A dot marks the
+ * link whose sections fill the middle of the screen. It stays out of the way
+ * while the landing reel plays.
  */
 export function Navbar() {
-  const { scrollY } = useScroll();
-  const [hidden, setHidden] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [onLight, setOnLight] = useState(false);
-
-  useMotionValueEvent(scrollY, 'change', (current) => {
-    const previous = scrollY.getPrevious() ?? 0;
-    setHidden(current > previous && current > 240);
-
-    const under = document
-      .elementsFromPoint(window.innerWidth / 2, 60)
-      .find((el) => !el.closest('header'));
-    setOnLight(Boolean(under && !under.closest('[data-nav-tone="dark"]')));
-  });
-
-  const tone = onLight ? 'text-ink' : 'text-paper-soft';
+  const intro = useIntroPlaying();
+  const [held, setHeld] = useState(intro);
+  const [current, setCurrent] = useState<string | null>(null);
+  // On the landing, section links are plain anchors for the smooth-scroll glide;
+  // elsewhere they lead back to the landing.
+  const home = usePathname() === '/';
+  const Anchor = home ? 'a' : Link;
+  const to = (hash: string) => (home ? hash : `/${hash}`);
 
   useEffect(() => {
-    document.body.style.overflow = open ? 'hidden' : '';
-    return () => {
-      document.body.style.overflow = '';
+    if (intro) {
+      setHeld(true);
+      return;
+    }
+    const timer = window.setTimeout(() => setHeld(false), AFTER_INTRO);
+    return () => window.clearTimeout(timer);
+  }, [intro]);
+
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const middle = window.innerHeight / 2;
+      const here = nav.links.find((link) =>
+        link.sections.some((id) => {
+          const box = document.getElementById(id)?.getBoundingClientRect();
+          return box ? box.top <= middle && box.bottom > middle : false;
+        }),
+      );
+      setCurrent(here?.href ?? null);
     };
-  }, [open]);
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
+    };
+  }, []);
 
   return (
-    <>
-      <motion.header
-        className="fixed inset-x-5 top-5 z-[120] md:inset-x-[34px] md:top-[34px]"
-        animate={{ y: hidden ? -120 : 0, opacity: hidden ? 0 : 1 }}
-        transition={{ duration: 0.5, ease: ease.expo }}
+    <motion.header
+      className="site-header"
+      // Starts out of view: the server renders the page with its reel up.
+      initial={{ y: -120, opacity: 0 }}
+      animate={{ y: held ? -120 : 0, opacity: held ? 0 : 1 }}
+      transition={{ duration: 0.5, ease: ease.expo }}
+      inert={held}
+    >
+      <div className="site-header-blur" aria-hidden>
+        <span />
+        <span />
+        <span />
+        <span />
+        <span />
+        <span />
+      </div>
+
+      <Anchor
+        href={home ? '#home' : '/'}
+        className="absolute left-[var(--pad-sides)] text-[22px] leading-none font-black tracking-[-0.04em] text-paper-soft md:text-[26px]"
       >
-        <nav className="flex h-[54px] items-center justify-between">
-          <Link
-            href="#home"
-            className={cn('text-[26px] leading-none font-black tracking-[-0.04em] transition-colors duration-500', tone)}
+        {site.wordmark}
+        <span className="text-brand">{site.brandSuffix}</span>
+      </Anchor>
+
+      <nav
+        aria-label="Main"
+        className="font-studio flex items-center gap-[max(10px,4vw)] text-[0.9rem] font-semibold md:gap-[min(30px,4vw)] md:text-[0.85rem]"
+      >
+        {nav.links.map((link) => (
+          <Anchor
+            key={link.href}
+            href={to(link.href)}
+            // On phones Mirage gives each link extra room on its left for the dot.
+            className={cn('site-header-link max-md:ml-2.5', current === link.href && 'is-active')}
+            aria-current={current === link.href ? 'location' : undefined}
           >
-            {site.wordmark}
-            <span className="text-brand">{site.brandSuffix}</span>
-          </Link>
-
-          <ul className="hidden items-center gap-[50px] lg:flex">
-            {nav.map((item, i) => (
-              <li key={item.label}>
-                <Link
-                  href={item.href}
-                  className={cn(
-                    'group/roll flex items-start gap-[2px] transition-opacity duration-300 hover:opacity-100',
-                    i === 0 ? 'opacity-100' : 'opacity-50',
-                  )}
-                >
-                  <RollText
-                    lineHeight={22}
-                    gap={6}
-                    className={cn('text-[18px] font-semibold tracking-[-0.1px] transition-colors duration-500', tone)}
-                  >
-                    {item.label}
-                  </RollText>
-                  <span className={cn('text-[10px] leading-3 font-bold tracking-[-0.1px] transition-colors duration-500', tone)}>
-                    {item.index}
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-
-          <div className="hidden md:block">
-            <PillButton label="Get in touch" href="#contact" />
-          </div>
-
-          <button
-            type="button"
-            aria-label="Open menu"
-            aria-expanded={open}
-            onClick={() => setOpen(true)}
-            className="grid size-[54px] place-items-center rounded-full bg-cream md:hidden"
-          >
-            <span className="flex flex-col gap-[5px]">
-              <span className="block h-[2px] w-5 rounded-full bg-ink" />
-              <span className="block h-[2px] w-5 rounded-full bg-ink" />
-            </span>
-          </button>
-        </nav>
-      </motion.header>
-
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            className="fixed inset-0 z-[130] flex flex-col justify-between bg-brand px-5 pt-5 pb-10 md:hidden"
-            initial={{ clipPath: 'inset(0 0 100% 0)' }}
-            animate={{ clipPath: 'inset(0 0 0% 0)' }}
-            exit={{ clipPath: 'inset(0 0 100% 0)' }}
-            transition={{ duration: 0.7, ease: ease.inOut }}
-          >
-            <div className="flex h-[54px] items-center justify-between">
-              <span className="text-[26px] leading-none font-black tracking-[-0.04em] text-paper-soft">
-                {site.wordmark}
-                <span className="text-ink">{site.brandSuffix}</span>
-              </span>
-              <button
-                type="button"
-                aria-label="Close menu"
-                onClick={() => setOpen(false)}
-                className="grid size-[54px] place-items-center rounded-full bg-paper-soft text-ink"
-              >
-                <span className="relative block size-5">
-                  <span className="absolute top-1/2 left-0 h-[2px] w-5 rotate-45 rounded-full bg-ink" />
-                  <span className="absolute top-1/2 left-0 h-[2px] w-5 -rotate-45 rounded-full bg-ink" />
-                </span>
-              </button>
-            </div>
-
-            <ul className="flex flex-col gap-2">
-              {nav.map((item, i) => (
-                <motion.li
-                  key={item.label}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, ease: ease.expo, delay: 0.25 + i * 0.07 }}
-                >
-                  <Link
-                    href={item.href}
-                    onClick={() => setOpen(false)}
-                    className="flex items-baseline gap-3 border-b border-paper-soft/25 py-4 text-[44px] leading-none font-semibold tracking-[-0.03em] text-paper-soft"
-                  >
-                    {item.label}
-                    <span className="text-[12px] font-bold">{item.index}</span>
-                  </Link>
-                </motion.li>
-              ))}
-            </ul>
-
-            <p className="text-label text-paper-soft/80">{site.email}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+            {link.label}
+          </Anchor>
+        ))}
+        <Link href={nav.contact.href} className="glow-button">
+          <span className="glow-button-label">{nav.contact.label}</span>
+          <span className="glow-button-bg" aria-hidden />
+        </Link>
+      </nav>
+    </motion.header>
   );
 }

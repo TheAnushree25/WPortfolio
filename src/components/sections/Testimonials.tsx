@@ -1,110 +1,171 @@
 'use client';
 
-import Image from 'next/image';
-import * as motion from 'motion/react-client';
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
+import { motion } from 'motion/react';
 import { testimonials } from '@/content/site';
-import { riseIn, stagger, viewportEarly } from '@/lib/motion';
-import { SectionHeader } from '@/components/ui/SectionHeader';
-import { CentredHeading } from './CentredHeading';
-import { NoiseLayer } from './Approach';
+import { useReveal } from '@/lib/reveal';
+import { cn } from '@/lib/utils';
+import { FocusText } from '@/components/ui/FocusText';
 
+/** Studio Mirage's card colours, one per card in turn. */
+const COLORS = ['#2DA7F9', '#52F92D', '#3E2DF9'];
+/** How many cards show behind the front one, and how much each step back shrinks and fades. */
+const DEPTH = 8;
+const SHRINK = 0.07;
+const FADE = 0.12;
+/** A change waits out the last shuffle (ms). */
+const SHUFFLE = 400;
+/** Swipes shorter than this are taps (px). */
+const SWIPE = 40;
+
+/**
+ * What clients say, after Studio Mirage's testimonials: a deck of glass cards,
+ * the active one in front and the rest stepping back and up behind it, each lit
+ * from its top edge in its own colour. Dots, arrow keys and swipes shuffle the
+ * deck; only the front card shows its words. On arrival the deck builds from
+ * the back and the quote focuses in like the landing statement.
+ */
 export function Testimonials() {
+  const cards = testimonials.cards;
+  const count = cards.length;
+  const [active, setActive] = useState(0);
+  const current = useRef(0);
+  const busy = useRef(false);
+  const sectionRef = useRef<HTMLElement>(null);
+  const [ref, shown] = useReveal<HTMLDivElement>(0.35);
+  // The deck's first arrival is slower than a shuffle; afterwards it moves at Mirage's pace.
+  const [settled, setSettled] = useState(false);
+
+  useEffect(() => {
+    if (!shown) {
+      setSettled(false);
+      return;
+    }
+    const timer = window.setTimeout(() => setSettled(true), 1700);
+    return () => window.clearTimeout(timer);
+  }, [shown]);
+
+  const go = useCallback((index: number) => {
+    if (busy.current || index === current.current) return;
+    busy.current = true;
+    current.current = index;
+    setActive(index);
+    window.setTimeout(() => {
+      busy.current = false;
+    }, SHUFFLE);
+  }, []);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || count < 2) return;
+    const step = (by: number) => go((current.current + by + count) % count);
+    const onKey = (event: KeyboardEvent) => {
+      if (!section.contains(document.activeElement)) return;
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        step(-1);
+      } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        step(1);
+      }
+    };
+    let startX = 0;
+    let startY = 0;
+    const onStart = (event: TouchEvent) => {
+      startX = event.touches[0].clientX;
+      startY = event.touches[0].clientY;
+    };
+    const onEnd = (event: TouchEvent) => {
+      const dx = event.changedTouches[0].clientX - startX;
+      const dy = event.changedTouches[0].clientY - startY;
+      if (Math.abs(dy) > Math.abs(dx) || Math.abs(dx) < SWIPE) return;
+      step(dx < 0 ? 1 : -1);
+    };
+    window.addEventListener('keydown', onKey);
+    section.addEventListener('touchstart', onStart, { passive: true });
+    section.addEventListener('touchend', onEnd, { passive: true });
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      section.removeEventListener('touchstart', onStart);
+      section.removeEventListener('touchend', onEnd);
+    };
+  }, [count, go]);
+
   return (
-    <section className="relative z-10 w-full overflow-hidden bg-paper pt-[10px] pb-[110px]">
-      <div className="gutter">
-        <div className="shell flex flex-col gap-[50px]">
-          <SectionHeader label={testimonials.label} code={testimonials.code} />
-
-          <CentredHeading
-            badge={testimonials.badge}
-            heading={testimonials.heading}
-            body={testimonials.body}
-            cta={testimonials.cta}
-          />
-
-          <motion.div
-            className="grid grid-cols-1 gap-5 pt-10 md:grid-cols-2 lg:grid-cols-3"
-            variants={stagger(0.1)}
-            initial="hidden"
-            whileInView="show"
-            viewport={viewportEarly}
-          >
-            {testimonials.items.map((item) => (
-              <motion.figure
-                key={item.name}
-                variants={riseIn}
-                className="group relative flex flex-col gap-6 overflow-hidden rounded-[10px] bg-cream px-6 pt-6 pb-[30px] transition-shadow duration-500 hover:shadow-[0_18px_40px_-26px_rgb(9_9_9_/_0.4)]"
+    <section
+      ref={sectionRef}
+      id="testimonials"
+      data-nav-tone="dark"
+      aria-label={testimonials.label}
+      className="screen-block relative z-10 justify-center"
+    >
+      <motion.div
+        ref={ref}
+        className="flex w-full flex-col items-center"
+        initial="hidden"
+        animate={shown ? 'shown' : 'hidden'}
+      >
+        <div className="testimonials-track">
+          {cards.map((card, i) => {
+            // Steps behind the front card, counting round the deck.
+            const back = (((i - active) % count) + count) % count;
+            const depth = Math.min(back, DEPTH + 1);
+            const style = {
+              '--card-color': COLORS[i % COLORS.length],
+              '--card-y': shown ? `${depth * -20}px` : '60px',
+              '--card-s': shown ? 1 - depth * SHRINK : 0.94,
+              '--card-o': shown && back <= DEPTH ? 1 - back * FADE : 0,
+              '--card-z': count - back,
+              ...(!settled && {
+                transitionDuration: '1.2s',
+                transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+                transitionDelay: shown ? `${0.1 + (count - 1 - back) * 0.12}s` : '0s',
+              }),
+            } as CSSProperties;
+            return (
+              <article
+                key={i}
+                className={cn('testimonial-card', i === active && 'is-active')}
+                style={style}
+                aria-hidden={i !== active}
               >
-                <NoiseLayer />
-
-                <div className="relative flex items-start justify-between">
-                  <span className="relative grid size-[50px] place-items-center overflow-hidden rounded-full bg-brand text-paper-soft">
-                    {'avatar' in item && typeof item.avatar === 'string' ? (
-                      <Image src={item.avatar} alt={item.name} fill sizes="50px" className="object-cover" />
-                    ) : (
-                      <Medal />
-                    )}
-                  </span>
-                  <span className="grid size-10 place-items-center rounded-full bg-line text-ink shadow-[inset_0_0_4px_0_rgb(0_0_0_/_0.05)] transition-transform duration-500 group-hover:-rotate-45">
-                    <svg viewBox="0 0 16 16" fill="none" className="size-4" aria-hidden>
-                      <path
-                        d="M3 13 13 3M5.5 3H13v7.5"
-                        stroke="currentColor"
-                        strokeWidth="1.6"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </span>
+                <div aria-hidden>
+                  <svg viewBox="0 0 30 21" className="h-[21px] w-[30px]" fill="#fff">
+                    <path d="M11.8.6C6.2 2.4.4 7.6.1 14.6A6 6 0 0 0 12 15a6 6 0 0 0-5.4-5.9c-.2-2.7 1.8-5.2 6.3-6.9ZM28.8.6c-5.6 1.8-11.4 7-11.7 14A6 6 0 0 0 29 15a6 6 0 0 0-5.4-5.9c-.2-2.7 1.8-5.2 6.3-6.9Z" />
+                  </svg>
                 </div>
-
-                <span className="relative flex w-[120px]" aria-hidden>
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} />
-                  ))}
-                </span>
-
-                <blockquote className="text-body relative text-ink-700">{item.quote}</blockquote>
-
-                <div className="relative mt-auto flex flex-col gap-[10px]">
-                  <span className="h-px w-full bg-line" />
-                  <figcaption className="flex flex-col">
-                    <span className="text-title flex items-center gap-[10px] text-ink">
-                      {item.name}
-                      <span className="size-1 rounded-full bg-ink" />
-                      {item.role}
-                    </span>
-                    <span className="text-small text-ink/60">{item.company}</span>
-                  </figcaption>
-                </div>
-              </motion.figure>
-            ))}
-          </motion.div>
+                <blockquote className="testimonial-text font-studio">
+                  <FocusText text={card.quote} delay={0.55} step={Math.min(0.02, 1.1 / card.quote.length)} />
+                </blockquote>
+                <footer className="testimonial-author font-studio">
+                  <div className="testimonial-avatar" aria-hidden>
+                    {card.initials}
+                  </div>
+                  <div className="testimonial-identity">
+                    <span className="testimonial-name">{card.name}</span>
+                    <span className="testimonial-role">{card.role}</span>
+                  </div>
+                </footer>
+              </article>
+            );
+          })}
         </div>
-      </div>
+
+        {count > 1 && (
+          <nav className="testimonial-dots" aria-label="Testimonial navigation">
+            {cards.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                className={cn('testimonial-dot', i === active && 'is-active')}
+                aria-label={`Go to testimonial ${i + 1}`}
+                aria-current={i === active ? 'true' : undefined}
+                onClick={() => go(i)}
+              />
+            ))}
+          </nav>
+        )}
+      </motion.div>
     </section>
-  );
-}
-
-/** Award mark shown where the reference places a client portrait. */
-function Medal() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="size-6" aria-hidden>
-      <circle cx="12" cy="14" r="6" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M9 3h6l-1.5 5h-3L9 3Z" fill="currentColor" />
-      <path d="m12 11.2.9 1.8 2 .3-1.45 1.4.35 2-1.8-.95-1.8.95.35-2-1.45-1.4 2-.3.9-1.8Z" fill="currentColor" />
-    </svg>
-  );
-}
-
-/** 24px brand star. Five of them sit in a 120px row, matching the reference. */
-function Star() {
-  return (
-    <svg viewBox="0 0 24 24" className="size-6 shrink-0 text-brand" aria-hidden>
-      <path
-        fill="currentColor"
-        d="M12 2.4 14.6 8.9 21.6 9.5 16.4 14.1 18 21 12 17.4 6 21 7.6 14.1 2.4 9.5 9.4 8.9 12 2.4Z"
-      />
-    </svg>
   );
 }

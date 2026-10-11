@@ -14,6 +14,8 @@
 
   --color-ink: #020923;
   --color-ink-900: #020923;
+  /* Stays dark in every theme: the reel's backdrop, dark cards, image frames. */
+  --color-night: #020923;
   --color-ink-800: #052179;
   --color-ink-700: #3a4d73;
   --color-ink-500: #5c6d8f;
@@ -27,6 +29,8 @@
 
   --font-sans:
     var(--font-inter), 'Inter Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  /* The landing slides' geometric sans. */
+  --font-studio: var(--font-red-hat), 'Red Hat Display', var(--font-inter), sans-serif;
 
   /* Shell geometry: 1440 design width, 40px gutters, 1345px content. */
   --spacing-gutter: 40px;
@@ -54,11 +58,12 @@
   }
 
   html {
-    background: var(--color-brand);
+    background: var(--color-night);
   }
 
+  /* Only <html> is painted: an opaque body would cover the fixed gradient,
+     which sits beneath the page at a negative z-index. */
   body {
-    background: var(--color-brand);
     color: var(--color-ink-900);
     font-family: var(--font-sans);
     font-optical-sizing: auto;
@@ -230,6 +235,1051 @@
 }
 
 /* ------------------------------------------------------------------ *
+ * Landing — the reel and the two slides from the Figma frames
+ * ------------------------------------------------------------------ */
+
+/* The landing frame is a size container, so the 1440 × 807 Figma frame maps
+   onto it exactly, scrollbar or not. */
+@utility hero-stage {
+  container-type: size;
+}
+
+/* --u is one design pixel by width: the wordmark spans the frame edge to edge.
+   --s fits the whole frame so the emblem and statement never crop; portrait
+   screens hand the statement the full width instead. */
+@utility hero-frame {
+  --u: calc(100cqw / 1440);
+  --s: min(calc(100cqw / 1440), calc(100cqh / 807));
+  @container (max-aspect-ratio: 1 / 1) {
+    --s: calc(100cqw / 800);
+  }
+}
+
+/* Studio Mirage's paddings: the content edge every section after the landing
+   aligns to, and the narrower edge of the header and footer. */
+:root {
+  --pad-content: calc(1.6vw + 105px + max(30px, 2vw));
+  --pad-sides: max(30px, 2vw);
+  @media (width < 48rem) {
+    --pad-content: 40px;
+    --pad-sides: 20px;
+  }
+}
+
+/* The selected-work cards: 9:16, a little shorter on phones. */
+@utility works-cards {
+  --card-h: clamp(220px, 66svh, 600px);
+  @media (width >= 48rem) {
+    --card-h: clamp(220px, 74svh, 600px);
+  }
+}
+
+/* One full screen per section: content centred in the viewport, clear of the
+   fixed nav, growing past the fold only when it has to. */
+@utility screen-block {
+  display: flex;
+  align-items: center;
+  margin-inline: auto;
+  width: 100%;
+  max-width: 1920px;
+  min-height: 100svh;
+  padding: 7rem var(--pad-content);
+  @media (width < 48rem) {
+    padding-block: 6rem;
+  }
+}
+
+/* Deep links and reduced motion skip the reel before it ever paints. */
+html[data-intro='skip'] [data-intro-reel] {
+  display: none;
+}
+
+/* ------------------------------------------------------------------ *
+ * Glass button — frosted pill with a travelling border shine; on hover the
+ * label lights up in a sweep and the icon swells.
+ * ------------------------------------------------------------------ */
+@property --glass-angle {
+  syntax: '<angle>';
+  initial-value: 80deg;
+  inherits: false;
+}
+@property --glass-top {
+  syntax: '<color>';
+  initial-value: rgb(255 255 255 / 0.04);
+  inherits: false;
+}
+@property --glass-bottom {
+  syntax: '<color>';
+  initial-value: rgb(100 100 100 / 0.32);
+  inherits: false;
+}
+@property --glow-end {
+  syntax: '<percentage>';
+  initial-value: 132%;
+  inherits: false;
+}
+@property --glow-width {
+  syntax: '<percentage>';
+  initial-value: 12%;
+  inherits: false;
+}
+
+@layer components {
+  .glass-button {
+    --glass-angle: 80deg;
+    --glass-top: rgb(255 255 255 / 0.04);
+    --glass-bottom: rgb(100 100 100 / 0.32);
+    --label-top: rgb(255 255 255);
+    --label-bottom: rgb(255 255 255 / 0.5);
+    --border-shine: conic-gradient(
+      from var(--glass-angle),
+      rgb(255 255 255 / 0.28) 0deg,
+      transparent 18deg,
+      transparent 150deg,
+      rgb(255 255 255 / 0.28) 180deg,
+      transparent 197deg,
+      transparent 332deg,
+      rgb(255 255 255 / 0.28) 364deg
+    );
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7rem;
+    padding: 0.95rem 1.5rem;
+    border-radius: 30px;
+    background: linear-gradient(90deg, var(--glass-top), var(--glass-bottom)), rgb(0 0 0 / 0.2);
+    box-shadow: 0 8px 6px rgb(0 0 0 / 0.05);
+    backdrop-filter: blur(5px);
+    color: var(--color-paper-soft);
+    font-size: 0.86rem;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+    transition-property: background, --glass-top, --glass-bottom, --glass-angle, backdrop-filter, transform;
+    transition-duration: 0.25s, 0.4s, 0.4s, 0.6s, 0.55s, 0.25s;
+    transition-timing-function:
+      var(--ease-out-expo), ease-in-out, ease-in-out, var(--ease-out-expo), ease-in-out, var(--ease-out-expo);
+  }
+
+  /* A 1px ring cut out of the shine, so only the border catches the light. */
+  .glass-button::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(rgb(255 255 255 / 0.1)), var(--border-shine);
+    mask:
+      linear-gradient(#000 0 0) content-box exclude,
+      linear-gradient(#000 0 0);
+    pointer-events: none;
+  }
+
+  .glass-button > span {
+    --glow-end: 132%;
+    --glow-width: 12%;
+    --glow-feather: 10%;
+    background: linear-gradient(
+      90deg,
+      var(--label-bottom) 0%,
+      var(--label-bottom) calc(var(--glow-end) - var(--glow-width) - var(--glow-feather)),
+      var(--label-top) calc(var(--glow-end) - var(--glow-width)),
+      var(--label-top) var(--glow-end),
+      var(--label-bottom) calc(var(--glow-end) + var(--glow-feather)),
+      var(--label-bottom) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition:
+      --glow-end 0.45s ease-out,
+      --glow-width 0.45s ease-out;
+  }
+
+  .glass-button svg {
+    transition: transform 0.2s ease-out;
+  }
+
+  .glass-button:hover:not(:disabled) {
+    --glass-angle: 95deg;
+    --glass-top: rgb(255 255 255 / 0.22);
+    --glass-bottom: rgb(40 40 44 / 0.28);
+    backdrop-filter: blur(15px);
+  }
+
+  .glass-button:hover:not(:disabled) svg {
+    transition-delay: 0.3s;
+    transform: scale(1.3);
+  }
+
+  .glass-button:hover:not(:disabled) > span {
+    animation:
+      glow-travel 0.8s cubic-bezier(0.25, 0.6, 0.3, 1) forwards,
+      glow-spread 0.4s cubic-bezier(0.4, 0, 0.25, 1) 0.1s both;
+  }
+
+  .glass-button:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  /* Mirage's outlined variant: no glass, a plain white rim. */
+  .glass-button.is-outlined {
+    background: none;
+    border: 1px solid rgb(255 255 255 / 0.9);
+  }
+
+  .glass-button.is-outlined::before {
+    content: none;
+  }
+}
+
+@keyframes glow-travel {
+  from {
+    --glow-end: -23%;
+  }
+  to {
+    --glow-end: 125%;
+  }
+}
+
+@keyframes glow-spread {
+  from {
+    --glow-width: 12%;
+  }
+  to {
+    --glow-width: 150%;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * They trust us — Studio Mirage's partner grid: hairlines at every column
+ * and row with half a row of lines above and below, a frosted cell under the
+ * pointer, and a light that follows the pointer along the lines.
+ * ------------------------------------------------------------------ */
+@layer components {
+  .partners-grid {
+    --cols: 5;
+    --cell-h: 190px;
+    --cell-half: calc(var(--cell-h) / 2);
+    --line: rgb(255 255 255 / 0.08);
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    padding: var(--cell-half) 0;
+    overflow: hidden;
+    clip-path: inset(1px 0 0 1px);
+    background-image:
+      linear-gradient(to right, var(--line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+    background-size:
+      calc(100% / var(--cols)) 100%,
+      100% var(--cell-h);
+    background-position:
+      0 0,
+      0 var(--cell-half);
+    background-repeat: repeat-x, repeat-y;
+    background-origin: border-box;
+    @media (width <= 1024px) {
+      --cols: 3;
+    }
+    @media (width <= 600px) {
+      --cols: 2;
+      --cell-h: 110px;
+    }
+  }
+
+  .partners-grid ul {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(var(--cols), 1fr);
+    grid-auto-rows: var(--cell-h);
+  }
+
+  .partners-grid li {
+    display: grid;
+    place-items: center;
+    padding: 1.2rem;
+    transition:
+      background-color 0.4s linear,
+      backdrop-filter 0.4s linear;
+  }
+
+  .partners-grid li:hover {
+    background-color: rgb(255 255 255 / 0.1);
+    backdrop-filter: blur(100px);
+  }
+
+  .partners-logo {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Mirage's 64% × 42% of the cell's inner box; the height is spelled out from
+     the row height, since a percentage there can resolve against the mark itself. */
+  .partners-logo img {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 64%;
+    max-height: calc((var(--cell-h) - 2.4rem) * 0.42);
+    object-fit: contain;
+    opacity: 0.55;
+    transition: opacity 0.4s ease;
+    @media (width <= 600px) {
+      max-width: 75%;
+      max-height: calc((var(--cell-h) - 2.4rem) * 0.7);
+    }
+  }
+
+  .partners-grid li:hover img {
+    opacity: 1;
+  }
+
+  /* A white light at the pointer, masked down to the hairlines. */
+  .partners-glow {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    opacity: var(--glow-on, 0);
+    transition: opacity 0.35s ease;
+    background: radial-gradient(
+      circle 220px at var(--mx, -200px) var(--my, -200px),
+      rgb(255 255 255 / 0.9),
+      rgb(255 255 255 / 0) 90%
+    );
+    mask-image:
+      linear-gradient(to right, #000 1px, transparent 1px), linear-gradient(to bottom, #000 1px, transparent 1px);
+    mask-size:
+      calc(100% / var(--cols)) 100%,
+      100% var(--cell-h);
+    mask-repeat: repeat-x, repeat-y;
+    mask-position:
+      0 0,
+      0 var(--cell-half);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Process — Studio Mirage's timeline: glass cards that leave a deck on the
+ * right one at a time and stack on the left, each lit from its corner by its
+ * own hue. The newest card turns to frosted glass over the living gradient.
+ * ------------------------------------------------------------------ */
+@property --card-tint {
+  syntax: '<percentage>';
+  initial-value: -500%;
+  inherits: false;
+}
+@property --card-shade {
+  syntax: '<number>';
+  initial-value: 0.9;
+  inherits: false;
+}
+
+@layer components {
+  .process-stack {
+    --card-w: clamp(280px, 24vw, 380px);
+    --card-h: min(64svh, 540px);
+    height: var(--card-h);
+    @media (width <= 768px) {
+      --card-w: min(60vw, 250px);
+      --card-h: min(58svh, 420px);
+    }
+  }
+
+  .process-card {
+    --card-tint: -500%;
+    --card-shade: 0.9;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: var(--card-w);
+    height: var(--card-h);
+    overflow: hidden;
+    container-type: inline-size;
+    border: 1px solid rgb(255 255 255 / 0.08);
+    border-radius: 18px;
+    background: radial-gradient(
+      circle 220px at 0 0,
+      var(--card-color) var(--card-tint),
+      rgb(2 9 35 / var(--card-shade)) 100%
+    );
+    box-shadow: 0 30px 60px -20px rgb(0 0 0 / 0.6);
+    color: rgb(255 255 255 / 0.5);
+    transition:
+      color 0.45s ease,
+      border-color 0.45s ease,
+      box-shadow 0.45s ease,
+      backdrop-filter 0.45s ease,
+      --card-tint 0.45s ease,
+      --card-shade 0.45s ease;
+  }
+
+  .process-card.is-active {
+    --card-tint: -200%;
+    --card-shade: 0.2;
+    color: var(--color-paper-soft);
+    border-color: rgb(255 255 255 / 0.16);
+    backdrop-filter: blur(15px);
+    box-shadow:
+      0 40px 90px -18px rgb(0 0 0 / 0.75),
+      0 0 0 1px rgb(255 255 255 / 0.1);
+  }
+
+  /* Film grain over the glass. */
+  .process-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.1;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+  }
+
+  /* Type scales with the card, which scales with the screen. */
+  .process-card-content {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: clamp(1.25rem, 11.6cqw, 2.75rem);
+  }
+
+  .process-card-number {
+    display: block;
+    width: var(--peek, 96px);
+    padding-bottom: 1rem;
+    font-size: clamp(1rem, 8.3cqw, 2rem);
+    line-height: 1.2;
+  }
+
+  .process-card h3 {
+    width: 70%;
+    font-size: clamp(1.3rem, 9.5cqw, 2.3rem);
+    line-height: 1.2;
+    font-weight: 400;
+    @media (width <= 768px) {
+      width: 100%;
+    }
+  }
+
+  .process-card p {
+    margin-top: 0.75rem;
+    font-size: clamp(0.875rem, 4.6cqw, 1.06rem);
+    line-height: 1.4;
+    opacity: 0.75;
+  }
+
+  /* A plus on the timeline for every card; bright once its card has arrived. */
+  .process-mark {
+    --mark: rgb(255 255 255 / 0.2);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 8px;
+    height: 1px;
+    margin-top: -0.5px;
+    background: var(--mark);
+    transition:
+      background 0.3s ease,
+      transform 0.3s ease;
+  }
+
+  .process-mark::after {
+    content: '';
+    position: absolute;
+    top: -3.5px;
+    left: 3.5px;
+    width: 1px;
+    height: 8px;
+    background: var(--mark);
+    transition: background 0.3s ease;
+  }
+
+  .process-mark.is-active {
+    --mark: rgb(255 255 255 / 0.8);
+    transform: scale(1.3);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Testimonials — Studio Mirage's stacked glass cards: the active card in
+ * front, the others stepping back and up behind it, each lit from its top
+ * edge in its own colour. Only the front card shows its words.
+ * ------------------------------------------------------------------ */
+@layer components {
+  .testimonials-track {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+    max-width: 580px;
+  }
+
+  .testimonial-card {
+    grid-row: 1;
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3.5rem;
+    padding: 2.5rem 3.5rem;
+    transform-origin: center top;
+    transform: translateY(var(--card-y)) scale(var(--card-s));
+    opacity: var(--card-o);
+    z-index: var(--card-z);
+    border: 1px solid rgb(255 255 255 / 0.08);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    pointer-events: none;
+    user-select: none;
+    touch-action: pan-y;
+    overflow: hidden;
+    background: radial-gradient(circle 220px at 50% 0, var(--card-color) -200%, rgb(0 0 0 / 0.15) 90%);
+    transition:
+      opacity 0.4s ease,
+      transform 0.4s ease;
+    @media (width <= 768px) {
+      gap: 1.5rem;
+      padding: 2rem;
+    }
+  }
+
+  .testimonial-card :is(div, blockquote) {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .testimonial-card.is-active {
+    pointer-events: auto;
+  }
+
+  .testimonial-card.is-active :is(div, blockquote) {
+    opacity: 1;
+  }
+
+  .testimonial-text {
+    font-size: 1.2rem;
+    font-weight: 300;
+    line-height: 1.5;
+    text-align: center;
+    color: var(--color-paper-soft);
+  }
+
+  .testimonial-author {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  .testimonial-avatar {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+    overflow: hidden;
+    border: 2px solid rgb(255 255 255 / 0.15);
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, rgb(255 255 255 / 0.22), rgb(255 255 255 / 0.04) 70%);
+    color: rgb(255 255 255 / 0.75);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+  }
+
+  .testimonial-identity {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    text-align: center;
+  }
+
+  .testimonial-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-paper-soft);
+  }
+
+  .testimonial-role {
+    width: 60%;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: rgb(255 255 255 / 0.55);
+  }
+
+  .testimonial-dots {
+    display: flex;
+    gap: 8px;
+    margin-top: 1.6rem;
+  }
+
+  .testimonial-dot {
+    padding: 8px 0;
+    border: 0;
+    background: transparent;
+    opacity: 0.4;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+  }
+
+  .testimonial-dot::before {
+    content: '';
+    display: block;
+    width: 26px;
+    height: 6px;
+    border-radius: 8px;
+    background: rgb(255 255 255 / 0.9);
+  }
+
+  .testimonial-dot.is-active {
+    opacity: 1;
+  }
+
+  .testimonial-dot:hover:not(.is-active) {
+    opacity: 0.8;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Footer — Studio Mirage's: a list of links between hairlines that a light
+ * runs along under the pointer, and a credits line with a bouncing arrow.
+ * ------------------------------------------------------------------ */
+@layer components {
+  .footer-links {
+    --border: rgb(255 255 255 / 0.2);
+    position: relative;
+    width: 16.6667%;
+    min-width: 200px;
+    border-bottom: 1px solid var(--border);
+    @media (width < 48rem) {
+      width: 100%;
+    }
+  }
+
+  .footer-links li {
+    border-top: 1px solid var(--border);
+  }
+
+  .footer-links a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 0;
+    color: var(--color-paper-soft);
+    transition:
+      padding 0.2s ease-out,
+      background 0.4s linear;
+  }
+
+  .footer-links a:hover {
+    padding: 15px 20px;
+    background: rgb(255 255 255 / 0.1);
+  }
+
+  /* The light at the pointer, masked down to the hairlines between the links. */
+  .footer-links-glow {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    opacity: var(--glow-on, 0);
+    transition: opacity 0.35s ease;
+    background: radial-gradient(
+      ellipse 40% 100px at var(--mx, -400px) var(--my, -400px),
+      rgb(255 255 255 / 0.5),
+      rgb(255 255 255 / 0.5),
+      transparent 90%
+    );
+    mask-image: var(--rows-mask, linear-gradient(#000, #000));
+    mask-size: 100% 1px;
+    mask-position: var(--rows-pos, 0 -10px);
+    mask-repeat: no-repeat;
+  }
+
+  .footer-credits {
+    display: flex;
+    gap: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    @media (width < 48rem) {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+  }
+
+  .footer-credits a {
+    color: var(--color-paper-soft);
+    opacity: 0.5;
+    transition: opacity 0.2s linear;
+  }
+
+  .footer-credits a:hover {
+    opacity: 1;
+  }
+
+  .footer-credits .back-to-top {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    opacity: 0.8;
+  }
+
+  .footer-credits .back-to-top:hover {
+    opacity: 1;
+  }
+
+  .back-to-top svg {
+    width: 12px;
+    animation: arrow-bounce 1.6s ease-in-out infinite;
+  }
+}
+
+@keyframes arrow-bounce {
+  0%,
+  to {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(0, -4px);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Next page — Studio Mirage's white teaser, its top torn like paper: the
+ * call to action follows the pointer, an eye watches it and blinks, and a
+ * gradient line wakes along the bottom on hover.
+ * ------------------------------------------------------------------ */
+@layer components {
+  .next-page {
+    position: relative;
+    background: #fff;
+  }
+
+  .next-page::before {
+    content: '';
+    position: absolute;
+    bottom: calc(100% - 1px);
+    left: 0;
+    width: 100%;
+    height: 28px;
+    background: #fff;
+    mask-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="900" height="28" viewBox="0 0 900 28"%3E%3Cpath d="M0 28L0 17.2L2 15.8L4 15.9L6 16.4L8 16.8L10 17.8L12 17.3L14 17.0L16 16.8L18 17.1L20 16.3L22 14.9L24 15.2L26 16.2L28 16.2L30 16.6L32 16.9L34 17.2L36 17.8L38 17.6L40 17.2L42 17.1L44 17.7L46 18.7L48 17.6L50 17.9L52 17.1L54 16.9L56 16.0L58 14.5L60 13.6L62 12.7L64 13.6L66 12.4L68 12.2L70 12.7L72 13.0L74 12.3L76 11.2L78 10.9L80 10.7L82 11.5L84 10.4L86 11.1L88 10.0L90 10.7L92 11.0L94 8.7L96 8.4L98 6.8L100 8.3L102 8.0L104 7.9L106 8.5L108 8.7L110 10.3L112 9.7L114 9.7L116 9.1L118 10.8L120 11.1L122 11.0L124 11.4L126 11.3L128 13.1L130 12.3L132 12.1L134 10.4L136 10.1L138 9.8L140 9.7L142 8.7L144 9.3L146 10.3L148 10.0L150 9.9L152 9.6L154 9.4L156 9.7L158 9.9L160 10.4L162 9.5L164 11.4L166 11.4L168 11.8L170 10.3L172 10.2L174 9.3L176 9.2L178 8.8L180 9.0L182 10.6L184 10.2L186 11.1L188 10.4L190 10.9L192 11.7L194 12.2L196 12.2L198 11.7L200 13.7L202 14.3L204 15.5L206 14.9L208 14.3L210 13.8L212 13.4L214 13.0L216 10.9L218 12.3L220 12.3L222 13.3L224 12.3L226 11.4L228 11.3L230 10.8L232 11.4L234 9.5L236 10.0L238 10.4L240 11.5L242 11.1L244 10.2L246 9.7L248 9.3L250 8.9L252 7.4L254 6.9L256 7.5L258 8.4L260 7.9L262 7.8L264 8.0L266 8.2L268 8.8L270 8.8L272 9.4L274 9.1L276 10.9L278 11.3L280 11.4L282 11.9L284 11.8L286 13.1L288 11.1L290 10.5L292 10.8L294 11.2L296 11.3L298 11.6L300 11.1L302 11.4L304 12.9L306 12.0L308 11.7L310 10.6L312 11.8L314 12.6L316 13.5L318 13.6L320 13.5L322 14.0L324 13.1L326 13.2L328 12.0L330 12.1L332 12.6L334 12.7L336 12.9L338 12.0L340 13.7L342 13.5L344 13.4L346 12.8L348 13.6L350 15.0L352 16.4L354 17.8L356 17.3L358 19.4L360 19.8L362 20.0L364 18.2L366 17.6L368 18.1L370 18.2L372 18.6L374 18.3L376 19.5L378 19.5L380 19.4L382 18.6L384 18.0L386 17.7L388 18.5L390 19.6L392 18.8L394 19.6L396 19.4L398 19.5L400 19.0L402 17.0L404 17.1L406 16.6L408 16.1L410 14.8L412 15.5L414 15.2L416 15.1L418 14.4L420 13.3L422 14.1L424 13.9L426 14.2L428 14.5L430 15.4L432 15.7L434 16.6L436 17.0L438 15.6L440 15.2L442 15.6L444 15.9L446 14.8L448 15.2L450 14.5L452 15.8L454 16.0L456 14.2L458 13.9L460 13.2L462 14.0L464 13.7L466 13.6L468 13.8L470 14.5L472 16.3L474 14.9L476 14.6L478 13.6L480 14.3L482 12.7L484 12.6L486 11.4L488 11.7L490 12.5L492 11.2L494 11.4L496 10.0L498 10.5L500 11.0L502 10.5L504 10.8L506 11.9L508 13.6L510 13.8L512 14.6L514 13.9L516 15.0L518 14.1L520 14.5L522 13.6L524 13.6L526 15.5L528 15.3L530 15.7L532 14.8L534 15.4L536 14.8L538 14.9L540 14.3L542 14.1L544 15.8L546 16.1L548 17.0L550 16.1L552 16.8L554 16.3L556 16.0L558 15.1L560 13.0L562 13.7L564 13.8L566 14.1L568 11.9L570 11.5L572 11.3L574 10.6L576 10.0L578 8.6L580 9.9L582 10.4L584 11.9L586 10.7L588 11.7L590 11.8L592 11.5L594 12.0L596 10.7L598 10.0L600 10.7L602 11.2L604 10.6L606 11.0L608 10.6L610 9.9L612 10.1L614 8.7L616 8.5L618 8.2L620 9.8L622 10.3L624 9.7L626 10.5L628 10.7L630 10.6L632 9.4L634 9.2L636 8.2L638 8.4L640 9.0L642 8.2L644 8.0L646 6.7L648 7.1L650 5.4L652 5.5L654 4.0L656 4.9L658 5.6L660 6.5L662 6.9L664 6.9L666 8.2L668 8.6L670 8.2L672 7.5L674 7.8L676 8.3L678 9.2L680 9.1L682 8.9L684 11.1L686 10.4L688 10.5L690 8.7L692 10.2L694 10.1L696 11.5L698 11.8L700 12.1L702 14.2L704 14.9L706 14.6L708 13.4L710 14.1L712 14.1L714 13.9L716 14.0L718 13.2L720 14.3L722 14.2L724 14.1L726 12.9L728 11.8L730 12.0L732 11.6L734 12.0L736 11.2L738 12.8L740 13.2L742 14.9L744 13.9L746 13.3L748 13.9L750 14.5L752 13.9L754 13.9L756 14.4L758 14.8L760 16.0L762 14.6L764 13.9L766 14.0L768 14.2L770 14.0L772 13.7L774 14.6L776 15.2L778 16.5L780 16.4L782 15.7L784 15.8L786 15.6L788 16.8L790 15.1L792 15.2L794 15.0L796 16.6L798 16.2L800 14.7L802 13.5L804 12.5L806 12.6L808 11.4L810 10.9L812 11.1L814 12.1L816 13.4L818 13.1L820 12.6L822 12.0L824 13.6L826 12.1L828 12.2L830 11.6L832 13.1L834 14.0L836 13.7L838 13.2L840 12.8L842 13.0L844 12.5L846 12.2L848 12.3L850 13.1L852 14.6L854 15.4L856 16.0L858 16.2L860 17.5L862 17.6L864 17.6L866 17.2L868 18.0L870 18.6L872 18.6L874 19.4L876 17.4L878 18.5L880 17.5L882 16.2L884 15.8L886 15.6L888 16.3L890 16.6L892 17.2L894 15.8L896 17.2L898 17.1L900 17.2L900 28Z"/%3E%3Ccircle cx="750.1" cy="9.1" r="1.1"/%3E%3Ccircle cx="717.0" cy="9.1" r="0.6"/%3E%3Ccircle cx="78.2" cy="9.8" r="0.75"/%3E%3Ccircle cx="861.7" cy="14.6" r="0.9"/%3E%3Ccircle cx="502.4" cy="6.1" r="1.1"/%3E%3Ccircle cx="611.9" cy="6.3" r="0.45"/%3E%3Ccircle cx="411.4" cy="13.6" r="1.1"/%3E%3Ccircle cx="806.5" cy="11.3" r="1.1"/%3E%3Ccircle cx="61.2" cy="8.6" r="0.75"/%3E%3Ccircle cx="727.1" cy="7.3" r="0.6"/%3E%3Ccircle cx="655.5" cy="2.1" r="0.9"/%3E%3Ccircle cx="444.6" cy="12.9" r="0.9"/%3E%3Ccircle cx="817.8" cy="11.0" r="0.45"/%3E%3Ccircle cx="554.8" cy="11.8" r="0.45"/%3E%3Ccircle cx="539.3" cy="12.2" r="0.75"/%3E%3Ccircle cx="558.6" cy="13.5" r="0.9"/%3E%3Ccircle cx="56.4" cy="13.7" r="0.45"/%3E%3Ccircle cx="622.2" cy="5.6" r="0.75"/%3E%3Ccircle cx="637.1" cy="5.7" r="0.9"/%3E%3Ccircle cx="419.8" cy="13.0" r="1.1"/%3E%3Ccircle cx="180.5" cy="2.6" r="0.9"/%3E%3Ccircle cx="17.7" cy="13.4" r="1.1"/%3E%3Ccircle cx="869.4" cy="14.6" r="0.75"/%3E%3Ccircle cx="348.6" cy="7.6" r="0.6"/%3E%3Ccircle cx="68.9" cy="10.9" r="1.1"/%3E%3Ccircle cx="236.6" cy="7.2" r="1.1"/%3E%3Ccircle cx="736.9" cy="7.5" r="0.45"/%3E%3Ccircle cx="632.2" cy="7.3" r="0.9"/%3E%3Ccircle cx="355.1" cy="16.1" r="0.9"/%3E%3Ccircle cx="612.7" cy="6.9" r="0.6"/%3E%3Ccircle cx="374.9" cy="15.4" r="0.45"/%3E%3Ccircle cx="754.8" cy="13.1" r="0.75"/%3E%3Ccircle cx="753.8" cy="12.5" r="0.6"/%3E%3Ccircle cx="640.9" cy="3.0" r="0.75"/%3E%3Ccircle cx="228.9" cy="10.1" r="0.9"/%3E%3Ccircle cx="896.9" cy="13.0" r="0.75"/%3E%3Ccircle cx="831.2" cy="6.4" r="0.45"/%3E%3Ccircle cx="253.5" cy="6.3" r="0.75"/%3E%3Ccircle cx="570.9" cy="9.8" r="0.75"/%3E%3Ccircle cx="392.9" cy="16.2" r="0.75"/%3E%3Ccircle cx="705.5" cy="11.7" r="0.45"/%3E%3Ccircle cx="729.5" cy="7.4" r="1.1"/%3E%3Ccircle cx="494.1" cy="6.5" r="0.45"/%3E%3Ccircle cx="838.4" cy="10.1" r="1.1"/%3E%3Ccircle cx="676.4" cy="3.8" r="0.75"/%3E%3Ccircle cx="437.1" cy="11.0" r="1.1"/%3E%3Ccircle cx="116.1" cy="5.6" r="0.75"/%3E%3Ccircle cx="254.4" cy="4.6" r="0.75"/%3E%3Ccircle cx="366.0" cy="16.1" r="0.9"/%3E%3Ccircle cx="501.4" cy="8.0" r="0.6"/%3E%3Ccircle cx="578.3" cy="7.4" r="1.1"/%3E%3Ccircle cx="813.7" cy="7.4" r="0.6"/%3E%3Ccircle cx="407.9" cy="13.9" r="0.9"/%3E%3Ccircle cx="385.0" cy="14.1" r="0.6"/%3E%3Ccircle cx="83.3" cy="8.7" r="0.45"/%3E%3Ccircle cx="288.1" cy="8.2" r="1.1"/%3E%3Ccircle cx="183.1" cy="9.7" r="0.9"/%3E%3Ccircle cx="345.0" cy="8.4" r="0.6"/%3E%3Ccircle cx="339.7" cy="9.3" r="0.45"/%3E%3Ccircle cx="448.3" cy="11.1" r="0.75"/%3E%3Ccircle cx="114.8" cy="6.1" r="0.6"/%3E%3Ccircle cx="85.0" cy="4.5" r="0.9"/%3E%3Ccircle cx="360.2" cy="16.4" r="0.75"/%3E%3Ccircle cx="762.4" cy="8.9" r="0.45"/%3E%3Ccircle cx="116.0" cy="5.9" r="0.9"/%3E%3Ccircle cx="869.6" cy="14.4" r="0.45"/%3E%3Ccircle cx="352.8" cy="10.3" r="1.1"/%3E%3Ccircle cx="768.5" cy="7.9" r="0.6"/%3E%3Ccircle cx="703.7" cy="12.1" r="0.6"/%3E%3Ccircle cx="470.0" cy="9.8" r="0.9"/%3E%3Ccircle cx="78.2" cy="5.6" r="0.45"/%3E%3Ccircle cx="702.9" cy="12.1" r="0.45"/%3E%3Ccircle cx="580.4" cy="7.4" r="0.6"/%3E%3Ccircle cx="563.3" cy="9.9" r="0.9"/%3E%3Ccircle cx="627.9" cy="9.1" r="0.45"/%3E%3Ccircle cx="271.1" cy="2.6" r="0.6"/%3E%3Ccircle cx="349.7" cy="11.6" r="1.1"/%3E%3Ccircle cx="3.0" cy="11.9" r="0.9"/%3E%3Ccircle cx="251.6" cy="6.3" r="0.6"/%3E%3Ccircle cx="427.9" cy="12.0" r="0.6"/%3E%3C/svg%3E');
+    mask-size: 900px 28px;
+    mask-repeat: repeat-x;
+    mask-position: left bottom;
+    pointer-events: none;
+  }
+
+  .next-page-zone {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 4rem var(--pad-sides);
+    color: var(--color-night);
+    @media (width <= 768px) {
+      padding-block: 2rem;
+    }
+  }
+
+  .next-page-overline {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    opacity: 0.4;
+  }
+
+  .next-page-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .next-page-cta {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    user-select: none;
+  }
+
+  .next-page-cta > span:first-child {
+    display: inline-block;
+    font-size: 0.9rem;
+    font-weight: 700;
+    opacity: 0.4;
+    pointer-events: none;
+    will-change: transform;
+    @media (width <= 768px) {
+      display: none;
+    }
+  }
+
+  .next-page-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(-45deg, #6fb1ffcc, #082bff, #6fb1ffcc, #082bff, #6fb1ffcc, #082bff, #6fb1ffcc, #082bff);
+    background-size: 400% 400%;
+    opacity: 0;
+    animation: line-drift 20s ease infinite;
+    transition: opacity 0.4s linear;
+  }
+
+  .next-page-zone:hover .next-page-line {
+    opacity: 1;
+  }
+
+  .blinky {
+    position: relative;
+    width: 35px;
+    height: 35px;
+    flex: none;
+    border-radius: 50%;
+    background: var(--color-night);
+  }
+
+  .blinky-iris {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 2;
+    width: 28px;
+    height: 10px;
+    transform: translate(-50%, -50%);
+  }
+
+  .blinky-iris::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 8px;
+    background: var(--color-night);
+    transform: translate(calc(-50% + var(--look-x, 0px)), calc(-50% + var(--look-y, 0px)));
+  }
+
+  .blinky-eye {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 1;
+    width: 27px;
+    height: 12px;
+    border-radius: 30px;
+    background: #fff;
+    transform: translate(-50%, -50%) scaleY(var(--lid, 1));
+    transition: transform 0.09s ease-in;
+  }
+}
+
+@keyframes line-drift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 50% 50%;
+  }
+  to {
+    background-position: 100% 50%;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Header — Studio Mirage's: the logo on the left, two links and a glowing
+ * contact pill on the right, over a band of graded blur.
+ * ------------------------------------------------------------------ */
+@property --glow-turn {
+  syntax: '<angle>';
+  initial-value: -45deg;
+  inherits: false;
+}
+
+@layer components {
+  .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 120;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    padding: 32px var(--pad-sides) 0;
+    @media (width < 48rem) {
+      padding-block: 22px;
+    }
+  }
+
+  /* Five layers of blur, each masked to its own band, and a tint above them. */
+  .site-header-blur {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    width: 100%;
+    height: 105px;
+    pointer-events: none;
+  }
+
+  .site-header-blur > * {
+    position: absolute;
+    inset: 0;
+  }
+
+  .site-header-blur > :nth-child(1) {
+    backdrop-filter: blur(16px);
+    mask-image: linear-gradient(to top, transparent 66%, #000 82%, #000 100%);
+  }
+  .site-header-blur > :nth-child(2) {
+    backdrop-filter: blur(8px);
+    mask-image: linear-gradient(to top, transparent 48%, #000 64%, #000 80%, transparent 92%);
+  }
+  .site-header-blur > :nth-child(3) {
+    backdrop-filter: blur(4px);
+    mask-image: linear-gradient(to top, transparent 30%, #000 46%, #000 62%, transparent 78%);
+  }
+  .site-header-blur > :nth-child(4) {
+    backdrop-filter: blur(2px);
+    mask-image: linear-gradient(to top, transparent 12%, #000 28%, #000 44%, transparent 60%);
+  }
+  .site-header-blur > :nth-child(5) {
+    backdrop-filter: blur(1px);
+    mask-image: linear-gradient(to top, #000 0%, #000 22%, transparent 42%);
+  }
+  .site-header-blur > :nth-child(6) {
+    background: rgb(2 9 35 / 0.5);
+    mask-image: linear-gradient(to top, transparent 0%, #000 90%);
+  }
+
+  .site-header-link {
+    position: relative;
+    padding: 6px 0;
+    color: var(--color-paper-soft);
+    opacity: 0.95;
+    transition: opacity 0.3s linear;
+  }
+
+  .site-header-link:hover {
+    opacity: 1;
+  }
+
+  /* The dot marking where the page is. */
+  .site-header-link::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -14px;
+    width: 6px;
+    height: 6px;
+    border-radius: 6px;
+    background: currentColor;
+    opacity: 0;
+    transform: translateY(-50%) scale(0.4);
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease;
+  }
+
+  .site-header-link.is-active::before {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
+
+  /* The contact pill: white, with a turning gradient glowing behind it. */
+  .glow-button {
+    position: relative;
+    display: inline-flex;
+    border-radius: 30px;
+    color: var(--color-night);
+  }
+
+  .glow-button-label {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7rem;
+    padding: 0.95rem 1.5rem;
+    border-radius: 30px;
+    background: rgb(255 255 255 / 0.95);
+    font-size: 0.85rem;
+    font-weight: 800;
+    transition: background 0.3s linear;
+    @media (width < 48rem) {
+      padding: 0.7rem 1rem;
+    }
+  }
+
+  .glow-button-bg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 1;
+    width: calc(100% + 10px);
+    height: calc(100% + 5px);
+    border-radius: 30px;
+    background: linear-gradient(
+      var(--glow-turn),
+      rgb(111 177 255 / 0.8),
+      rgb(8 43 255 / 0.87),
+      rgb(111 177 255 / 0.8),
+      rgb(8 43 255 / 0.87)
+    );
+    filter: blur(10px);
+    opacity: 0.8;
+    transform: translate(-50%, -50%);
+    animation: glow-turn 5s linear infinite;
+    transition:
+      opacity 0.3s linear,
+      filter 0.6s ease,
+      width 0.6s ease,
+      height 0.6s ease;
+  }
+
+  .glow-button:hover .glow-button-label {
+    background: rgb(255 255 255 / 0.8);
+  }
+
+  .glow-button:hover .glow-button-bg {
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    filter: blur(0px);
+    opacity: 0.9;
+  }
+}
+
+@keyframes glow-turn {
+  from {
+    --glow-turn: -45deg;
+  }
+  to {
+    --glow-turn: 315deg;
+  }
+}
+
+/* ------------------------------------------------------------------ *
  * Motion
  * ------------------------------------------------------------------ */
 @keyframes marquee-x {
@@ -238,6 +1288,16 @@
   }
   to {
     transform: translate3d(var(--marquee-shift, -50%), 0, 0);
+  }
+}
+
+/* A bead of light running down the landing's scroll line. */
+@keyframes scroll-drip {
+  from {
+    transform: translate3d(0, -100%, 0);
+  }
+  to {
+    transform: translate3d(0, 100%, 0);
   }
 }
 

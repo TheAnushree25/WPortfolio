@@ -5,7 +5,8 @@ import { motion, useMotionValue, useSpring } from 'motion/react';
 
 /**
  * 16px brand dot that trails the pointer and swells over interactive targets.
- * Hidden entirely on touch devices and when the pointer leaves the document.
+ * Hidden entirely on touch devices, when the pointer leaves the document, and
+ * over surfaces marked data-cursor="hide".
  */
 export function Cursor() {
   const x = useMotionValue(-100);
@@ -22,8 +23,10 @@ export function Cursor() {
     const move = (event: PointerEvent) => {
       x.set(event.clientX - 8);
       y.set(event.clientY - 8);
-      setVisible(true);
-      setActive(Boolean((event.target as HTMLElement).closest('a, button, input, textarea, [data-cursor]')));
+      const target = event.target as HTMLElement;
+      // Some surfaces bring their own pointer (the next-page sheet's travelling line).
+      setVisible(!target.closest('[data-cursor="hide"]'));
+      setActive(Boolean(target.closest('a, button, input, textarea, [data-cursor]')));
     };
     const leave = () => setVisible(false);
 
