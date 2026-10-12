@@ -1,0 +1,84 @@
+{
+  "pages": [
+    {
+      "src": "/work/freighteasy-brochure/01.webp",
+      "half": "/work/freighteasy-brochure/01-half.webp",
+      "width": 1800,
+      "height": 2546,
+      "tone": "#5a6ab5",
+      "preview": "data:image/webp;base64,UklGRjABAABXRUJQVlA4ICQBAADQBgCdASoYACIAPqVCmEmmI6IhNVv8AMAUiWoAsR9HQpvAFbkNwCRTEjZwfQvsDFhqQn5x/2yrTmIhQsjzoUAA/vaIRk2bbRCjEeZWdWfhDbQCihGSdlQtGK06ZMMV22sP/F+7Uf1R7e//ggu3dhEVNeq4UQp9+b/wE4jrvjA1zDbtKeUef2Z8EuU/fy/P/4N/oMAF/P2lRSkX0bK4Do5ynMKPijqdMZ4LEi/gpPwVi/6BvFkOWNP8W8iBJT1IAT2vatlAWc+/zMAY/n332QkaFd++fFgRkfmJOncod5F2o89FtE3XEZ509skmx3alMR7kpBahwh+2wHz2JQLS4+4q5XXwsdpuknHsyDLx2+sr4J+KcMwqYVijIZjFzpHm7JFcgAAA"
+    },
+    {
+      "src": "/work/freighteasy-brochure/02.webp",
+      "half": "/work/freighteasy-brochure/02-half.webp",
+      "width": 1800,
+      "height": 2546,
+      "tone": "#f1f2f4",
+      "preview": "data:image/webp;base64,UklGRq4AAABXRUJQVlA4IKIAAABwBQCdASoYACIAPrFImkmnJCIhMAqo4BYJYwCAAAiuRVZRyvIlIPmXNKQ47IHH+jnBH+wAAP74sC3KHLa8KEgT8/MGP/9/isCwqmw7L4PCQX5kVF8J4/Mh739354TRZyqjQjpKkeOImG2msJMIm4WypX0LzFGe+VsDnVS8GaUk3yUmMa7ONdQf1vWL8J11QwlQ6cXJ3NcLgfzVvepUUPW4QAA="
+    },
+    {
+      "src": "/work/freighteasy-brochure/03.webp",
+      "half": "/work/freighteasy-brochure/03-half.webp",
+      "width": 1800,
+      "height": 2546,
+      "tone": "#b8bcd4",
+      "preview": "data:image/webp;base64,UklGRjIBAABXRUJQVlA4ICYBAABwBgCdASoYACIAPrVOn0unJCKhqqoA4BaJbAC34Nx5AMafSiOkJy27+1BpR+t3T5rJ69gUOCKE8u1iLyAA/vc47M4kTWk5e6wVdpDgxKiDZIfviiuBOqTbjolHcmQggRfuHcTqZkWNkDxz680hrXVNtIwY0i6idX8SUycbnXae2xeSPWXmqW+wJoXyYoL52OE5wYk96vwT17yJeykLROFwdJRHVGwcnXC9va4yFSHGwh+wyQIFHky0pfjQSruXYkDeJGSP74eeuTm+D1cVAjIJBtgcp6g17DRv7KNLVRk+QKXErdq6+SXmrCuNZfhiyFSt3pnsSv0FF7Jy3tz4Yu7xyRXFvdOcVlRtomkiO+Q9n6xT7DPwvHIs7FccifrLaDZQHI4AAAA="
+    },
+    {
+      "src": "/work/freighteasy-brochure/04.webp",
+      "half": "/work/freighteasy-brochure/04-half.webp",
+      "width": 1800,
+      "height": 2546,
+      "tone": "#bbbfd3",
+      "preview": "data:image/webp;base64,UklGRi4BAABXRUJQVlA4ICIBAABQBgCdASoYACIAPrVOoUsnJCMhqqoA4BaJagC1G1cWAEeB7xivdFX5FrD7iwEHaUzXt2xE7BNjIriIAAD+9z4HRiomerB0Hw+5Jhe6ha2Q1Mz++7hulfB6bTnfwrdp1JIE2o8mKxYZKB14IBXXrK2DHpb4kldkecMVIcbePVQXaZ8vIqMD2QotyYZbx0x43zrU0X6vsZ0v68WerfV4p6geY+2zh3pjv6OPpvGKNwCPE+jCpqExHJckkL56X1b0VFlXRTycZ9YMNMd3cwFIsZoyA48VLTgVKndHn1EfeNMYUyuJ21Eci5uAQHk2Sg2OGM10AuCWevkYa4c1IYDKoloTeRY9S938qTtVdFHfK4FISsz43Z9jP1ozbiYm93eIFcsAAA=="
+    },
+    {
+      "src": "/work/freighteasy-brochure/05.webp",
+      "half": "/work/freighteasy-brochure/05-half.webp",
+      "width": 1800,
+      "height": 2546,
+      "tone": "#afb4d0",
+      "preview": "data:image/webp;base64,UklGRi4BAABXRUJQVlA4ICIBAAAwBgCdASoYACIAPrVOn0unJCKhqqoA4BaJbAC2+1ANneZjl1Fe2Lkl19pEpV05jKXWATY7qwE/ykwAAP73PgdGKibu8Ql/WhDZtWkrl/DJR7mWhcSZd9LjgyY8vNzqJeESdCt+DDOIbC6eIskldkecMUVIbofwi6oTosFDK2d6pTzNC7L4fhvYKmglCnIlw62hUokkZdToP47/qjOXnDrLLUI9WUDFPHlS+i65mkNX9439XpI/s0gFCBhFe/ZFYAAALK9Hy/Ll/4CAxsTmO6w/PZ4X9I+lh91vz5nua/HG2G2yBbJiJNzx5ONkVTb13bqXvJZ2dMSzHb7haQgHZ7GXexUJTnHFBMrZfn6vMc3YGyvzO7Vp13UnjWujyYbWUBAAAA=="
+    },
+    {
+      "src": "/work/freighteasy-brochure/06.webp",
+      "half": "/work/freighteasy-brochure/06-half.webp",
+      "width": 1800,
+      "height": 2546,
+      "tone": "#edeef1",
+      "preview": "data:image/webp;base64,UklGRtoAAABXRUJQVlA4IM4AAADQBQCdASoYACIAPrVOnkqnJCKhqqwA4BaJYwDNSzF5HoZssdDeOklU8slEkoWn+OAZJOidmgwAAP73PVbxa9H1sJ8dSNQurlmjAIct3DvZF3U0NtS0ydX+mRFBkQpOfs5BPlIOVzUyODMyu2WMph156/Nox4UjE9OAcrnGCI6NGW+pUlxRD9YRWqtD18ZfTUeA0YLOrADhEDJn+/YAzL1rfJQ/QqT85UC+DOJQ4ei0Dd88z36o7QxsWz9hCOb70elJ+qT8hJ+TlTy/aAAAAA=="
+    },
+    {
+      "src": "/work/freighteasy-brochure/07.webp",
+      "half": "/work/freighteasy-brochure/07-half.webp",
+      "width": 1800,
+      "height": 2546,
+      "tone": "#e4ebfa",
+      "preview": "data:image/webp;base64,UklGRvoAAABXRUJQVlA4IO4AAAAwBgCdASoYACIAPrVQoEynJKMiKrgKAOAWiWQAqSfX4L+eVAKP/WhFS/h9PpelJSAs83Tn/5tVg45AAP73Pgd86VDKMcm5w05kMO7+FQ1pgPwTp+bJ7uqdUuK7SzgOzy4QmoVWO/7ESW9e4/t9wP4GG6tyrRrwLPvl+9vhYgo++aJA15ve9JrC7JcntcoitdSmtZ21Ge1x91UW5CrfjpDNKvZck5KQbPnwBx+xYAYFkSSa6aB7UNuFMI80kOwMeEiSmOJ51kICsrLqXMldVY79IrDh3VyWb3e0vkM/38vW2b/Ai19ddw+OTm5XaAAA"
+    },
+    {
+      "src": "/work/freighteasy-brochure/08.webp",
+      "half": "/work/freighteasy-brochure/08-half.webp",
+      "width": 1800,
+      "height": 2546,
+      "tone": "#dfe7f9",
+      "preview": "data:image/webp;base64,UklGRgIBAABXRUJQVlA4IPYAAAAQBgCdASoYACIAPrFEnEmnI6KhMBqtUOAWCWYAp0QZyxWzoCiB5DqzZWRaKt0/ehoDPpQ+GKGhzAAA/vgZZPDLWf3jRuWkGLozwFtRVpaNQT0jqhy6UkgAaVDkduiUK0/JFmllzDtP91bWvuhZq8Uflb4idYnEyrc50pvdXrYeGMYsSAlrCcPYzm0q/QZLzJrkgC7bWW5c+uoEcUvQSriS3y3hs/QtYq5uIv2Di9HuQfgxWiDi4c7It2cUqg5R1yD+BzgHY/iBaQ+PUxezTSuoGnLT6UKBzLX3jr+LE4TPMYNO1ULH3ayYZ/OrgDjaEuf9IdurgAA="
+    },
+    {
+      "src": "/work/freighteasy-brochure/09.webp",
+      "half": "/work/freighteasy-brochure/09-half.webp",
+      "width": 1800,
+      "height": 2546,
+      "tone": "#c0d3f9",
+      "preview": "data:image/webp;base64,UklGRlIBAABXRUJQVlA4IEYBAACQBwCdASoYACIAPrVMoEunJCMhsBVYAOAWiWwArDNtOgjMCK9ABzyWmAPhp1cFm1f2W/EGTUKpFGtv83FXkmB8U77IEAAA/vdd2qyEEyyjG1sZ98vLjDUcTkhEMSDCGk+aOYfPb0M8LS3XaX+EeoLXt+rf5FcruMSwSqCQM49l1zx5sdLzOrbvHbsEwMFigv76fTtiY6xjBwJrOz37c/lWFf+wZoe/gfLIXe2Cx8iLbWAiYFQOs+N6hcbNmOmakNrY0MNpVEL+oexUQCZ7aYMFjuHPEAyN+BjR5EkvqIxSG9hlYWyOewDP82fhjNg0bf80MXL4rZeCHLca6VXCfkOk6n4iYZX7j+oaqaAWGx3t9aKaV/g5DevmXaKzYIiTs9hYpgNZRDsEverRcmALAQ37OPN6EhFcBNZYXLUX0UhFPPvYOncAAA=="
+    },
+    {
+      "src": "/work/freighteasy-brochure/10.webp",
+      "half": "/work/freighteasy-brochure/10-half.webp",
+      "width": 1800,
+      "height": 2546,
+      "tone": "#959fcd",
+      "preview": "data:image/webp;base64,UklGRq4AAABXRUJQVlA4IKIAAAAwBQCdASoYACIAPq1InkmmJKMhMAqowBWJQBhov/wHkc7NCVeaLb6Nv+pM8EEBc0NYAAD+93vuD6psPV90zGD7yd/RjF3IySbOf3y4s5e4ixkZC7XP7U/thLiWcwGnkW1+x7Ht7KqT34dMdIsZmP7x8qK01ebA0Lrj55pAS5Z6CjLx0EcwLVHX5vDvOez3Hn+hsAmoEa6813G1M4BkWLIAAAA="
+    }
+  ]
+}

@@ -62,6 +62,31 @@ export function settleOn(target: HTMLElement, ms: number) {
   return free;
 }
 
+/**
+ * Rests the page under something that covers it whole (the work viewer):
+ * Lenis stops, which takes the root's scrollbar away so it can't sit beside
+ * the viewer's own. Returns the release.
+ */
+export function holdPage() {
+  const held = lenis;
+  if (held) {
+    held.stop();
+    return () => held.start();
+  }
+  const root = document.documentElement;
+  const previous = root.style.overflow;
+  root.style.overflow = 'hidden';
+  return () => {
+    root.style.overflow = previous;
+  };
+}
+
+/** Moves the page to `y` at once, with or without Lenis. */
+export function jumpTo(y: number) {
+  if (lenis) lenis.scrollTo(y, { immediate: true, force: true });
+  else window.scrollTo(0, y);
+}
+
 /** True while a nav click is carrying the page somewhere. */
 export function isNavigating() {
   return navigating;

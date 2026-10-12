@@ -1,0 +1,100 @@
+{
+  "pages": [
+    {
+      "src": "/work/spring-chu/01.webp",
+      "half": "/work/spring-chu/01-half.webp",
+      "width": 1800,
+      "height": 1800,
+      "tone": "#071013",
+      "preview": "data:image/webp;base64,UklGRqoAAABXRUJQVlA4IJ4AAAAwBACdASoYABgAPrVIoEunI6MhsBgIAOAWiUAX5wId+46gT0rDN9yDWEAA/vnFToV5SETS2TEMRwynv5ySV32TSjeWcKtcI9HHpTehUrhFuUvx+5PuM+4MWQEXm4/DHcpebw4VE/c4ehezZCSdth6Sd5kMoiwBQtyqJxusoKOgzBShT8JAQZVrrWGuwGFWP4M2Q/0wdFjaYt8GRQAAAA=="
+    },
+    {
+      "src": "/work/spring-chu/02.webp",
+      "half": "/work/spring-chu/02-half.webp",
+      "width": 1800,
+      "height": 1800,
+      "tone": "#eff6f7",
+      "preview": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAABwBACdASoYABgAPrVQn0qnJSKhsBgIAOAWiUAAEe7MrXg8rfJMog6bmbxIAAD++hVcE+/6LvscDNF39NzMAEZVveTTPabIIZnO4luMcH3Tb1Avo908ZMRwsRByqTPc0TxhaxdnuIH114dy+ElgNOAAAAA="
+    },
+    {
+      "src": "/work/spring-chu/03.webp",
+      "half": "/work/spring-chu/03-half.webp",
+      "width": 1800,
+      "height": 1800,
+      "tone": "#f4f6f7",
+      "preview": "data:image/webp;base64,UklGRm4AAABXRUJQVlA4IGIAAAAQBACdASoYABgAPrVKnkmnJCKhMAgA4BaJZwAAW+lmQ0hVZQ8frbOsAAD++LK3ODU9CVruphh07X5IXS1RXHrmQcl2Oa9aA+bRVNgetqpYUJw9S+Fs+XtggzEYPoIKstAAAA=="
+    },
+    {
+      "src": "/work/spring-chu/04.webp",
+      "half": "/work/spring-chu/04-half.webp",
+      "width": 1800,
+      "height": 1800,
+      "tone": "#f3f4f4",
+      "preview": "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAAAwBACdASoYABgAPrVInEmnJCKhMAgA4BaJaQAAW+sgYlS07rXx5R/a4AAA/viyt3MF8VxFhjiJJqfyxYrf2OwJYV5chjv3tm+rSbmFcpAKmUlIAAAAAA=="
+    },
+    {
+      "src": "/work/spring-chu/05.webp",
+      "half": "/work/spring-chu/05-half.webp",
+      "width": 1800,
+      "height": 1800,
+      "tone": "#f4f5f7",
+      "preview": "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAAAwBACdASoYABgAPq1GnEmmI6KhN/VYAMAViWcAyngQ7+C/lKal0R7OIAAA/vluA+un7XcAEuc21bGsDTb0bvb1TKkLqYu8EZW2cnxykd3hJi0MmF1ABROaRTM/jGE7jfZDgpK9kUO4La16mzASWAAA"
+    },
+    {
+      "src": "/work/spring-chu/06.webp",
+      "half": "/work/spring-chu/06-half.webp",
+      "width": 1800,
+      "height": 1800,
+      "tone": "#eef3f7",
+      "preview": "data:image/webp;base64,UklGRpwAAABXRUJQVlA4IJAAAAAQBQCdASoYABgAPrFEnUmnI6KhN/VYAOAWCWUAzB2MYm8AhjD9xzocv4mIimOpta0gAP74rbdv9Ur0JEYPkDhsNqm10SQt0Ics/19fzJMP1/OIUt2vNnG7Kq+Ce2KnOGwAf4wgz4OqivagjjdPOFIrEdq2MDv9xKR61yxDm67VCazBxO71F1akXf5VXMfAAAA="
+    },
+    {
+      "src": "/work/spring-chu/07.webp",
+      "half": "/work/spring-chu/07-half.webp",
+      "width": 1800,
+      "height": 1800,
+      "tone": "#0a0c0c",
+      "preview": "data:image/webp;base64,UklGRpoAAABXRUJQVlA4II4AAACwBACdASoYABgAPrVMoEsnJCMhsBgIAOAWiWcAAC+t59dBuScRx4iEvdgNXuyAAP75xVQvoBbf9sI7ms4LHVeBAHiWxltSbTK0Hnmg/BzJ95INyAymM/gP/8f6UqQZh57Fv7Abd5z5TQlmve7jOLJJ+RWFOTeIurmFquxvdV19puUEZydN8lPXDISCAAAA"
+    },
+    {
+      "src": "/work/spring-chu/08.webp",
+      "half": "/work/spring-chu/08-half.webp",
+      "width": 1800,
+      "height": 1800,
+      "tone": "#edf3f5",
+      "preview": "data:image/webp;base64,UklGRpAAAABXRUJQVlA4IIQAAADwBACdASoYABgAPrVQn0qnJKKhsBgIAOAWiWUAyPTaOgADlbEhis1x61Al/Or+0AAA/vf1sdUi6iPTH5/YJu4jSGcCG1vymGJv1COLSIzgqjMJct+3yrelJX7NM+eAN/KnDiCcRpa3VsnUW1TKzVj2mUVpJ1qtNv29jhCj4YeUALlAAAA="
+    },
+    {
+      "src": "/work/spring-chu/09.webp",
+      "half": "/work/spring-chu/09-half.webp",
+      "width": 1800,
+      "height": 1800,
+      "tone": "#f1f6f7",
+      "preview": "data:image/webp;base64,UklGRqoAAABXRUJQVlA4IJ4AAABQBQCdASoYABgAPrVKnkmnJCKhMBgMAOAWiWUAyh/AAYG2wnPYMEEpmokJ41shud0UiYAA/vgZZy0KeTUFCPW4PtC/3nPgNvMSKxg5Rm+Jpa1CcRsG7ZAAJEcoQ7DjUU3vS3j91rA50T0OqdPNObC2urJ9Pf4snMWyXhStmCmjAwMqC6rWFTHpc1zsNxMejdIzOd4DMocDjKLvS6AAAA=="
+    },
+    {
+      "src": "/work/spring-chu/10.webp",
+      "half": "/work/spring-chu/10-half.webp",
+      "width": 1800,
+      "height": 1800,
+      "tone": "#dbeef3",
+      "preview": "data:image/webp;base64,UklGRv4AAABXRUJQVlA4IPIAAAAwBQCdASoYABgAPrVMn0mnJKKhMAgA4BaJaACAAGT1t/PXn0EOiVO2oEMrJIk0HyeHAAD+9+bXzfBZNv+hwfotHpPtKhp0rQsgrMidvhFLd93qZu3Qai0QU/qg/PaGtgxgfDezt+jCr/TfPLyCOnVkFv0rBl8Ek3i/drCgtm2n/s3XC/N3ru8447KnnjjIYZXtf4gTYnsCmiqBFSr1Dk239Y02bgKvo/nI1f8HLS2ykmYWk95ZdkJo0fxXYkCgkbhC5l6jhZ4ZgLuSV35K/3mTcNLdbanMk3SEY3Se3pdkrLHhqcRBJD+KtuTQSIEHxAAAAA=="
+    },
+    {
+      "src": "/work/spring-chu/11.webp",
+      "half": "/work/spring-chu/11-half.webp",
+      "width": 1800,
+      "height": 1800,
+      "tone": "#050c0e",
+      "preview": "data:image/webp;base64,UklGRpQAAABXRUJQVlA4IIgAAABQBACdASoYABgAPqlGnUmmJCMhMAwAwBUJaAAD46oN+5N+iKFnZfieaAAAAP766LRZfaymaWJ40bQ/DL3BjnhTxjMLIDGW0X2JrSn04yDzll8grUCUZQOJYJd+DgQh3x7Sn15wcBqvt96v7lFmaQfUcN+o9uaz/mnB3iqsKwF++/ZITaR9sAAA"
+    },
+    {
+      "src": "/work/spring-chu/12.webp",
+      "half": "/work/spring-chu/12-half.webp",
+      "width": 1800,
+      "height": 1800,
+      "tone": "#57b9e4",
+      "preview": "data:image/webp;base64,UklGRvAAAABXRUJQVlA4IOQAAABQBgCdASoYABgAPrVQpEwnJKOiKAqo4BaJbACdMoRwN4t9gHM8vkaQx9F8M5nhNBZCR04d+UZEpmwQAAD+EDPbkOzcR7LX4bTPjqG4llCILQ7uS3MRNzo2ZJEZRTw/yl3rFqwaHdyN/8ft0ld+D32jDVmYYkLZLGnKIa1iU7DAFFMdlzx7moPlzZGGTk7+SM/uPQCXjdEkM+Uycm7g1kyOEa1Ha41woK9lQV+siJEub8N5+OeXO6Yn8x5aTuJmOxH6qxxMkBLp+3Y9pIH/jxv0H9GGtFn0yA/p/x6ATlbQm1tNgAA="
+    }
+  ]
+}

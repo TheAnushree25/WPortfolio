@@ -18,6 +18,8 @@ export function SmoothScroll() {
       wheelMultiplier: 0.9,
       touchMultiplier: 1.6,
       smoothWheel: true,
+      // The work viewer scrolls on its own (its own Lenis, its own index); the page leaves it be.
+      prevent: (node) => node.hasAttribute('data-scroll-own'),
     });
     registerLenis(lenis);
 
