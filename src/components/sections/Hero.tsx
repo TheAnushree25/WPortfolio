@@ -8,6 +8,7 @@ import { hero } from '@/content/site';
 import { setIntroPlaying } from '@/lib/intro';
 import { ease } from '@/lib/motion';
 import { isNavigating, lockScroll, scrollTarget } from '@/lib/scroll';
+import { useWork } from '@/lib/work';
 import { IntroReel } from '@/components/hero/IntroReel';
 import { LivingGradient } from '@/components/hero/LivingGradient';
 import { AtlasWordmark, type WordmarkState } from '@/components/hero/AtlasWordmark';
@@ -50,6 +51,8 @@ export function HeroScene() {
   const trackRef = useRef<HTMLElement>(null);
   const releaseReel = useRef<(() => void) | null>(null);
   const previous = useRef<Slide>('intro');
+  // The light rests while a project covers the page.
+  const covered = useWork((state) => state.covered);
 
   // The boot script already decided whether the reel plays.
   useEffect(() => {
@@ -129,7 +132,7 @@ export function HeroScene() {
   return (
     <>
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-10">
-        <LivingGradient scene={scene} running />
+        <LivingGradient scene={scene} running={!covered} />
       </div>
 
       <AnimatePresence initial={false}>{slide === 'intro' && <IntroReel key="reel" onEnd={land} />}</AnimatePresence>

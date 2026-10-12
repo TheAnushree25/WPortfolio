@@ -17,6 +17,9 @@ and the Atlas Studios palette are hers.
 | Page light        | WebGL fragment shader (no library) | The Figma gradients, alive and fixed behind every section: GPU-drawn at device resolution, dithered against banding. |
 | Landing art       | Inline SVG                  | The wordmark and emblem are vector geometry measured from the Figma frames — crisp at any size and animatable part by part. |
 | Fonts             | Inter variable + Red Hat Display via `next/font` | Inter's optical-size axis reproduces Framer's "Inter Display"; Red Hat Display Medium sets the landing statement. |
+| Project routes    | Parallel + intercepting routes (`@modal/(.)work/[slug]`) | Every project has a shareable, statically generated `/work/<slug>` page; opened from the home page it plays over it instead, so the back button closes it and the page underneath never reloads. |
+| Project pages     | PyMuPDF → WebP at two widths, served by `srcset` | Each PDF is rendered once at build time (`scripts/work/build.py`), so a 105 MB deck reads as 8 MB of instant pages; no image optimiser in the way. |
+| Viewer scroll     | A second Lenis on the viewer | The deck scrolls with the page's weighted feel, and chapter jumps glide or cut on the same clock. |
 
 ## Getting started
 
@@ -41,6 +44,9 @@ src/
 │  ├─ page.tsx            Section order — the entire page composition
 │  ├─ contact/page.tsx    Book a meeting (Cal.com, or requests by email)
 │  ├─ deck/page.tsx       The deck, read over the living gradient
+│  ├─ work/[slug]/page.tsx  A project on its own page (shared links, reloads)
+│  ├─ @modal/             The slot a project fills when opened from the home page
+│  │  └─ (.)work/[slug]/page.tsx  Hands the project to the stage over the home page
 │  └─ globals.css         Design tokens (@theme) + typography utilities
 ├─ components/
 │  ├─ layout/             Chrome that persists across the page
@@ -70,12 +76,22 @@ src/
 │  │  └─ NextPage.tsx       The torn white teaser at the foot of the page
 │  ├─ contact/            The booking page: Booker, CalEmbed, RequestBooker
 │  ├─ deck/               The deck viewer
+│  ├─ work/               The project viewer
+│  │  ├─ ProjectStage.tsx   Lifts a card's shot to the screen and back; hosts the viewer
+│  │  ├─ ProjectViewer.tsx  Title card, pages, scroll-spy, chapter jumps, next project
+│  │  ├─ ViewerIndex.tsx    The index rail, the phone's pill and sheet, editions
+│  │  ├─ ViewerPage.tsx     One page (develops as it loads) and the ambient light
+│  │  └─ OpenProject.tsx    Rendered by the intercepted route: names the open project
 │  └─ ui/                 Primitives reused across sections
 │     ├─ GlassButton.tsx     Frosted pill with border shine and label sweep
 │     └─ FocusText.tsx       Text that focuses in character by character
 ├─ content/
-│  └─ site.ts             Every string and image URL on the page
+│  ├─ site.ts             Every string and image URL on the page
+│  ├─ work.ts             Each project's decks: summary, accent colour, chapters
+│  ├─ projects.ts         Joins cards, studies and rendered pages (server only)
+│  └─ decks/*.json        Page sizes, tones and previews, written by the build script
 └─ lib/
+   ├─ work.ts             Shared state between the row, the route and the stage
    ├─ motion.ts           Shared easing curves and the character focus-in
    ├─ reveal.ts           Cues a section's reveal as it comes on screen
    ├─ finale.ts           Hands the footer's scene geometry to the page light
@@ -136,6 +152,32 @@ screens up to 900px wide).
 To change a picture, drop a file into `public/images/` and point the matching
 entry in `site.ts` at it.
 
+### Project decks
+
+Seven cards open their brand guidelines or company deck in the project viewer
+(`/work/<slug>`); Teddy, Dishoom and Animal have no deck yet and open their shot.
+The YOOJ and Dorikala cards are stand-ins — mockups lifted from their own decks —
+until their card art is made.
+
+The pages are rendered from the original PDFs by
+
+```bash
+python scripts/work/build.py path/to/folder/with/the/pdfs   # all decks
+python scripts/work/build.py path/to/folder yooj dorikala    # just these
+```
+
+which needs Python with `pymupdf` and `pillow`. It writes each page to
+`public/work/<deck>/NN.webp` (and `NN-half.webp`) and its sizes, tone and preview
+to `src/content/decks/<deck>.json`. The PDFs themselves are not in the repository
+(Dorikala's is 105 MB, over GitHub's file limit); `DECKS` in the script maps each
+deck to its file name.
+
+To add a project: give its card a `slug` in `site.ts`, add its PDF to `DECKS` in
+the script and run it, import the new JSON in `content/projects.ts`, and describe it
+in `content/work.ts` — a summary, an accent colour, and its chapters, each named by
+the page it starts on. A project can have more than one edition (FreightEasy has its
+presentation and its A4 brochure).
+
 ## Motion inventory
 
 Each of these mirrors a specific behaviour in the reference:
@@ -146,7 +188,8 @@ Each of these mirrors a specific behaviour in the reference:
 - **Mission slide** — the next scroll swaps the statement for the mission line, revealed with the same focus-in over the dimmed emblem. Scroll triggers each scene and time plays it; the page holds still for each moment (never during a nav-link glide), then the landing scrolls away.
 - **Living light** — the landing's gradient (the Figma radial #001873 → #020923 with the #082BFF streak) is fixed behind the whole page, the landing included. It drifts continuously and swings between two states every two seconds: the light travels, swells and brightens towards the electric blue, then ebbs while a low light rises opposite.
 - **Cursor sand** — Studio Mirage's about-page effect, ported from their shaders pass for pass: the pointer stirs a fluid simulation (splat, divergence, pressure, advection on their letterboxed 256² grid) whose ink displaces and scatters the light and grains it, so a cloud of sand trails the cursor and settles. The grain is lifted so it reads against blue as theirs does against black. It fades within a second of the pointer stopping and sleeps when idle; touch screens and reduced motion go without.
-- **Selected work** — after Studio Mirage's cards: the section pins and a row of 9:16 cards travels sideways exactly as far as the page scrolls. Shots zoom on hover and lean against the travel; each card's glass button opens the full project in a native dialog.
+- **Selected work** — after Studio Mirage's cards: the section pins and a row of 9:16 cards travels sideways exactly as far as the page scrolls. Shots zoom on hover and lean against the travel; a click anywhere on a card opens its project (or, without a deck, its shot in a native dialog), and its glass pill lights up wherever the pointer is on the card.
+- **Project viewer** — the card's shot lifts off the row exactly where it sits (its drift and hover zoom included) and travels, growing and darkening, until it fills the screen; the night closes in behind it and the page underneath stops. It becomes the title card's backdrop, drifting slowly closer, while the name focuses in character by character. Scrolling on, the pages arrive one after another: each develops out of its own blurred preview as it loads, and lifts out of the dark as it crosses the middle of the screen, while the room behind takes its light from the page in view (its 24px rendering, blown up and blurred). The index on the left follows the reading — a lit marker slides from chapter to chapter, a hairline fills as each is read, the bar names the chapter and rolls the page count, and a segment per chapter fills along the top edge. Hovering a chapter floats its opening page beside the index; choosing it glides there if it is near, or dips to a chapter card and cuts if it is far. The end of the deck opens the next project, whose shot grows out of its panel the same way. Closing dissolves back to the shot, which settles into its card — scrolling the row to the card first if the reader has moved on through other projects. On phones the index folds into a pill with a progress ring and a sheet. Escape closes, the arrow keys turn the page, and the back button works throughout.
 - **Areas of practice and story** — Studio Mirage's listing and two-column texts, each filling one screen with type scaled to the viewport. Every line focuses in character by character like the landing statement — titles first, then the columns or paragraphs in turn — and replays on the next visit; practice items rest at 60% and brighten on hover.
 - **They trust us** — Studio Mirage's partner grid: full-bleed hairlines with the client marks at 55%. The marks sharpen in a wave after the title; under the pointer a cell frosts, its mark turns full white and a light runs along the nearby lines.
 - **How we work** — Studio Mirage's timeline: the section pins for 0.8 of a screen per card. The first card stands alone and the rest wait in a deck on the right; each stretch of scroll slides the next card across onto the stack, nudging the one beneath aside, and turns it into frosted glass over the light, lit from its corner in its own hue. A plus rides above each card and brightens as it arrives.

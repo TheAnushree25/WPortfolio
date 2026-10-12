@@ -49,7 +49,11 @@ export const hero = {
 /**
  * Selected work, shown as tall cards that travel sideways while the section is
  * pinned. `focus` is the object-position that keeps each square shot's subject
- * inside its 9:16 card.
+ * inside its 9:16 card. Projects with a deck in `content/work.ts` open it in
+ * the work viewer at /work/<slug>; the rest open their shot.
+ *
+ * YOOJ and Dorikala are stand-in cards: their shots are mockups lifted from
+ * their own guideline decks until the final card art is made.
  */
 export const works = {
   title: 'New perspectives. Made visible.',
@@ -57,15 +61,32 @@ export const works = {
   cta: 'Explore the project',
   close: 'Close project',
   projects: [
-    { title: 'Kidcity', kind: 'Kids apparel · Identity & packaging', src: '/images/works/kidcity.jpg', focus: '50% 50%' },
-    { title: 'Fresh Feast', kind: 'Salad & juice bar · Identity & packaging', src: '/images/works/fresh-feast.jpg', focus: '50% 50%' },
-    { title: 'Spring Chu', kind: 'Natural spring water · Label design', src: '/images/works/spring-chu.jpg', focus: '50% 50%' },
-    { title: 'Teddy', kind: 'Hard cider · Label design', src: '/images/works/teddy.jpg', focus: '10% 50%' },
-    { title: 'Zenoxa', kind: 'Wellness wearable · Identity', src: '/images/works/zenoxa.jpg', focus: '50% 50%' },
-    { title: 'Dishoom', kind: 'Strong brew · Label design', src: '/images/works/dishoom.jpg', focus: '50% 50%' },
-    { title: 'Animal', kind: 'Dark beer · Label design', src: '/images/works/animal.jpg', focus: '30% 50%' },
-    { title: 'FreightEasy', kind: 'Logistics · Company deck', src: '/images/works/freighteasy.jpg', focus: '75% 50%' },
+    { slug: 'yooj', title: 'YOOJ', kind: 'Healthcare · Brand identity system', src: '/images/works/yooj.jpg', focus: '50% 50%' },
+    { slug: 'dorikala', title: 'Dorikala', kind: 'Fusion fashion · Brand identity system', src: '/images/works/dorikala.jpg', focus: '50% 50%' },
+    { slug: 'kidcity', title: 'Kidcity', kind: 'Kids apparel · Identity & packaging', src: '/images/works/kidcity.jpg', focus: '50% 50%' },
+    { slug: 'fresh-feast', title: 'Fresh Feast', kind: 'Salad & juice bar · Identity & packaging', src: '/images/works/fresh-feast.jpg', focus: '50% 50%' },
+    { slug: 'spring-chu', title: 'Spring Chu', kind: 'Natural spring water · Label design', src: '/images/works/spring-chu.jpg', focus: '50% 50%' },
+    { slug: 'teddy', title: 'Teddy', kind: 'Hard cider · Label design', src: '/images/works/teddy.jpg', focus: '10% 50%' },
+    { slug: 'zenoxa', title: 'Zenoxa', kind: 'Wellness wearable · Identity', src: '/images/works/zenoxa.jpg', focus: '50% 50%' },
+    { slug: 'dishoom', title: 'Dishoom', kind: 'Strong brew · Label design', src: '/images/works/dishoom.jpg', focus: '50% 50%' },
+    { slug: 'animal', title: 'Animal', kind: 'Dark beer · Label design', src: '/images/works/animal.jpg', focus: '30% 50%' },
+    { slug: 'freighteasy', title: 'FreightEasy', kind: 'Logistics · Company deck', src: '/images/works/freighteasy.jpg', focus: '75% 50%' },
   ],
+  /** The words of the work viewer. */
+  viewer: {
+    eyebrow: 'Case study',
+    pages: 'pages',
+    chapters: 'chapters',
+    start: 'Start reading',
+    index: 'Index',
+    close: 'Close project',
+    back: 'Back to all work',
+    end: 'End of the deck',
+    next: 'Next project',
+    view: 'View the project',
+    editions: 'Edition',
+    scroll: 'Scroll',
+  },
 } as const;
 
 /** The studio's fields, set in columns after Studio Mirage's expertise listing. */

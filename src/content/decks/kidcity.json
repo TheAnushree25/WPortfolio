@@ -1,0 +1,108 @@
+{
+  "pages": [
+    {
+      "src": "/work/kidcity/01.webp",
+      "half": "/work/kidcity/01-half.webp",
+      "width": 1800,
+      "height": 1800,
+      "tone": "#e7ebef",
+      "preview": "data:image/webp;base64,UklGRsYAAABXRUJQVlA4ILoAAAAQBQCdASoYABgAPrVKoUunJCMhsBgIAOAWiUAGoaKoFAB7eyDffiKCbFx19xtYGk4AAP74rgt3twWTgBg507VOwxvTDHxLXDVF/vvsV1o38dImW6jJ7swJ9mZDVofwhd9XL0/nYOJklBBG8V3peop52AHOLAPJtIne+Ya1lbab++vmHUFTgBMCKwC5gC6hh/xgoGTAylXkP/4GWssis4Zs9nUy0h/6wfSYUzl3xkYwow8mIkwUgrvXQAA="
+    },
+    {
+      "src": "/work/kidcity/02.webp",
+      "half": "/work/kidcity/02-half.webp",
+      "width": 1800,
+      "height": 1800,
+      "tone": "#1e5998",
+      "preview": "data:image/webp;base64,UklGRsYAAABXRUJQVlA4ILoAAADwBACdASoYABgAPrVUpE0nJKOiKAgA4BaJY2EHRZwygmQNP+Hf/AOraNQk6bMFWQAA/uwsVIlTZV8twSKBJQjM63g14kJ96A/0ne5rQpGcxPlP/4oe7/1JB//6+8odikQcjM79F6/5l6GWNPHlhUNmp2cLQ8IDPo1yu4BPasqOVbuVJmFtBqiKBY9qOqF7u2FhXUp0y1xxFlc7XjI8GIEd+khgIkWKlHubPq6ezkOQlXL3CEJvULhzcAA="
+    },
+    {
+      "src": "/work/kidcity/03.webp",
+      "half": "/work/kidcity/03-half.webp",
+      "width": 1800,
+      "height": 1800,
+      "tone": "#ebeff2",
+      "preview": "data:image/webp;base64,UklGRuAAAABXRUJQVlA4INQAAAAQBgCdASoYABgAPrVQoEynJKMiKAqo4BaJQBgdRGe8oleB7vSFpVYHibwv7A17OTcAPao7ez35WLgA/vgYZYjROwkDIGO+Km9ZKry1fXT6Oqfv6ol2ueJBVwozwFI4v8pkFX8FfmqDv/LD/VvAMpduLcZGP/MTZ6jAo74Lo44Qwp+yyrSHOVm1z4gJjQ7RPIjIzIgfBudtSQx2RpMMarM9e4ZMnJ3IC5THe99y0jACyv3LBaLl/JDGxRo4bXugLvwjHfmcd8I5RO8d2rVYFwphLoAAAA=="
+    },
+    {
+      "src": "/work/kidcity/04.webp",
+      "half": "/work/kidcity/04-half.webp",
+      "width": 1800,
+      "height": 1800,
+      "tone": "#9da2a1",
+      "preview": "data:image/webp;base64,UklGRsYAAABXRUJQVlA4ILoAAADwBQCdASoYABgAPrVMn0qnJCKhqA1Q4BaJagCdMuNwN4x+QEqq3H/d1QC/VrjDJ7bSYMkiPESJgADN8DsG4EGiEYp+BakvlTkkLaLCW/QmC+Lm+v8Zcu1eur0vF4s7hciKd5htbF4b3lWgG2ml/H0pN3z/1lH7Ut7b//LbEZQiM/2L53MK4jCZXLu827HJz6T4u/XT96Sf6uraSzZozEo/pDy8v/S50HnozmYx6oZflFiI7rDoeS3gAAA="
+    },
+    {
+      "src": "/work/kidcity/05.webp",
+      "half": "/work/kidcity/05-half.webp",
+      "width": 1800,
+      "height": 1800,
+      "tone": "#b7c9db",
+      "preview": "data:image/webp;base64,UklGRqIAAABXRUJQVlA4IJYAAADQBACdASoYABgAPrVIoUunI6MhsBgIAOAWiUAABicv+UJJdeoxNqf5iOuNiABIAAD+iTyHWorbaEGU0BSd73c3Hcm2UgYYUaZeQTDq5/GdUFVx5Gq/JL6LJphFrid/+oqh78QISf/EXNOkt85FIJd7ttx+nPUxWBchwStoSn0MB0veeb4APjAChVW2vw8l7OT+2oCtgAA="
+    },
+    {
+      "src": "/work/kidcity/06.webp",
+      "half": "/work/kidcity/06-half.webp",
+      "width": 1800,
+      "height": 1800,
+      "tone": "#f7f8f9",
+      "preview": "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAACwBACdASoYABgAPrVMn0snJCKhsBgIAOAWiWkAAC6m7/vhWObzw0tdX3tmVwXYAP74sa5/Uqt0tbVd+nvTJjZIkqucRP9eB9//UrtyL9CXrsAWD5LE/DuWNdYQDGqhrm2qRsBy7/pgGufRxtTcvgAA"
+    },
+    {
+      "src": "/work/kidcity/07.webp",
+      "half": "/work/kidcity/07-half.webp",
+      "width": 1800,
+      "height": 1800,
+      "tone": "#97a1ae",
+      "preview": "data:image/webp;base64,UklGRgYBAABXRUJQVlA4IPoAAADwBQCdASoYABgAPrVSo00nJKMiKAgA4BaJYgCxG3dJOj2fcgQYhPTtAw3L/r+SiX8NR91Flw/gAAD+9NPaQAo1LN4Bl8WAQeRpRWK2Xcgoj6D5edisP40C9pZAi6X9/LoXayNDColHF7dEH9dw1n8KUIFhjGgaIQ9hEGhZHdHGpHBYf+yGv6vi//y6nrjLh/hH1UdZo/fX54H1eq7WSqU/uqWv4e68TO71F65mmJffzm+E5TDOEMN6WjbvilY2LLK/Vf1SySBPppTCh6/sTYjeLL7fEK5kOxGSatcQhDUIqn0SgOFAGGlDaT59tSlsQY7qjanT1gsuUAAA"
+    },
+    {
+      "src": "/work/kidcity/08.webp",
+      "half": "/work/kidcity/08-half.webp",
+      "width": 1800,
+      "height": 1800,
+      "tone": "#d3b08d",
+      "preview": "data:image/webp;base64,UklGRkIBAABXRUJQVlA4IDYBAABQBgCdASoYABgAPrVOoUwnJCMiKAqo4BaJbACdMoR06QduzMugHWBIOxqFgmIxiRk6qi/bpSM1g/fGAAD+6o/7lhFVvgSo5mMkXtarXv6kKlGZcf+QTGy5B4RFDjwSdJPJOTV8Cn39zXUNxlGf0p97K5Kl1e8tA8AMrYXUq2KA0FGE+e0THDNRvrtxNrJ2TJ13ZqXnbwKQ+kAIM6Olo2twNyQq/PcWIz6qWEIQ+/qX6GcIRZQFeEMuKhjAy3soJdeavn+p56l/U/eRzzH7pRwz/Z7PX+Fx2G9B1+nM4DeI3xyEt8ZAhxGvxc2FyuWjwDW4gb28sXVs9dL+XbJe/8Y7S7zbThkBBjw07PkcKsCgmOOd3kBCSZM6Q57UYmFA6Xi4notfMuDlmDGm+PDlKheDQDno8AAA"
+    },
+    {
+      "src": "/work/kidcity/09.webp",
+      "half": "/work/kidcity/09-half.webp",
+      "width": 1800,
+      "height": 1800,
+      "tone": "#4674a5",
+      "preview": "data:image/webp;base64,UklGRr4AAABXRUJQVlA4ILIAAABwBQCdASoYABgAPrVMn0snJCKhqA1Q4BaJbACdMoR4T5XvAO4AAYSJ6lWPWXlpTE3zzN3AAP7i7BmgX2nUb0fNSSHuZmRREuyHI0luWRDX7uxpnRUAIdD+E8QC3xfU0oHbL1/C3GrYfgnsoZAcEfQnErXvslBBy5S+KQP7lULiY6K5pmMcuc1bEhc8Rj808KdjgwuWbSY/maZkWMax032Do23CbRBMmLSLO6HBWFTAAAAA"
+    },
+    {
+      "src": "/work/kidcity/10.webp",
+      "half": "/work/kidcity/10-half.webp",
+      "width": 1800,
+      "height": 1800,
+      "tone": "#f3f5f4",
+      "preview": "data:image/webp;base64,UklGRsIAAABXRUJQVlA4ILYAAACQBQCdASoYABgAPrVKn0snJCKhsBgIAOAWiWMAzNHcC4IjfZ1mUIi2hvP0008Y+ebxZ9LmIAD+9+7Q+odJH1VXvRQ+bHT6yOQrRzWE3aH25yBqrCY9UNuBlL8Z5flzn6caqsqAKcXiRWibO4CZv6Tt8vxNG5t4HqFfS36O8pDj1g4qOnp+n15wP2l7p5NY1q1PObt5WRQ1wfKLxwWLeyrj5sNZULFiXPV0o3cR9e5vvKVm5+AAAA=="
+    },
+    {
+      "src": "/work/kidcity/11.webp",
+      "half": "/work/kidcity/11-half.webp",
+      "width": 1800,
+      "height": 1800,
+      "tone": "#ededee",
+      "preview": "data:image/webp;base64,UklGRqwAAABXRUJQVlA4IKAAAABwBACdASoYABgAPrVMoEsnJCMhqA1Q4BaJZwAD4rkK+YFR4Af5atRudxJAAAD++Lhfv/olWgf4i5m9TQweyBvC56AARrwQWdJmHaDINo/af9V7H1ONZJK9C+gji/13sGvunU/P7jxfi5k6Fwhj+jLp3s/gOflMidm5CnqtrLWkRqHy7FzI+9aS09S+epe5PSwV5mDSf0Iuw1D3T4GAAAAA"
+    },
+    {
+      "src": "/work/kidcity/12.webp",
+      "half": "/work/kidcity/12-half.webp",
+      "width": 1800,
+      "height": 1800,
+      "tone": "#ebe9ea",
+      "preview": "data:image/webp;base64,UklGRtYAAABXRUJQVlA4IMoAAADQBACdASoYABgAPrVQoEwnJKMiKAqo4BaJZwAD4PELAW7pH6a6v9F8gAC2KOWEAAD++Lhfxt49NXPt9bDWk/1+Lr3BnHctQkWd9vl5iSTl3Qg2uM88V92lPtlmJLKRCCkR7IkAuCkaKxdFPCGkGcqYGmc5gguBVEXSJyZ1fmEbZjObrFuWm3jGt+hTMWfNXNIB5P34nAak5yuPK+/gjFKik5rXKREU3yXo4tJwqweT4xYYJeAjy161KnmeAX8U0ejsfD+egPOAAAAA"
+    },
+    {
+      "src": "/work/kidcity/13.webp",
+      "half": "/work/kidcity/13-half.webp",
+      "width": 1800,
+      "height": 1800,
+      "tone": "#cbd9da",
+      "preview": "data:image/webp;base64,UklGRrABAABXRUJQVlA4IKQBAADwBwCdASoYABgAPrVSok0nJKMiKAgA4BaJbACdMoMqzcBtr7sA3lKfAXehmvelvYFDAW+cMtLnK6SpqZVG1RZfn7aWJeyD02AA/uIbpHunhjm2m6FtwiNI4148KHEeTHNPklsEYY6+u05dlVVFFI4ZrTf6mkJymU3+gaYtkG17BJxfA53oJ5fhSG26M1E9yvwW+nIlzfGvvm9i0XfzYPIlSmz+P+kRzPT85mHDBUgtj9NUkqSGrAfypIPHx5zu+hg4zpsVjrJz7vSddaCgq+1ny86nyt5afzzAi9DdL+oerv9MXK9ghAltmalw/zywF92jHt1pdCV49MDte0PhAPThEtZwxfoLjskDJwWGo6KDSNF2sLw4M+73qxZ+wbc34ZxernY5Qum2bwOtK4wNKP1dazDHxWUTgJhOhdkXLfUL75Tz3JRQff/Vvt/k1VA0dDHmZqpfJ1cbMK35BGNNWBnxFvqUa/+VU97puB9Mfiuml9KEjUzXuHrSEaArZ1gRlR3luY3U/p+1U+JDlr1Vkt2ten47VWqE19wVG3bX5ejT776hAAA="
+    }
+  ]
+}

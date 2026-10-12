@@ -1,0 +1,188 @@
+{
+  "pages": [
+    {
+      "src": "/work/freighteasy/01.webp",
+      "half": "/work/freighteasy/01-half.webp",
+      "width": 2400,
+      "height": 1350,
+      "tone": "#282359",
+      "preview": "data:image/webp;base64,UklGRpYAAABXRUJQVlA4IIoAAACQAgCdASoYAA4AAoBCJagCdADyl0BKTdY89H8FgAD++V9QYwh3ebFp4vJiOdWEQ/ElRiB9wGdYgPyj2mW2JW1zCAKmce/fCEc1PtT8rPd98qIGxQ4fP6Tif/Ww6ainijXB07qWR4D8RUaB0M+P27DZBFJJi3OqUOJza2U0THLZPKFZIm9qpkbAAAA="
+    },
+    {
+      "src": "/work/freighteasy/02.webp",
+      "half": "/work/freighteasy/02-half.webp",
+      "width": 2400,
+      "height": 1350,
+      "tone": "#f6f8fb",
+      "preview": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAADQAwCdASoYAA4APrVInkmnJCKhMAgA4BaJZwDE2CHfLathTraHkmgA/vgTMlWMeRgZy59Xvc7S3vVWI6NNp2jApoQc8hn/RjyAAA=="
+    },
+    {
+      "src": "/work/freighteasy/03.webp",
+      "half": "/work/freighteasy/03-half.webp",
+      "width": 2400,
+      "height": 1350,
+      "tone": "#97a0ad",
+      "preview": "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAACwAwCdASoYAA4APrVInkmnJCKhMAgA4BaJYwAAWnLAWAfecDu2AAD+n3g1L/sVZpXDs3t2xP33aZy0jMy/nzQDBIT8Dz+9F6vCLHY2Ux6bcNQQdUPdIsHB++kpO9vb0GuhDRBuYT032glAEJEQYAAA"
+    },
+    {
+      "src": "/work/freighteasy/04.webp",
+      "half": "/work/freighteasy/04-half.webp",
+      "width": 2400,
+      "height": 1350,
+      "tone": "#221e53",
+      "preview": "data:image/webp;base64,UklGRpwAAABXRUJQVlA4IJAAAAAQBACdASoYAA4APrVInkmnJCKhMAgA4BaJZAC06CHbZGbKOOpc3eBkgAD+94CR6V9921KXho7je9ONDPzh1qwbK9R/zIj17MrMjuVnXXfiopJb/CIP4MEQfxGf5RLuhZbegDDuYH4hp6LQTYF1PmTKP6J5WJUwHh5eYgrO0KUaaxMPF7kYcxXyBkZH5U+bgAA="
+    },
+    {
+      "src": "/work/freighteasy/05.webp",
+      "half": "/work/freighteasy/05-half.webp",
+      "width": 2400,
+      "height": 1350,
+      "tone": "#cdcfd5",
+      "preview": "data:image/webp;base64,UklGRqQAAABXRUJQVlA4IJgAAAAQBACdASoYAA4APrVInkmnJCKhMAgA4BaJZQCsABufK4CzAF9vb+KS0AD+9i/K7Ocuwf6PIXWL1sy+5TrCNO69ijheyutceqNJ1slC5B4yHq+K19RUKHpm2gf95LFQFlHDYAVSbunKCU9mg/BUKV0byXIDFWRBkiNNRUxHIvoYsu9/XloCOS6WLZIN4chG/DF6i4oXx00AAA=="
+    },
+    {
+      "src": "/work/freighteasy/06.webp",
+      "half": "/work/freighteasy/06-half.webp",
+      "width": 2400,
+      "height": 1350,
+      "tone": "#d3d0d4",
+      "preview": "data:image/webp;base64,UklGRqQAAABXRUJQVlA4IJgAAABQBACdASoYAA4APrVInkmnJCKhMAgA4BaJYwCdH8ADB0Z0peTfmhxx4vAAAP7oq0NjZQrwuY0Whn3Ql6vrGYthnZPHa7eof2b4OuWjCBJn9DK4p7S78U51yWMHr+d6bqKhXa0M1jmO1vBSk8y/qjpTxGm0jzsN3tI+yU5tcL4DRfQU0L+++7bUW7UrkfF8igVy8hiTJAAAAA=="
+    },
+    {
+      "src": "/work/freighteasy/07.webp",
+      "half": "/work/freighteasy/07-half.webp",
+      "width": 2400,
+      "height": 1350,
+      "tone": "#c3c2c3",
+      "preview": "data:image/webp;base64,UklGRrAAAABXRUJQVlA4IKQAAACwBACdASoYAA4APrVInkmnJCKhMAgA4BaJZQCdH8GJ/gPQgks5fRA2s8ZEqLbgAP7imKEAXipjJJEPCkQFA9/cS7d6XV9dmRzvPL2ibik9JXvv6Rv8NsF/obAue59WEeJa7YumVqeyhKnOh0gFSdxW6J81w4gyNlBCZfGdj67Zd7zF/K/we6IxncyREcUjpxuTXldd0qJUU9SgUT2efaT3iscAAA=="
+    },
+    {
+      "src": "/work/freighteasy/08.webp",
+      "half": "/work/freighteasy/08-half.webp",
+      "width": 2400,
+      "height": 1350,
+      "tone": "#bab4b4",
+      "preview": "data:image/webp;base64,UklGRroAAABXRUJQVlA4IK4AAABQBACdASoYAA4APrVInkmnJCKhMAgA4BaJQBOnKBuZIdnVFTnr0KWrBoiAAP5tLNJkYLSuUK0Pm3y/ppgMbSdCPxHEv+iR0FITjrqqpXTDRzJPoRcr0FCvSng3HnrJ02YIx+q/H6ndf7H02B55jBrPA7CCI6qM+A1X2vTJLLq8fBlqEAd75Le9AV610Pm5laD6wj71kR/T4xiWPVq9tNwBZSImXcPdBxQA2aowAAA="
+    },
+    {
+      "src": "/work/freighteasy/09.webp",
+      "half": "/work/freighteasy/09-half.webp",
+      "width": 2400,
+      "height": 1350,
+      "tone": "#dddcdd",
+      "preview": "data:image/webp;base64,UklGRpgAAABXRUJQVlA4IIwAAABQBACdASoYAA4APrVInkmnJCKhMAgA4BaJYwCdOUDZABDFtELa8DmNVWeAAP7yhChSXwDBjuV1WoS/fwevN4PX+S5Mi/Ui27rtD4eMclgdsRHCEgEw8cjsWxZwoU4UwuYutIs7xJJjS9yh5f6TJPq2BKjQK+rmX/6kZNFSgUCQ7hiC8PLTZIgCeEcAAA=="
+    },
+    {
+      "src": "/work/freighteasy/10.webp",
+      "half": "/work/freighteasy/10-half.webp",
+      "width": 2400,
+      "height": 1350,
+      "tone": "#cdcdd4",
+      "preview": "data:image/webp;base64,UklGRp4AAABXRUJQVlA4IJIAAABQBACdASoYAA4APrVInkmnJCKhMAgA4BaJZQCdIHACckm+LgXXzmqQCidwAP71Iey7w4kModMb+4tm1kA3mEhSJgcBz0VDxj9UdEyXFpt7xglAovmjsMe2IypybClMmoMXigfwelE47nNQfJdpax1H5KCJoZgppiAQf3g7Awa2AUQ/9jZIM3Wh5D7seWCASYgAAA=="
+    },
+    {
+      "src": "/work/freighteasy/11.webp",
+      "half": "/work/freighteasy/11-half.webp",
+      "width": 2400,
+      "height": 1350,
+      "tone": "#141253",
+      "preview": "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAACwAwCdASoYAA4APrVInkmnJCKhMAgA4BaJQBOgA9LG5G0kDU/86AD+9sX+ITPbqN/43mi1d3tGq5gnU5iRPi7sRxk3BIIAzIp4PoxICl8EjUmVOqN1IpjyEdBk4kAA"
+    },
+    {
+      "src": "/work/freighteasy/12.webp",
+      "half": "/work/freighteasy/12-half.webp",
+      "width": 2400,
+      "height": 1350,
+      "tone": "#a0928b",
+      "preview": "data:image/webp;base64,UklGRsAAAABXRUJQVlA4ILQAAABQBACdASoYAA4APrVInkmnJCKhMAgA4BaJYgCxC8AJUHhc5LmX05P7XKkAAP7+89as4UfxehJ4njf/HiH/zcf/1idxcFBpE118+yShhvvgqabarKtwhwY0WNdg7FcHKHgUkc+1egQsRSd7vCX8xaOm1l3SwzUDX5tzydjZZakni7htwfrnse/0JKDwxLGcwXLvl4u0lRyosEEhqzHwv+dHicptImvg4OsXwHmHRBtGWkFxlAA="
+    },
+    {
+      "src": "/work/freighteasy/13.webp",
+      "half": "/work/freighteasy/13-half.webp",
+      "width": 2400,
+      "height": 1350,
+      "tone": "#d4d5d5",
+      "preview": "data:image/webp;base64,UklGRrIAAABXRUJQVlA4IKYAAADwAwCdASoYAA4APrVInkmnJCKhMAgA4BaJZQC7ACHgN5fgCM/TnRwAAP74E3GglL0jacn9p2fBKDC/iOozllh5mhQzHUQRwru4KYy8EdenLoDsLCj781fh9/VDOd0/+KwZQvXb6IUGS+kpHI5NL301R5ejnH3vPh3sJimls/fZoP8zo9O2o430cNpeHaSwfwdM68TWNWUoifdgh4Y/TMYNtBXRAAAA"
+    },
+    {
+      "src": "/work/freighteasy/14.webp",
+      "half": "/work/freighteasy/14-half.webp",
+      "width": 2400,
+      "height": 1350,
+      "tone": "#c0bbb3",
+      "preview": "data:image/webp;base64,UklGRrAAAABXRUJQVlA4IKQAAADwAwCdASoYAA4APrVQoUqnJSMhsAgA4BaJYwCuHGhjvdCst5bSPipgAP7+x9f4y0r5r/ydiv+K7/5V//0Huffei4/urvU9e4SbiRCm8Wqky1usZv/K61mLjFZ+cK0hISY1nM7qYomJd0aS75R4cpxiRbQj6v7kUEVlcURQiKocWuDaGOWLfw9LSiiNseO4PLTarHCoxIz2uhU0k89xG2oCdC5QAA=="
+    },
+    {
+      "src": "/work/freighteasy/15.webp",
+      "half": "/work/freighteasy/15-half.webp",
+      "width": 2400,
+      "height": 1350,
+      "tone": "#d9dee5",
+      "preview": "data:image/webp;base64,UklGRrYAAABXRUJQVlA4IKoAAACQBACdASoYAA4APrVInkmnJCKhMAgA4BaJQBdkCbk/wHoQNwsWZnjgxJtrNsAA/vgTcaCVm8wMVooHTDve1qE2oW4G1ikudV8shRSHyhmZxWV/18/VLFb2jF4r69z1P4/79X8P9Yn8snx6DgY659xnu51+H7gm7JzAd/8f7dBUCfr5f0Yu3/n6pclsa53gt/V0CEtlRpIup32xH6Z/G2EeUtUx+Fzfkl6QAA=="
+    },
+    {
+      "src": "/work/freighteasy/16.webp",
+      "half": "/work/freighteasy/16-half.webp",
+      "width": 2400,
+      "height": 1350,
+      "tone": "#d2d2cb",
+      "preview": "data:image/webp;base64,UklGRrgAAABXRUJQVlA4IKwAAABwBACdASoYAA4APrVInkmnJCKhMAgA4BaJQBdkCa4MwKl05lZCBNb1KAMFQAD+9z5igHedT3wzDg/lpiS6jF646fDmItNtRJdcYqgwEoQ+yd778xxDR7uPYoRXYzMI2oxpviBMfPU2vXsIqbP6IQ3/FruXE0XmWNgCsqCro42KurT5tIedcwX4w+o8y0gjhmgvEFXP2Y0wO98Yx88E3h6thejyeEM2IHqoAAAA"
+    },
+    {
+      "src": "/work/freighteasy/17.webp",
+      "half": "/work/freighteasy/17-half.webp",
+      "width": 2400,
+      "height": 1350,
+      "tone": "#f5f7fa",
+      "preview": "data:image/webp;base64,UklGRlwAAABXRUJQVlA4IFAAAADwAwCdASoYAA4APrVInkmnJCKhMAgA4BaJZwDE2CHh+k44dldBL/SAAP74uBSMUyWh2Z2fQ7dxxLf2QHn9BbY6DeYiNjc2EON+yBeFIQwAAA=="
+    },
+    {
+      "src": "/work/freighteasy/18.webp",
+      "half": "/work/freighteasy/18-half.webp",
+      "width": 2400,
+      "height": 1350,
+      "tone": "#0a2141",
+      "preview": "data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAACwAwCdASoYAA4APrVInkmnJCKhMAgA4BaJY1efTsydHC0kixCw0AD+8WdlnCEJtLfiFXaf5yTHkZ15R98TIzwS1qKjO1Sj1rIMFbTB2faD6NwjzPB/iJoAdIQmZXwaFvHGv2d1D1oN/G44r4w4AA=="
+    },
+    {
+      "src": "/work/freighteasy/19.webp",
+      "half": "/work/freighteasy/19-half.webp",
+      "width": 2400,
+      "height": 1350,
+      "tone": "#0b2a58",
+      "preview": "data:image/webp;base64,UklGRpIAAABXRUJQVlA4IIYAAABwBACdASoYAA4APrVIn0mnJCKhMAgA4BaJbACdLoBbgBpWm6+o6Vaku84C8AD+/qgogF5oC0Nl+fZ7DFP/96f9ZVqfmr+g2UGU9Bhi/n4ZDTBa3k5ypFEk+KAUjjk4AZ6f6HNfEEPLseDwg0mHEt09VySwKD7l0RUs8kWnF34rBLwVwxAAAA=="
+    },
+    {
+      "src": "/work/freighteasy/20.webp",
+      "half": "/work/freighteasy/20-half.webp",
+      "width": 2400,
+      "height": 1350,
+      "tone": "#0d2c5b",
+      "preview": "data:image/webp;base64,UklGRpwAAABXRUJQVlA4IJAAAAAQBQCdASoYAA4APrVInkmnJCKhMAgA4BaJagCdMoRwHaA2wF2ABAW7thlT89F3ryAAAP7+qCiAXmgLQ2X59txhHmWD729DdS8kq6ajcE/K14C89Spezqz+KEKDs86yRLNaQGLqD36n15BFuXwWErZuOrGjvOmwuL3TxVFQvHjiOBKAX4Vy7ylmnzGDdxRAAAA="
+    },
+    {
+      "src": "/work/freighteasy/21.webp",
+      "half": "/work/freighteasy/21-half.webp",
+      "width": 2400,
+      "height": 1350,
+      "tone": "#0c2a59",
+      "preview": "data:image/webp;base64,UklGRo4AAABXRUJQVlA4IIIAAADQBACdASoYAA4APrVInkmnJCKhMAgA4BaJbACdMoRwN6BJpQRaS7FlYtKNI7lAAAD+/qgogF5oC0Nl+fZ626kFRYE/YolFW8TB44qTSv8Pp5Hz6bXkhcjv73p3AiG1H7wywBWZC+zH6Fh+l3wEWOKAQw+MOMM2oRvQePXDfjg1DAAA"
+    },
+    {
+      "src": "/work/freighteasy/22.webp",
+      "half": "/work/freighteasy/22-half.webp",
+      "width": 2400,
+      "height": 1350,
+      "tone": "#f9fbfe",
+      "preview": "data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAABQAwCdASoYAA4APrVKnkonJCKhsAgA4BaJZwDA3DBhe/QnAAD+9AV8vucz6zlsDUBLAqeIjdDpeOSK96AidGQLV1gOI8NUaD2bW9wAAAA="
+    },
+    {
+      "src": "/work/freighteasy/23.webp",
+      "half": "/work/freighteasy/23-half.webp",
+      "width": 2400,
+      "height": 1350,
+      "tone": "#171656",
+      "preview": "data:image/webp;base64,UklGRm4AAABXRUJQVlA4IGIAAADQAwCdASoYAA4APrVInkmnJCKhMAgA4BaJZACdACHe+ULWscapyiAA/vd02zYIx8Lct7ao/hUQqo/DjUpu4AoTnBx8XbRdFJl93PzUIL/i0Kb58UOg9FHmAqpeDSo0bcqeAA=="
+    }
+  ]
+}

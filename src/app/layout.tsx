@@ -52,7 +52,12 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+/**
+ * `modal` is the slot a project fills when it is opened from the home page
+ * (app/@modal/(.)work/[slug]): the URL becomes /work/<slug> while the page
+ * underneath stays put.
+ */
+export default function RootLayout({ children, modal }: { children: React.ReactNode; modal: React.ReactNode }) {
   return (
     // The boot script writes data-intro onto <html> before React hydrates.
     <html lang="en" className={`${inter.variable} ${redHat.variable}`} suppressHydrationWarning>
@@ -64,6 +69,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Cursor />
         <Navbar />
         {children}
+        {modal}
       </body>
     </html>
   );
