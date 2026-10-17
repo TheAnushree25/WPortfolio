@@ -24,10 +24,12 @@ export function Navbar() {
   const [held, setHeld] = useState(intro);
   const [current, setCurrent] = useState<string | null>(null);
   // On the landing, section links are plain anchors for the smooth-scroll glide;
-  // elsewhere they lead back to the landing.
-  const home = usePathname() === '/';
+  // elsewhere they lead back to the landing. Page links (the work page) are links everywhere.
+  const pathname = usePathname();
+  const home = pathname === '/';
   const Anchor = home ? 'a' : Link;
   const to = (hash: string) => (home ? hash : `/${hash}`);
+  const isCurrent = (href: string) => current === href || (!href.startsWith('#') && pathname.startsWith(href));
 
   useEffect(() => {
     if (intro) {
@@ -94,17 +96,21 @@ export function Navbar() {
         aria-label="Main"
         className="font-studio flex items-center gap-[max(10px,4vw)] text-[0.9rem] font-semibold md:gap-[min(30px,4vw)] md:text-[0.85rem]"
       >
-        {nav.links.map((link) => (
-          <Anchor
-            key={link.href}
-            href={to(link.href)}
-            // On phones Mirage gives each link extra room on its left for the dot.
-            className={cn('site-header-link max-md:ml-2.5', current === link.href && 'is-active')}
-            aria-current={current === link.href ? 'location' : undefined}
-          >
-            {link.label}
-          </Anchor>
-        ))}
+        {nav.links.map((link) => {
+          const Tag = link.href.startsWith('#') ? Anchor : Link;
+          const active = isCurrent(link.href);
+          return (
+            <Tag
+              key={link.href}
+              href={link.href.startsWith('#') ? to(link.href) : link.href}
+              // On phones Mirage gives each link extra room on its left for the dot.
+              className={cn('site-header-link max-md:ml-2.5', active && 'is-active')}
+              aria-current={active ? (link.href.startsWith('#') ? 'location' : 'page') : undefined}
+            >
+              {link.label}
+            </Tag>
+          );
+        })}
         <Link href={nav.contact.href} className="glow-button">
           <span className="glow-button-label">{nav.contact.label}</span>
           <span className="glow-button-bg" aria-hidden />

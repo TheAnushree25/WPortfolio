@@ -1,4 +1,6 @@
 @import 'tailwindcss';
+@import './works.css';
+@import './system.css';
 
 /* ------------------------------------------------------------------ *
  * Design tokens — the reference composition in the Atlas Studios
@@ -268,9 +270,19 @@
 
 /* The selected-work cards: 9:16, a little shorter on phones. */
 @utility works-cards {
+  --card-ratio: 0.5625;
   --card-h: clamp(220px, 66svh, 600px);
   @media (width >= 48rem) {
     --card-h: clamp(220px, 74svh, 600px);
+  }
+}
+
+/* The systems' cards: 16:10 screens, as wide as the phone allows. */
+@utility works-screens {
+  --card-ratio: 1.6;
+  --card-h: min(clamp(180px, 34svh, 300px), calc((100vw - 60px) / 1.6));
+  @media (width >= 48rem) {
+    --card-h: clamp(220px, 52svh, 480px);
   }
 }
 

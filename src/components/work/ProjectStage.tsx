@@ -18,12 +18,17 @@ import {
   type ShotBox,
 } from '@/lib/work';
 
-const loadViewer = () => import('./ProjectViewer');
-const ProjectViewer = lazy(() => loadViewer().then((module) => ({ default: module.ProjectViewer })));
+const loadDeckViewer = () => import('./ProjectViewer');
+const loadSystemViewer = () => import('./SystemViewer');
+const ProjectViewer = lazy(() => loadDeckViewer().then((module) => ({ default: module.ProjectViewer })));
+const SystemViewer = lazy(() => loadSystemViewer().then((module) => ({ default: module.SystemViewer })));
+
+/** Which viewer a card opens: a design's deck, or a system's case study. */
+export type ViewerKind = 'design' | 'system';
 
 /** Fetches the viewer's code ahead of a click (a card hovered or focused). */
-export function preloadViewer() {
-  void loadViewer();
+export function preloadViewer(kind: ViewerKind = 'design') {
+  void (kind === 'system' ? loadSystemViewer() : loadDeckViewer());
 }
 
 /** The lift: a slow start, a long travel and a soft landing, like a camera crane. */
@@ -488,22 +493,24 @@ export function ProjectStage() {
   if (!host) return null;
   return createPortal(
     <>
-      {slots.map(({ project, visible }) => (
-        <div key={project.slug} className={visible ? undefined : 'work-stage-waiting'}>
-          <Suspense fallback={null}>
-            <ProjectViewer
-              project={project}
-              mode="overlay"
-              active={visible}
-              shotSrc={shot?.slug === project.slug ? shot.src : undefined}
-              ready={visible && revealed === project.slug}
-              onReady={viewerPainted}
-              onClose={close}
-              onNext={next}
-            />
-          </Suspense>
-        </div>
-      ))}
+      {slots.map(({ project, visible }) => {
+        const shared = {
+          mode: 'overlay',
+          active: visible,
+          shotSrc: shot?.slug === project.slug ? shot.src : undefined,
+          ready: visible && revealed === project.slug,
+          onReady: viewerPainted,
+          onClose: close,
+          onNext: next,
+        } as const;
+        return (
+          <div key={project.slug} className={visible ? undefined : 'work-stage-waiting'}>
+            <Suspense fallback={null}>
+              {project.discipline === 'system' ? <SystemViewer project={project} {...shared} /> : <ProjectViewer project={project} {...shared} />}
+            </Suspense>
+          </div>
+        );
+      })}
       <div ref={layerRef} aria-hidden className="work-stage">
         <div ref={backdropRef} className="work-stage-backdrop" />
         <div ref={frameRef} className="work-stage-frame">

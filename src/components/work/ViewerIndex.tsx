@@ -54,6 +54,8 @@ type ListProps = {
   onHover?: (index: number | null, item: HTMLElement | null) => void;
   /** Keeps the shared marker of the rail apart from the one in the sheet. */
   variant: 'rail' | 'sheet';
+  /** Whether each chapter shows the pages it spans (decks do; a system's chapters have none). */
+  ranges?: boolean;
 };
 
 /**
@@ -61,7 +63,7 @@ type ListProps = {
  * from chapter to chapter, and a hairline under its name fills as the
  * chapter is read (--chapter-progress, set by the viewer every frame).
  */
-function ChapterList({ chapters, active, onPick, onHover, variant }: ListProps) {
+function ChapterList({ chapters, active, onPick, onHover, variant, ranges = true }: ListProps) {
   const listRef = useRef<HTMLOListElement>(null);
 
   // Keep the active chapter in view when the list is taller than its room.
@@ -91,7 +93,7 @@ function ChapterList({ chapters, active, onPick, onHover, variant }: ListProps) 
             {index === active && <motion.span layoutId={`work-index-marker-${variant}`} className="work-index-marker" transition={marker} />}
             <span className="work-index-num">{pad(index + 1)}</span>
             <span className="work-index-title">{chapter.title}</span>
-            <span className="work-index-pages">{range(chapter)}</span>
+            {ranges && <span className="work-index-pages">{range(chapter)}</span>}
             <span aria-hidden className="work-index-bar" />
           </button>
         </li>
@@ -106,6 +108,9 @@ type RailProps = {
   active: number;
   onPick: (index: number) => void;
   editions: Editions | null;
+  /** The head's count; a deck counts its pages. */
+  count?: string;
+  ranges?: boolean;
 };
 
 /**
@@ -113,7 +118,7 @@ type RailProps = {
  * has been scrolled past. Hovering a chapter floats its opening page beside
  * the rail, so the reader can see where a click will take them.
  */
-export function ChapterRail({ chapters, pages, active, onPick, editions }: RailProps) {
+export function ChapterRail({ chapters, pages, active, onPick, editions, count, ranges = true }: RailProps) {
   const railRef = useRef<HTMLElement>(null);
   const [preview, setPreview] = useState<{ index: number; y: number } | null>(null);
 
@@ -135,15 +140,14 @@ export function ChapterRail({ chapters, pages, active, onPick, editions }: RailP
     <nav ref={railRef} className="work-rail" aria-label={copy.index}>
       <p className="work-rail-head">
         <span>{copy.index}</span>
-        <span>
-          {pages.length} {copy.pages}
-        </span>
+        <span>{count ?? `${pages.length} ${copy.pages}`}</span>
       </p>
       {editions && <EditionSwitch editions={editions} placement="rail" />}
       <ChapterList
         chapters={chapters}
         active={active}
         variant="rail"
+        ranges={ranges}
         onHover={hover}
         onPick={(index) => {
           // The preview has done its work once the chapter is chosen.
@@ -217,6 +221,9 @@ type SheetProps = {
   onPick: (index: number) => void;
   onClose: () => void;
   editions: Editions | null;
+  /** The head's count; a deck counts its pages. */
+  count?: string;
+  ranges?: boolean;
 };
 
 /**
@@ -224,7 +231,7 @@ type SheetProps = {
  * closes it and goes there. It is dragged down by its head, so the list
  * itself still scrolls under a thumb.
  */
-export function ChapterSheet({ open, chapters, active, total, onPick, onClose, editions }: SheetProps) {
+export function ChapterSheet({ open, chapters, active, total, onPick, onClose, editions, count, ranges = true }: SheetProps) {
   const drag = useDragControls();
   return (
     <AnimatePresence>
@@ -262,9 +269,7 @@ export function ChapterSheet({ open, chapters, active, total, onPick, onClose, e
               <span aria-hidden className="work-sheet-grip" />
               <p className="work-rail-head">
                 <span>{copy.index}</span>
-                <span>
-                  {total} {copy.pages}
-                </span>
+                <span>{count ?? `${total} ${copy.pages}`}</span>
               </p>
             </div>
             {editions && (
@@ -283,6 +288,7 @@ export function ChapterSheet({ open, chapters, active, total, onPick, onClose, e
               chapters={chapters}
               active={active}
               variant="sheet"
+              ranges={ranges}
               onPick={(index) => {
                 onClose();
                 onPick(index);

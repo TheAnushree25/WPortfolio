@@ -13,11 +13,11 @@ export const site = {
 
 /**
  * Studio Mirage's header: two links and a contact pill. Each link lights its
- * dot while the page is in its sections.
+ * dot on its own page, and on the landing while the page is in its sections.
  */
 export const nav = {
   links: [
-    { label: 'Our works', href: '#work', sections: ['work'] },
+    { label: 'Our works', href: '/works', sections: ['work'] },
     { label: 'About us', href: '#about', sections: ['expertise', 'about', 'clients', 'process', 'testimonials'] },
   ],
   contact: { label: 'Contact us', href: '/contact' },
@@ -53,7 +53,8 @@ export const hero = {
  * the work viewer at /work/<slug>; the rest open their shot.
  *
  * YOOJ and Dorikala are stand-in cards: their shots are mockups lifted from
- * their own guideline decks until the final card art is made.
+ * their own guideline decks until the final card art is made. `industry` is
+ * what the work page's filters sort them by.
  */
 export const works = {
   title: 'New perspectives. Made visible.',
@@ -61,16 +62,16 @@ export const works = {
   cta: 'Explore the project',
   close: 'Close project',
   projects: [
-    { slug: 'yooj', title: 'YOOJ', kind: 'Healthcare · Brand identity system', src: '/images/works/yooj.jpg', focus: '50% 50%' },
-    { slug: 'dorikala', title: 'Dorikala', kind: 'Fusion fashion · Brand identity system', src: '/images/works/dorikala.jpg', focus: '50% 50%' },
-    { slug: 'kidcity', title: 'Kidcity', kind: 'Kids apparel · Identity & packaging', src: '/images/works/kidcity.jpg', focus: '50% 50%' },
-    { slug: 'fresh-feast', title: 'Fresh Feast', kind: 'Salad & juice bar · Identity & packaging', src: '/images/works/fresh-feast.jpg', focus: '50% 50%' },
-    { slug: 'spring-chu', title: 'Spring Chu', kind: 'Natural spring water · Label design', src: '/images/works/spring-chu.jpg', focus: '50% 50%' },
-    { slug: 'teddy', title: 'Teddy', kind: 'Hard cider · Label design', src: '/images/works/teddy.jpg', focus: '10% 50%' },
-    { slug: 'zenoxa', title: 'Zenoxa', kind: 'Wellness wearable · Identity', src: '/images/works/zenoxa.jpg', focus: '50% 50%' },
-    { slug: 'dishoom', title: 'Dishoom', kind: 'Strong brew · Label design', src: '/images/works/dishoom.jpg', focus: '50% 50%' },
-    { slug: 'animal', title: 'Animal', kind: 'Dark beer · Label design', src: '/images/works/animal.jpg', focus: '30% 50%' },
-    { slug: 'freighteasy', title: 'FreightEasy', kind: 'Logistics · Company deck', src: '/images/works/freighteasy.jpg', focus: '75% 50%' },
+    { slug: 'yooj', title: 'YOOJ', kind: 'Healthcare · Brand identity system', src: '/images/works/yooj.jpg', focus: '50% 50%', industry: 'Healthcare' },
+    { slug: 'dorikala', title: 'Dorikala', kind: 'Fusion fashion · Brand identity system', src: '/images/works/dorikala.jpg', focus: '50% 50%', industry: 'Fashion' },
+    { slug: 'kidcity', title: 'Kidcity', kind: 'Kids apparel · Identity & packaging', src: '/images/works/kidcity.jpg', focus: '50% 50%', industry: 'Kids' },
+    { slug: 'fresh-feast', title: 'Fresh Feast', kind: 'Salad & juice bar · Identity & packaging', src: '/images/works/fresh-feast.jpg', focus: '50% 50%', industry: 'Food' },
+    { slug: 'spring-chu', title: 'Spring Chu', kind: 'Natural spring water · Label design', src: '/images/works/spring-chu.jpg', focus: '50% 50%', industry: 'Drinks' },
+    { slug: 'teddy', title: 'Teddy', kind: 'Hard cider · Label design', src: '/images/works/teddy.jpg', focus: '10% 50%', industry: 'Drinks' },
+    { slug: 'zenoxa', title: 'Zenoxa', kind: 'Wellness wearable · Identity', src: '/images/works/zenoxa.jpg', focus: '50% 50%', industry: 'Wellness' },
+    { slug: 'dishoom', title: 'Dishoom', kind: 'Strong brew · Label design', src: '/images/works/dishoom.jpg', focus: '50% 50%', industry: 'Drinks' },
+    { slug: 'animal', title: 'Animal', kind: 'Dark beer · Label design', src: '/images/works/animal.jpg', focus: '30% 50%', industry: 'Drinks' },
+    { slug: 'freighteasy', title: 'FreightEasy', kind: 'Logistics · Company deck', src: '/images/works/freighteasy.jpg', focus: '75% 50%', industry: 'Logistics' },
   ],
   /** The words of the work viewer. */
   viewer: {
@@ -87,6 +88,59 @@ export const works = {
     editions: 'Edition',
     scroll: 'Scroll',
   },
+  /** The words of the system viewer, around each system's own (content/systems.ts). */
+  system: {
+    eyebrow: 'System',
+    cta: 'Explore the system',
+    brief: 'The brief',
+    stack: 'Tech stack',
+    journeys: 'User journeys',
+    design: 'Design',
+    screens: 'Screens',
+    numbers: 'In numbers',
+    chapter: 'Chapter',
+    visit: 'Visit the live site',
+    end: 'End of the case study',
+    built: 'What it is built with',
+    flow: 'How it fits together',
+    outcome: 'Outcome',
+    palette: 'Colour',
+    type: 'Type',
+    principles: 'Principles',
+    desktop: 'On a desktop',
+    phone: 'On a phone',
+    highlights: 'Engineering highlights',
+  },
+} as const;
+
+/**
+ * The work page (/works), after Studio Mirage's: the selected work in two
+ * rows — the systems the studio engineers and the identities it designs —
+ * over a screening room whose screens play whatever is pointed at.
+ */
+export const worksPage = {
+  title: 'Selected work',
+  intro: 'Systems we engineer and identities we design, end to end.',
+  filters: { label: 'Filters', discipline: 'Discipline', industry: 'Industry', clear: 'Clear all', none: 'Nothing matches those filters yet.' },
+  nowShowing: 'Now showing',
+  rows: {
+    systems: {
+      id: 'systems',
+      number: '01',
+      title: 'Systems',
+      line: 'Websites, platforms and AI, engineered end to end.',
+      tags: ['Tech stack', 'User journeys', 'Website plan', 'Design'],
+    },
+    design: {
+      id: 'design',
+      number: '02',
+      title: 'Design',
+      line: 'Identity. Digital. Experience.',
+      tags: ['Brand identity', 'Packaging', 'Guidelines'],
+    },
+  },
+  /** The torn white teaser at the foot of the page. */
+  next: { overline: 'Next page', title: 'Your project, next.', cta: 'You are one click away', label: 'Book a meeting', href: '/contact' },
 } as const;
 
 /** The studio's fields, set in columns after Studio Mirage's expertise listing. */
@@ -253,7 +307,7 @@ export const nextPage = {
   /** What the travelling line says; the link itself reads as the label. */
   cta: 'You are one click away',
   label: 'Explore our work',
-  href: '#work',
+  href: '/works',
   /** The reel's turning carousel, played above the sheet while it's hovered. */
   clip: '/video/atlas-carousel.mp4',
 } as const;
@@ -271,8 +325,10 @@ export const deck = {
 
 /**
  * The booking page, after Studio Mirage's Cal.com scheduler. With a Cal.com
- * link set (NEXT_PUBLIC_CAL_LINK) the real scheduler loads; until then the
- * same layout takes requests by email.
+ * link set (NEXT_PUBLIC_CAL_LINK) the real scheduler loads; otherwise the
+ * studio's own: a picked time goes on the studio's Google Calendar with a
+ * Meet link, the visitor gets the invitation and the studio's inbox a note
+ * (app/api/booking). Until Google is connected it falls back to email.
  */
 export const booking = {
   studio: 'The Atlas Studio',
@@ -280,17 +336,40 @@ export const booking = {
   duration: '45m',
   minutes: 45,
   location: 'Google Meet',
-  email: 'km.anushree25@gmail.com',
+  email: 'contact.theatlasstudio@gmail.com',
   /** Start times in the studio's time zone (India, UTC+5:30), shown in each visitor's own. */
   slots: ['11:00', '11:45', '12:30', '14:30', '15:15', '16:00', '16:45', '17:30'],
   studioOffsetMinutes: 330,
   /** How far ahead requests can be made, in days. */
   horizon: 60,
-  form: { name: 'Your name', email: 'Email address', notes: 'Anything we should know?', back: 'Back', send: 'Request this time' },
+  form: {
+    name: 'Your name',
+    email: 'Email address',
+    notes: 'Anything we should know?',
+    back: 'Back',
+    send: 'Request this time',
+    sending: 'Booking your time…',
+  },
+  /** Booked: the meeting is on the studio's calendar and the invitation is on its way. */
+  booked: {
+    title: 'You’re booked',
+    body: 'It’s on our calendar. A Google Meet invitation is on its way to',
+    join: 'Join link',
+    ics: 'Add to my calendar',
+    again: 'Book another time',
+  },
+  /** Google not connected (or unreachable): the request opens in the visitor's email app instead. */
   sent: {
     title: 'Your request is ready to send',
     body: 'Your email app has opened with the time you picked. Send it, and we’ll confirm with a meeting link.',
     again: 'Pick another time',
   },
-  note: 'Requests go straight to the studio’s inbox.',
+  errors: {
+    taken: 'Someone has just booked that time. Please pick another.',
+    invalid: 'Please check your name and email address.',
+    limited: 'Too many requests in a row. Please try again in a few minutes.',
+  },
+  taken: 'Booked',
+  /** Under the booker: the first once bookings reach the calendar, the second while they go by email. */
+  note: { calendar: 'Bookings go straight to the studio’s calendar.', inbox: 'Requests go straight to the studio’s inbox.' },
 } as const;

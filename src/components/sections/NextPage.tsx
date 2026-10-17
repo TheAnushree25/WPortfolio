@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 import { nextPage } from '@/content/site';
 import { teaserHover } from '@/lib/footage';
@@ -14,9 +15,11 @@ const EASE = 0.15;
  * pointer in place of the cursor dot, a gradient line wakes along the bottom,
  * and the footer above hands its stage to the reel's turning carousel; the eye
  * watches the pointer wherever it is and blinks now and then. The whole sheet
- * is the link.
+ * is the link; each page names where it leads.
  */
-export function NextPage() {
+type Teaser = { overline: string; title: string; cta: string; label: string; href: string };
+
+export function NextPage({ content = nextPage }: { content?: Teaser }) {
   const zoneRef = useRef<HTMLAnchorElement>(null);
   const ctaRef = useRef<HTMLSpanElement>(null);
   const irisRef = useRef<HTMLSpanElement>(null);
@@ -115,27 +118,27 @@ export function NextPage() {
   }, []);
 
   return (
-    <section className="next-page relative z-10" aria-label={nextPage.overline}>
-      <a
+    <section className="next-page relative z-10" aria-label={content.overline}>
+      <Link
         ref={zoneRef}
-        href={nextPage.href}
-        aria-label={`${nextPage.label}: ${nextPage.title}`}
+        href={content.href}
+        aria-label={`${content.label}: ${content.title}`}
         data-cursor="hide"
         className="next-page-zone font-studio"
       >
         <span className="block">
-          <span className="next-page-overline">{nextPage.overline}</span>
-          <span className="next-page-title block">{nextPage.title}</span>
+          <span className="next-page-overline">{content.overline}</span>
+          <span className="next-page-title block">{content.title}</span>
         </span>
         <span className="next-page-cta">
-          <span ref={ctaRef}>{nextPage.cta}</span>
+          <span ref={ctaRef}>{content.cta}</span>
           <span className="blinky" aria-hidden>
             <span ref={irisRef} className="blinky-iris" />
             <span ref={eyeRef} className="blinky-eye" />
           </span>
         </span>
         <span className="next-page-line" aria-hidden />
-      </a>
+      </Link>
     </section>
   );
 }

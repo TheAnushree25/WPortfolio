@@ -6,6 +6,8 @@
  * The card itself (title, kind, shot) lives with the others in `site.ts`.
  */
 
+import type { SystemStudy } from './systems';
+
 export type Chapter = { readonly title: string; readonly page: number };
 
 type Edition = { readonly label: string; readonly deck: string; readonly chapters: readonly Chapter[] };
@@ -217,14 +219,36 @@ export type DeckPage = {
 /** A project's shot, as the card shows it. */
 export type Shot = { src: string; focus: string };
 
-/** Everything the viewer needs to show one project, assembled on the server. */
-export type ProjectData = {
+type ProjectBase = {
   slug: string;
   title: string;
   kind: string;
   summary: string;
   accent: string;
   cover: Shot;
-  editions: { label: string; pages: DeckPage[]; chapters: Chapter[] }[];
   next: { slug: string; title: string; kind: string; cover: Shot };
+};
+
+/** A design project: its deck (or decks), read page by page. */
+export type DeckProject = ProjectBase & {
+  discipline: 'design';
+  editions: { label: string; pages: DeckPage[]; chapters: Chapter[] }[];
+};
+
+/** A system: its case study, read chapter by chapter (content/systems.ts). */
+export type SystemProject = ProjectBase & {
+  discipline: 'system';
+  system: SystemCase;
+};
+
+/** Everything a viewer needs to show one project, assembled on the server. */
+export type ProjectData = DeckProject | SystemProject;
+
+/** A system's study with its screens, as the viewer reads it. */
+export type SystemCase = SystemStudy & { screens: Screen[] };
+
+/** One screen of a live site, as scripts/work/screens.mjs captured it. */
+export type Screen = DeckPage & {
+  device: 'desktop' | 'phone';
+  caption: string;
 };
