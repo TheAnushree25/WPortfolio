@@ -20,6 +20,9 @@ and the Atlas Studios palette are hers.
 | Project routes    | Parallel + intercepting routes (`@modal/(.)work/[slug]`) | Every project has a shareable, statically generated `/work/<slug>` page; opened from the home page it plays over it instead, so the back button closes it and the page underneath never reloads. |
 | Project pages     | PyMuPDF → WebP at two widths, served by `srcset` | Each PDF is rendered once at build time (`scripts/work/build.py`), so a 105 MB deck reads as 8 MB of instant pages; no image optimiser in the way. |
 | Viewer scroll     | A second Lenis on the viewer | The deck scrolls with the page's weighted feel, and chapter jumps glide or cut on the same clock. |
+| Work page         | CSS 3D + the page light     | Studio Mirage's /works: five screens on an arc (CSS 3D with trig functions, no WebGL library) over the living gradient. |
+| System screens    | Headless Chrome over CDP (`scripts/work/screens.mjs`) | Each live product is scrolled with real wheel events and captured at 2x; pictures are resized and encoded in the browser itself, so the script needs no packages. |
+| Bookings          | Google Calendar + Gmail over plain REST | A booked time goes on the studio's calendar with a Meet link and lands in its inbox; no SDK, so nothing new to install. |
 
 ## Getting started
 
@@ -44,10 +47,14 @@ src/
 │  ├─ page.tsx            Section order — the entire page composition
 │  ├─ contact/page.tsx    Book a meeting (Cal.com, or requests by email)
 │  ├─ deck/page.tsx       The deck, read over the living gradient
+│  ├─ works/page.tsx      The work page: systems and design, after Studio Mirage's /works
 │  ├─ work/[slug]/page.tsx  A project on its own page (shared links, reloads)
-│  ├─ @modal/             The slot a project fills when opened from the home page
-│  │  └─ (.)work/[slug]/page.tsx  Hands the project to the stage over the home page
-│  └─ globals.css         Design tokens (@theme) + typography utilities
+│  ├─ @modal/             The slot a project fills when opened from the home or work page
+│  │  └─ (.)work/[slug]/page.tsx  Hands the project to the stage over the page
+│  ├─ api/booking/        Books a meeting (route.ts) and reports busy times (availability/)
+│  ├─ globals.css         Design tokens (@theme) + typography utilities
+│  ├─ works.css           The work page: filters, screening room, index rows, rows of cards
+│  └─ system.css          The system viewer's chapters
 ├─ components/
 │  ├─ layout/             Chrome that persists across the page
 │  │  ├─ Navbar.tsx       Mirage's header: two links, a glowing contact pill, graded blur
@@ -76,9 +83,14 @@ src/
 │  │  └─ NextPage.tsx       The torn white teaser at the foot of the page
 │  ├─ contact/            The booking page: Booker, CalEmbed, RequestBooker
 │  ├─ deck/               The deck viewer
-│  ├─ work/               The project viewer
-│  │  ├─ ProjectStage.tsx   Lifts a card's shot to the screen and back; hosts the viewer
-│  │  ├─ ProjectViewer.tsx  Title card, pages, scroll-spy, chapter jumps, next project
+│  ├─ works/              The work page: WorksPage, ScreeningRoom (the arc), Filters
+│  ├─ work/               The project viewers
+│  │  ├─ CardRow.tsx        The pinned row of travelling cards (landing and work page)
+│  │  ├─ ProjectStage.tsx   Lifts a card's shot to the screen and back; hosts a viewer
+│  │  ├─ ProjectViewer.tsx  A design's deck: title card, pages, scroll-spy, chapter jumps
+│  │  ├─ SystemViewer.tsx   A system's case study, chapter by chapter
+│  │  ├─ system/            Its chapters: Brief, Stack (+ architecture), Plan, Journeys,
+│  │  │                     Design, Screens, Numbers; browser and phone frames; logos
 │  │  ├─ ViewerIndex.tsx    The index rail, the phone's pill and sheet, editions
 │  │  ├─ ViewerPage.tsx     One page (develops as it loads) and the ambient light
 │  │  └─ OpenProject.tsx    Rendered by the intercepted route: names the open project
@@ -87,11 +99,15 @@ src/
 │     └─ FocusText.tsx       Text that focuses in character by character
 ├─ content/
 │  ├─ site.ts             Every string and image URL on the page
-│  ├─ work.ts             Each project's decks: summary, accent colour, chapters
-│  ├─ projects.ts         Joins cards, studies and rendered pages (server only)
-│  └─ decks/*.json        Page sizes, tones and previews, written by the build script
+│  ├─ work.ts             Each design's decks: summary, accent colour, chapters
+│  ├─ systems.ts          Each system's case study: stack, architecture, plan, journeys…
+│  ├─ projects.ts         Joins cards, studies, pages and screens (server only)
+│  ├─ decks/*.json        Page sizes, tones and previews, written by the build script
+│  └─ screens/*.json      System screens, written by scripts/work/screens.mjs
 └─ lib/
    ├─ work.ts             Shared state between the row, the route and the stage
+   ├─ booking.ts          The booking rules both the page and the server keep
+   ├─ google.ts           Calendar and Gmail over REST (server only)
    ├─ motion.ts           Shared easing curves and the character focus-in
    ├─ reveal.ts           Cues a section's reveal as it comes on screen
    ├─ finale.ts           Hands the footer's scene geometry to the page light
@@ -178,6 +194,62 @@ in `content/work.ts` — a summary, an accent colour, and its chapters, each nam
 the page it starts on. A project can have more than one edition (FreightEasy has its
 presentation and its A4 brochure).
 
+### Systems
+
+The work page (`/works`) has a second row: the systems — websites, platforms and
+AI the studio engineers. Each opens a case study in the system viewer at
+`/work/<slug>`: the brief, the tech stack with its architecture, the site map, the
+user journeys, the design language, the screens and the numbers. The words live in
+`content/systems.ts`, counted from each system's own repository.
+
+The screens are captured from the live products:
+
+```bash
+node scripts/work/screens.mjs                 # all systems
+node scripts/work/screens.mjs shoku keeri     # just these
+```
+
+It drives a headless Google Chrome (set `CHROME_PATH` if it isn't in the usual
+place) and writes `public/work/systems/<slug>/NN.webp` (+ `NN-half.webp`) and
+`src/content/screens/<slug>.json`. Which pages, scroll positions and captions to
+take is the `SYSTEMS` list at the top of the script; the first desktop screen is
+the card and the title card's backdrop. Keeri's in-app screens are the
+screenshots its own docs publish, since the console sits behind a sign-in.
+
+To add a system: add its shots to `SYSTEMS` and run the script, import its JSON in
+`content/projects.ts`, and describe it in `content/systems.ts` (and add its slug to
+`systemOrder`).
+
+## Bookings
+
+`/contact` books meetings straight onto the studio's Google Calendar. A visitor
+picks a time and leaves a name and email; the server (`app/api/booking`) checks the
+time against the studio's slots and its calendar, creates the event with a Google
+Meet link (Google emails the visitor the invitation) and sends the studio's inbox,
+contact.theatlasstudio@gmail.com, a note it can reply to. Times already taken are
+left out of the calendar. Until Google is connected, or if it can't be reached,
+the page falls back to opening the visitor's email app with the request written.
+
+To connect it, once, signed in to Google as contact.theatlasstudio@gmail.com:
+
+1. In [Google Cloud](https://console.cloud.google.com), create a project and enable
+   the **Google Calendar API** and the **Gmail API**.
+2. Under **Google Auth Platform**, set up the consent screen (External), add the
+   scopes `calendar.events`, `calendar.freebusy` and `gmail.send`, and **publish the
+   app** to production. A testing-mode app's sign-in expires after seven days.
+   Unverified is fine for the studio's own account: Google shows a warning screen
+   once, and "Advanced, then Go to the app" continues.
+3. Under **Clients**, create an OAuth client of type **Desktop app**, and put its ID
+   and secret in `.env.local` as `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`.
+4. Run `node scripts/google/authorize.mjs`, sign in as the studio and allow access.
+   It writes `GOOGLE_REFRESH_TOKEN` into `.env.local` (never printing it) and checks
+   it can read the calendar. `--check` re-checks it later.
+5. Restart `npm run dev`. On Vercel, add the same three variables to the project.
+
+`.env.example` lists the optional settings: another calendar (`BOOKING_CALENDAR_ID`),
+another inbox (`BOOKING_NOTIFY_EMAIL`), or no invitation for the visitor
+(`BOOKING_INVITE_GUEST=false`).
+
 ## Motion inventory
 
 Each of these mirrors a specific behaviour in the reference:
@@ -198,5 +270,7 @@ Each of these mirrors a specific behaviour in the reference:
 - **Footer** — Mirage's links between hairlines, with a light that runs along the lines under the pointer and a frosted shift on hover; the credits line ends in a bouncing return-to-top arrow.
 - **Next page** — Mirage's white teaser, torn along its top edge: on hover the call to action follows the pointer and a gradient line wakes along the bottom; an eye watches the pointer and blinks every few seconds.
 - **Header** — Mirage's: the wordmark left, "Our works" and "About us" with a dot marking the part of the page in view, and a white "Contact us" pill with a turning blue glow, over a band of graded blur.
+- **Work page** — Studio Mirage's /works: the title and its glass filters (discipline and industry, as chips with a clear-all), then a screening room: five screens on an arc, standing on a floor that catches their light, leaning after the pointer. Left alone they run a programme of the work, one screen turning over at a time; pointing at an index row plays that kind of work on every screen, centre first. The index rows are Mirage's hairline list: the row under the pointer slides in and frosts while the other dims, and a light runs along the nearest hairline. Below, each kind of work is a row of cards travelling sideways like the landing's: the systems as screens, the identities as the landing's own posters, opening exactly as they do there. While a card is pointed at, the others step back and the row's heading names it.
+- **System viewer** — a system opens the way a deck does (its screen lifts off the row into the title card), then reads in chapters: the brief beside the facts, with the product in its browser tipping up to face the reader; the stack as lit tiles, layer by layer, and the architecture with light running along its wires; the site map drawing out from its root; the journeys, one person at a time, the line filling as each step lights; the palette that opens under the pointer and the typefaces set in themselves; the screens, a browser that stays in view and turns its pages with the reading; and the numbers, counted up as they arrive. The index, the bar, the chapter cuts and the next-project ending are the deck viewer's.
 
 All motion is disabled under `prefers-reduced-motion`.

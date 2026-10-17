@@ -6,7 +6,7 @@ import Lenis from 'lenis';
 import { useCallback, useEffect, useId, useMemo, useRef, useState, type CSSProperties, type MouseEvent } from 'react';
 import { AnimatePresence, motion, useReducedMotion, type Variants } from 'motion/react';
 import { works } from '@/content/site';
-import type { ProjectData } from '@/content/work';
+import type { DeckProject } from '@/content/work';
 import { ease } from '@/lib/motion';
 import { boxOf, type ShotBox } from '@/lib/work';
 import { cn } from '@/lib/utils';
@@ -46,7 +46,7 @@ function topWithin(element: HTMLElement | null, container: HTMLElement | null) {
   return top;
 }
 
-type Edition = ProjectData['editions'][number];
+type Edition = DeckProject['editions'][number];
 
 /** Each chapter's span of pages, and the chapter every page belongs to. */
 function lay(edition: Edition) {
@@ -75,7 +75,7 @@ const fade: Variants = {
 };
 
 type ProjectViewerProps = {
-  project: ProjectData;
+  project: DeckProject;
   /** `overlay` over the home page (the stage plays its entrance), or a `page` of its own. */
   mode: 'overlay' | 'page';
   /** Overlay: false while it waits unseen under the stage's shot; only the active viewer takes keys. */

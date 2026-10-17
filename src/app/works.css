@@ -1,0 +1,668 @@
+/* ------------------------------------------------------------------ *
+ * The work page — Studio Mirage's /works in the studio's light: the title
+ * and its glass filters, a screening room of five screens on an arc, the
+ * index of the two kinds of work in hairline rows, and each kind as a row of
+ * cards travelling sideways (systems as screens, identities as posters).
+ * ------------------------------------------------------------------ */
+@layer components {
+  .works-hero {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;
+    padding: calc(5.5rem + clamp(1.25rem, 5svh, 3.25rem)) 0 clamp(1.5rem, 5svh, 3rem);
+  }
+
+  .works-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 0 var(--pad-sides);
+  }
+
+  .works-title {
+    font-family: var(--font-studio);
+    font-size: clamp(1.9rem, 2.4vw, 2.5rem);
+    line-height: 1.1;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: rgb(255 255 255 / 0.95);
+  }
+
+  .works-intro {
+    max-width: 30rem;
+    margin-top: 0.65rem;
+    font-family: var(--font-studio);
+    font-size: clamp(0.92rem, 1vw, 1.04rem);
+    line-height: 1.5;
+    font-weight: 500;
+    color: rgb(255 255 255 / 0.58);
+  }
+
+  /* --- Filters: Mirage's glass pill and its frosted panel ---------------- */
+  .works-filters {
+    position: relative;
+    z-index: 30;
+    flex: none;
+  }
+
+  .works-filter-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.5rem 0.8rem 0.5rem 1.15rem;
+    border: 0.5px solid rgb(255 255 255 / 0.3);
+    border-radius: 20px;
+    background: rgb(255 255 255 / 0.1);
+    backdrop-filter: blur(20px);
+    color: var(--color-paper-soft);
+    font-family: var(--font-studio);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      border-color 0.2s ease,
+      background 0.2s ease;
+  }
+
+  .works-filter-btn:hover {
+    border-color: rgb(255 255 255 / 0.5);
+  }
+
+  .works-filter-btn.is-open {
+    border-color: rgb(255 255 255 / 0.6);
+    background: rgb(255 255 255 / 0.08);
+  }
+
+  .works-filter-chevron {
+    width: 0.62rem;
+    transition: transform 0.2s ease;
+  }
+
+  .works-filter-btn.is-open .works-filter-chevron {
+    transform: rotate(90deg);
+  }
+
+  .works-filter-count {
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: var(--color-paper-soft);
+    color: var(--color-night);
+    font-size: 0.62rem;
+    line-height: 1.6;
+  }
+
+  .works-filter-panel {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    overflow: hidden;
+    min-width: 10rem;
+    border: 0.5px solid rgb(255 255 255 / 0.2);
+    border-radius: 14px;
+    transform-origin: top right;
+    @media (width < 48rem) {
+      width: calc(100vw - 2 * var(--pad-sides));
+    }
+  }
+
+  .works-filter-panel:hover {
+    border-color: rgb(255 255 255 / 0.4);
+  }
+
+  .works-filter-glass {
+    position: absolute;
+    inset: 0;
+    background: rgb(2 9 35 / 0.6);
+    backdrop-filter: blur(16px);
+  }
+
+  .works-filter-columns {
+    position: relative;
+    display: flex;
+    gap: 3rem;
+    max-height: 70svh;
+    overflow-y: auto;
+    padding: 1.75rem 2.25rem;
+    @media (width < 48rem) {
+      flex-direction: column;
+      gap: 1.5rem;
+      padding: 1.25rem;
+    }
+  }
+
+  .works-filter-columns fieldset {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .works-filter-columns legend {
+    margin-bottom: 0.9rem;
+    font-family: var(--font-studio);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgb(255 255 255 / 0.45);
+  }
+
+  .works-filter-grid {
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    gap: 0.65rem 2rem;
+  }
+
+  .works-filter-option {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    text-align: left;
+    white-space: nowrap;
+    font-family: var(--font-studio);
+    font-size: 1rem;
+    color: var(--color-paper-soft);
+    opacity: 0.55;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+
+  .works-filter-option::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-sky);
+    box-shadow: 0 0 8px var(--color-sky);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .works-filter-option.is-on,
+  .works-filter-option:hover {
+    opacity: 1;
+  }
+
+  .works-filter-option.is-on::before {
+    opacity: 1;
+  }
+
+  /* The filters that are on, as chips under the title. */
+  .works-chips {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    overflow: hidden;
+    padding: 1.1rem var(--pad-sides) 0;
+  }
+
+  .works-chips-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .works-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem 0.75rem;
+    border: 0.5px solid rgb(255 255 255 / 0.3);
+    border-radius: 4px;
+    background: rgb(0 0 0 / 0.4);
+    color: var(--color-paper-soft);
+    font-family: var(--font-studio);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .works-chip svg {
+    width: 0.55rem;
+    opacity: 0.7;
+  }
+
+  .works-chips-clear {
+    flex: none;
+    padding: 0.45rem 1.15rem;
+    border: 1px solid rgb(255 255 255 / 0.3);
+    border-radius: 40px;
+    background: rgb(255 255 255 / 0.1);
+    color: var(--color-paper-soft);
+    font-family: var(--font-studio);
+    font-size: 0.75rem;
+    font-weight: 600;
+    opacity: 0.6;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+
+  .works-chips-clear:hover {
+    opacity: 1;
+  }
+
+  /* --- The screening room: five screens on an arc, standing on light ---- */
+  .screening {
+    position: relative;
+    flex: 1;
+    min-height: clamp(18rem, 44svh, 32rem);
+    margin-top: clamp(0.5rem, 2svh, 1.5rem);
+    perspective: 1700px;
+    perspective-origin: 50% 30%;
+    pointer-events: none;
+  }
+
+  .screening-stage {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    transform: rotateX(4deg);
+  }
+
+  /* Each screen sits on a circle around the viewer, turned to face them. */
+  .screening-screen {
+    --w: clamp(9rem, 17vw, 20rem);
+    --r: calc(var(--w) * 2.36);
+    --a: calc(var(--i) * 26deg);
+    position: absolute;
+    top: 42%;
+    left: 50%;
+    width: var(--w);
+    aspect-ratio: 16 / 10;
+    transform-style: preserve-3d;
+    transform: translate(-50%, -50%) translate3d(calc(sin(var(--a)) * var(--r)), 0, calc((1 - cos(var(--a))) * var(--r))) rotateY(calc(var(--a) * -1));
+    @media (width < 48rem) {
+      --w: 44vw;
+      --r: calc(var(--w) * 2.2);
+      top: 40%;
+    }
+  }
+
+  .screening-panel {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: 6px;
+    background: #050b1f;
+    box-shadow:
+      0 0 0 1px rgb(255 255 255 / 0.12),
+      0 30px 70px -24px rgb(0 0 0 / 0.75),
+      0 0 70px -12px rgb(10 144 254 / 0.32);
+  }
+
+  .screening-frame {
+    position: absolute;
+    inset: 0;
+  }
+
+  .screening-image {
+    object-fit: cover;
+    object-position: 50% 0%;
+    animation: screening-drift 14s ease-in-out infinite alternate;
+  }
+
+  /* A sheen across the glass, catching the room's light. */
+  .screening-glass {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, rgb(255 255 255 / 0.14), transparent 32%, transparent 70%, rgb(255 255 255 / 0.05));
+    mix-blend-mode: screen;
+  }
+
+  /* The screen's own picture, flipped onto the floor and blurred into light. */
+  .screening-reflection {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 75%;
+    margin-top: 5px;
+    background-size: cover;
+    background-position: center;
+    filter: blur(14px) saturate(1.5);
+    opacity: 0.5;
+    transform: scaleY(-1);
+    mask-image: linear-gradient(to top, rgb(0 0 0 / 0.95), transparent 80%);
+  }
+
+  /* The floor: a pool of blue light the screens stand in, under a horizon line. */
+  .screening-floor {
+    position: absolute;
+    top: calc(42% + var(--floor-drop, 5.2vw));
+    left: -15%;
+    right: -15%;
+    height: 55%;
+    background:
+      radial-gradient(48% 34% at 50% 6%, rgb(10 144 254 / 0.24), rgb(9 92 251 / 0.08) 50%, transparent 78%),
+      linear-gradient(to bottom, rgb(2 9 35 / 0), rgb(2 9 35 / 0.55));
+    transform: translateZ(-1px);
+    @media (width < 48rem) {
+      --floor-drop: 14vw;
+    }
+  }
+
+  .screening-floor::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgb(120 190 255 / 0.55), transparent);
+    box-shadow: 0 0 18px rgb(10 144 254 / 0.6);
+  }
+
+  .screening-caption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0.25rem;
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.85rem;
+    padding: 0 var(--pad-sides);
+    font-family: var(--font-studio);
+  }
+
+  .screening-caption-label {
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: rgb(255 255 255 / 0.42);
+  }
+
+  .screening-caption-roll {
+    display: inline-grid;
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  .screening-caption-title {
+    grid-area: 1 / 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--color-paper-soft);
+  }
+
+  .screening-caption-kind {
+    font-weight: 500;
+    color: rgb(255 255 255 / 0.5);
+    @media (width < 48rem) {
+      display: none;
+    }
+  }
+
+  /* --- The index: Mirage's hairline rows, one per kind of work ----------- */
+  .works-index {
+    position: relative;
+    margin-top: clamp(1.25rem, 3.5svh, 2.5rem);
+    --mx: -9999px;
+  }
+
+  /* Rows rest at 80%; the one under the pointer frosts and slides in, the other steps back.
+     (The dimming is on the link: the row itself carries its entrance's inline opacity.) */
+  .works-index-item {
+    position: relative;
+    background: linear-gradient(to left, rgb(255 255 255 / 0), rgb(255 255 255 / 0) 120%);
+    transition:
+      padding 0.2s ease,
+      background 1s linear;
+  }
+
+  .works-index-item > .works-index-link {
+    opacity: 0.8;
+    transition: opacity 0.4s ease;
+  }
+
+  @media (hover: hover) {
+    .works-index:hover .works-index-item:not(:hover) > .works-index-link {
+      opacity: 0.4;
+    }
+
+    .works-index-item:hover {
+      padding-inline: 20px;
+      background: linear-gradient(to left, rgb(255 255 255 / 0.05), rgb(255 255 255 / 0.25) 120%);
+      backdrop-filter: blur(8px);
+      transition: all 0.4s linear;
+    }
+
+    .works-index-item:hover > .works-index-link {
+      opacity: 1;
+    }
+  }
+
+  .works-index-item.is-empty > .works-index-link {
+    opacity: 0.3;
+  }
+
+  .works-index-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgb(255 255 255 / 0.1);
+  }
+
+  /* A light that runs along the hairline nearest the pointer. */
+  .works-index-line::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(260px 1px at var(--mx) 50%, rgb(255 255 255 / 0.95), transparent);
+    opacity: var(--glow, 0);
+    transition: opacity 0.3s ease;
+  }
+
+  .works-index-end {
+    position: relative;
+    height: 0;
+  }
+
+  .works-index-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 22px var(--pad-sides);
+    color: var(--color-paper-soft);
+    font-family: var(--font-studio);
+  }
+
+  .works-index-name {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+  }
+
+  .works-index-num {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    font-variant-numeric: tabular-nums;
+    color: rgb(255 255 255 / 0.45);
+  }
+
+  .works-index-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    transition: font-size 0.4s linear;
+  }
+
+  @media (hover: hover) {
+    .works-index-item:hover .works-index-title {
+      font-size: 1.25rem;
+    }
+  }
+
+  .works-index-infos {
+    display: flex;
+    flex: 1 1 50%;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.6rem;
+  }
+
+  .works-index-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.6rem;
+    @media (width < 48rem) {
+      display: none;
+    }
+  }
+
+  .works-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.32rem 0.62rem;
+    border: 0.5px solid rgb(255 255 255 / 0.3);
+    border-radius: 4px;
+    background: rgb(0 0 0 / 0.45);
+    font-family: var(--font-studio);
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+    color: rgb(255 255 255 / 0.94);
+  }
+
+  .works-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.38rem 0.9rem;
+    border: 0.5px solid rgb(10 144 254 / 0.7);
+    border-radius: 99px;
+    background: rgb(0 0 0 / 0.6);
+    font-family: var(--font-studio);
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    color: #5ab4ff;
+  }
+
+  .works-empty {
+    padding: 2rem var(--pad-sides) 0;
+    text-align: center;
+    font-family: var(--font-studio);
+    font-size: 0.95rem;
+    color: rgb(255 255 255 / 0.6);
+  }
+
+  /* --- A row's heading, in Mirage's list style ---------------------------- */
+  .works-band-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    padding: 0 var(--pad-content) clamp(1rem, 3svh, 2rem);
+  }
+
+  .works-band-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.6rem 1.1rem;
+  }
+
+  .works-band-num {
+    font-family: var(--font-studio);
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    color: #5ab4ff;
+  }
+
+  .works-band-title h2 {
+    font-family: var(--font-studio);
+    font-size: clamp(1.6rem, 2.3vw, 2.06rem);
+    line-height: 1.2;
+    font-weight: 400;
+    color: rgb(255 255 255 / 0.95);
+  }
+
+  .works-band-line {
+    font-family: var(--font-studio);
+    font-size: 1rem;
+    font-weight: 500;
+    color: rgb(255 255 255 / 0.58);
+  }
+
+  .works-band-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 2rem;
+  }
+
+  .works-band-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    @media (width < 48rem) {
+      display: none;
+    }
+  }
+
+  .works-band-now {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    white-space: nowrap;
+    font-family: var(--font-studio);
+  }
+
+  .works-band-now-title {
+    font-weight: 700;
+    color: var(--color-paper-soft);
+  }
+
+  .works-band-now-kind {
+    font-size: 0.85rem;
+    color: rgb(255 255 255 / 0.55);
+    @media (width < 64rem) {
+      display: none;
+    }
+  }
+
+  .works-industry {
+    padding: 0.32rem 0.75rem;
+    border: 0.5px solid var(--industry);
+    border-radius: 99px;
+    background: rgb(0 0 0 / 0.6);
+    font-family: var(--font-studio);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--industry);
+  }
+
+  /* Mirage's index: while one card is pointed at, the rest step back. */
+  .works-dim ul > li {
+    transition: filter 0.45s ease;
+  }
+
+  @media (hover: hover) {
+    .works-dim ul:has(> li:hover) > li:not(:hover) {
+      filter: brightness(0.42) saturate(0.6);
+    }
+  }
+}
+
+@keyframes screening-drift {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.07) translateY(-2%);
+  }
+}
