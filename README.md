@@ -22,7 +22,7 @@ and the Atlas Studios palette are hers.
 | Viewer scroll     | A second Lenis on the viewer | The deck scrolls with the page's weighted feel, and chapter jumps glide or cut on the same clock. |
 | Work page         | CSS 3D + the page light     | Studio Mirage's /works: five screens on an arc (CSS 3D with trig functions, no WebGL library) over the living gradient. |
 | System screens    | Headless Chrome over CDP (`scripts/work/screens.mjs`) | Each live product is scrolled with real wheel events and captured at 2x; pictures are resized and encoded in the browser itself, so the script needs no packages. |
-| Bookings          | Google Calendar + Gmail over plain REST | A booked time goes on the studio's calendar with a Meet link and lands in its inbox; no SDK, so nothing new to install. |
+| Bookings          | Calendly, pre-filled from the site's own form | Calendly owns the studio's times, takes one booking per slot and sends every email; the visitor types their details once, in the studio's form. No package: Calendly's widget script is loaded on the page. |
 
 ## Getting started
 
@@ -34,9 +34,9 @@ npm run lint     # eslint
 npm run typecheck
 ```
 
-Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_CAL_LINK` to the studio's
-Cal.com booking link (`username/event-slug`) to load the real scheduler on
-`/contact`; left empty, the page takes booking requests by email.
+Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_CALENDLY_URL` to the
+studio's Calendly event link to take bookings on `/contact` (see "Bookings");
+left empty, the page takes booking requests by email.
 
 ## Structure
 
@@ -81,7 +81,8 @@ src/
 │  │  ├─ Testimonials.tsx   Stacked glass testimonial cards
 │  │  ├─ Finale.tsx         The footer: wordmark from sand, the globe, links, credits
 │  │  └─ NextPage.tsx       The torn white teaser at the foot of the page
-│  ├─ contact/            The booking page: Booker, CalEmbed, RequestBooker
+│  ├─ contact/            The booking page: Booker, CalendlyBooker (the form, then Calendly),
+│  │                      MeetingDetails, and the fallbacks CalEmbed and RequestBooker
 │  ├─ deck/               The deck viewer
 │  ├─ works/              The work page: WorksPage, ScreeningRoom (the arc), Filters
 │  ├─ work/               The project viewers
@@ -222,13 +223,63 @@ To add a system: add its shots to `SYSTEMS` and run the script, import its JSON 
 
 ## Bookings
 
-`/contact` books meetings straight onto the studio's Google Calendar. A visitor
-picks a time and leaves a name and email; the server (`app/api/booking`) checks the
-time against the studio's slots and its calendar, creates the event with a Google
-Meet link (Google emails the visitor the invitation) and sends the studio's inbox,
-contact.theatlasstudio@gmail.com, a note it can reply to. Times already taken are
-left out of the calendar. Until Google is connected, or if it can't be reached,
-the page falls back to opening the visitor's email app with the request written.
+`/contact` books meetings through Calendly. The visitor first fills in the studio's
+own form (name, email, anything we should know), then picks a time in Calendly's
+calendar, shown on the page with those answers already in its form, so nothing is
+typed twice (`components/contact/CalendlyBooker.tsx`). Pressing
+Schedule books it. Calendly takes one booking per slot, so of two visitors on the
+same time the second is turned away. It puts the meeting on the studio's Google
+Calendar with a Meet link, sends the visitor a calendar invitation, and emails the
+studio their answers.
+
+To connect it, set `NEXT_PUBLIC_CALENDLY_URL` to the event's link
+(`https://calendly.com/theatlasstudio/meeting`) in `.env.local` and on both Vercel
+projects, then rebuild: the value is written into the page when it's built. The
+Calendly event must be:
+
+- **One-on-one**, so each slot takes a single booking.
+- On **Google Meet**, with the studio's Google Calendar connected both to check for
+  conflicts and to add events to.
+- Sending invitees a **calendar invitation**.
+- Asking **Anything we should know?** as its first question, after name and
+  email. Calendly fills its questions by position (`a1` is the first), so the
+  site's answer only lands in the right place while it stays first.
+
+The studio manages its times in Calendly: weekly hours, date-specific hours, and
+anything marked busy in its Google Calendar.
+
+### Cancellations
+
+- **The studio cancels** in Calendly (Calendar → the meeting → Cancel), or deletes the
+  meeting in Google Calendar and sends the cancellation. Either way Calendly cancels the
+  booking and offers the time again, because the studio's calendar is connected with
+  "Automatically sync changes from this calendar to Calendly". The client's invitation
+  is withdrawn.
+- **The client cancels or reschedules** with the links in their invitation. Calendly
+  updates the calendar and emails the studio.
+- **The client answers "No"** to the invitation. Calendly doesn't act on that, so
+  `scripts/bookings/decline-guard.gs`, a Google Apps Script running in the studio's
+  account every five minutes, deletes any upcoming Calendly meeting whose guests have
+  all declined. Calendly then cancels the booking. The script writes the client a note
+  with a link to book again, and tells the studio. To set it up, sign in to
+  script.google.com as the studio, create a project and paste the file in. Add the
+  "Google Calendar API" service (as `Calendar`), then run `install` once and allow
+  access.
+
+### Without Calendly
+
+With no Calendly link, `/contact` loads Cal.com's scheduler if `NEXT_PUBLIC_CAL_LINK`
+is set, and otherwise the studio's own booker, which books meetings straight onto the
+studio's Google Calendar. Don't connect Google while Calendly is set: two systems
+taking bookings can both accept the same time.
+
+In the studio's own booker, a visitor picks a time and leaves a name and email; the
+server (`app/api/booking`) checks the time against the studio's slots and its
+calendar, creates the event with a Google Meet link (Google emails the visitor the
+invitation) and sends the studio's inbox, contact.theatlasstudio@gmail.com, a note it
+can reply to. Times already taken are left out of the calendar. Until Google is
+connected, or if it can't be reached, the page falls back to opening the visitor's
+email app with the request written.
 
 To connect it, once, signed in to Google as contact.theatlasstudio@gmail.com:
 
