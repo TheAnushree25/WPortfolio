@@ -95,15 +95,6 @@ const SYSTEMS = {
     { image: 'https://maplefurnishers.keeri.in/docs/screenshots/keeri-products-filters-390.png', device: 'phone', caption: 'Filters, in a sheet' },
     { url: 'https://maplefurnishers.keeri.in/login', device: 'phone', caption: 'The branded sign-in on a phone' },
   ],
-  'madhusudan-voice': [
-    { url: 'https://msva.maplestudios.co.in/', wait: 5000, caption: 'Live call data: every call, numbers masked' },
-    { url: 'https://msva.maplestudios.co.in/', click: 'Sample analytics', caption: 'Sample analytics: answered, missed and unanswered' },
-    { url: 'https://msva.maplestudios.co.in/', click: 'Platform Flow', caption: 'The platform flow, end to end' },
-    { url: 'https://msva.maplestudios.co.in/console.html', caption: 'The support console’s sign-in' },
-    { url: 'https://msva.maplestudios.co.in/guide.html', caption: 'The user and developer guide' },
-    { url: 'https://msva.maplestudios.co.in/', device: 'phone', caption: 'The demo app on a phone' },
-    { url: 'https://msva.maplestudios.co.in/console.html', device: 'phone', caption: 'Console sign-in on a phone' },
-  ],
   'ishita-traders': [
     { url: 'https://ishita-traders.vercel.app/products', caption: 'The catalogue: UTL, Exide and Microtek' },
     { url: 'https://ishita-traders.vercel.app/products', y: 800, caption: 'Every product with its key specs and a dealer-price button' },

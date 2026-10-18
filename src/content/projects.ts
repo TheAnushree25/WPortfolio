@@ -13,7 +13,6 @@ import mapleFurnishersScreens from './screens/maple-furnishers.json';
 import mapleStudiosScreens from './screens/maple-studios.json';
 import shokuScreens from './screens/shoku.json';
 import keeriScreens from './screens/keeri.json';
-import madhusudanScreens from './screens/madhusudan-voice.json';
 import ishitaScreens from './screens/ishita-traders.json';
 
 /**
@@ -38,7 +37,6 @@ const screens = {
   'maple-studios': mapleStudiosScreens,
   shoku: shokuScreens,
   keeri: keeriScreens,
-  'madhusudan-voice': madhusudanScreens,
   'ishita-traders': ishitaScreens,
 } as Record<string, { screens: Screen[] }>;
 
