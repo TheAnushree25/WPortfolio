@@ -324,15 +324,19 @@ export const deck = {
 } as const;
 
 /**
- * The booking page, after Studio Mirage's Cal.com scheduler. With a Cal.com
- * link set (NEXT_PUBLIC_CAL_LINK) the real scheduler loads; otherwise the
- * studio's own: a picked time goes on the studio's Google Calendar with a
- * Meet link, the visitor gets the invitation and the studio's inbox a note
- * (app/api/booking). Until Google is connected it falls back to email.
+ * The booking page, after Studio Mirage's Cal.com scheduler. With a Calendly
+ * link set (NEXT_PUBLIC_CALENDLY_URL) the visitor fills in the studio's form,
+ * then books in Calendly's calendar with those answers already in it; Calendly
+ * owns the slots, the bookings and every email. Without it, a Cal.com link
+ * (NEXT_PUBLIC_CAL_LINK) loads that scheduler; otherwise the studio's own: a
+ * picked time goes on the studio's Google Calendar with a Meet link, the
+ * visitor gets the invitation and the studio's inbox a note (app/api/booking).
+ * Until Google is connected it falls back to email.
  */
 export const booking = {
   studio: 'The Atlas Studio',
-  title: 'Our next meeting',
+  /** The Calendly event's name, so the page and the invitation agree. */
+  title: 'Discussion Meeting',
   duration: '45m',
   minutes: 45,
   location: 'Google Meet',
@@ -342,13 +346,29 @@ export const booking = {
   studioOffsetMinutes: 330,
   /** How far ahead requests can be made, in days. */
   horizon: 60,
+  /**
+   * The form. With Calendly, `notes` fills the Calendly event's first invitee
+   * question (a1), so that question must stay first there.
+   */
   form: {
     name: 'Your name',
     email: 'Email address',
     notes: 'Anything we should know?',
+    next: 'Pick a time',
     back: 'Back',
     send: 'Request this time',
     sending: 'Booking your time…',
+  },
+  /** Calendly's step: the calendar, with the visitor's details handed over. */
+  calendly: {
+    intro: 'Tell us a little about you, then pick a time.',
+    as: 'Booking as',
+    edit: 'Change my details',
+    loading: 'Loading the calendar…',
+    failed: 'The calendar didn’t load.',
+    open: 'Open it on Calendly',
+    or: 'or',
+    write: 'email us',
   },
   /** Booked: the meeting is on the studio's calendar and the invitation is on its way. */
   booked: {
