@@ -1,0 +1,22 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	// The site's name on Cloudflare: its Worker, and the start of its address (atlas-studios.<you>.workers.dev).
+	"name": "atlas-studios",
+	// The program Cloudflare runs: the site, as the adapter builds it.
+	"main": ".open-next/worker.js",
+	// Which version of Cloudflare's engine the site expects, with Node.js compatibility switched on.
+	"compatibility_date": "2026-08-01",
+	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+	// Everything visitors download as-is (pages, scripts, images, videos), served straight from Cloudflare's network.
+	"assets": {
+		"directory": ".open-next/assets",
+		"binding": "ASSETS"
+	},
+	"services": [
+		{
+			// Lets the site reach itself, which the adapter's caching uses. Must match "name" above.
+			"binding": "WORKER_SELF_REFERENCE",
+			"service": "atlas-studios"
+		}
+	]
+}
