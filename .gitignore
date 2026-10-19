@@ -17,5 +17,10 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 
+# Cloudflare: the adapter's build output, Wrangler's local state and local secrets
+.open-next/
+.wrangler/
+.dev.vars*
+
 # Local layout dumps used while matching the reference site
 .analysis/

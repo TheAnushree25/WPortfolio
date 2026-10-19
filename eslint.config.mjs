@@ -8,7 +8,8 @@ const __dirname = dirname(__filename);
 const compat = new FlatCompat({ baseDirectory: __dirname });
 
 const eslintConfig = [
-  { ignores: ['.next/**', 'node_modules/**', '.analysis/**'] },
+  // Generated: Next's build and its types file, and the Cloudflare adapter's and Wrangler's output.
+  { ignores: ['.next/**', 'node_modules/**', '.analysis/**', 'next-env.d.ts', '.open-next/**', '.wrangler/**'] },
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
 ];
 
