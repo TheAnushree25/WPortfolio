@@ -106,7 +106,8 @@ function block(event: Event) {
 }
 
 function blockKeys(event: KeyboardEvent) {
-  const target = event.target as HTMLElement | null;
+  // Keys sent to the window or the document itself have no element to look inside.
+  const target = event.target instanceof Element ? event.target : null;
   if (target?.closest('input, textarea, select, [contenteditable="true"]')) return;
   // Space still presses a focused button; it only scrolls from the page itself.
   if (event.key === ' ' && target?.closest('button, a, [role="button"]')) return;

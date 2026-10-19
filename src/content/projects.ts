@@ -14,6 +14,7 @@ import mapleStudiosScreens from './screens/maple-studios.json';
 import shokuScreens from './screens/shoku.json';
 import keeriScreens from './screens/keeri.json';
 import ishitaScreens from './screens/ishita-traders.json';
+import saajScreens from './screens/saaj.json';
 
 /**
  * Joins each card with its study and the pages or screens rendered for it.
@@ -38,6 +39,7 @@ const screens = {
   shoku: shokuScreens,
   keeri: keeriScreens,
   'ishita-traders': ishitaScreens,
+  saaj: saajScreens,
 } as Record<string, { screens: Screen[] }>;
 
 /** The design cards that open a deck, in the order the row shows them. */

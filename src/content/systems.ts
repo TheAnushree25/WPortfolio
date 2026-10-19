@@ -48,6 +48,11 @@ export type SystemStudy = {
   /** For the work page's filters. */
   readonly industry: string;
   readonly year: string;
+  /**
+   * What the product is used on: a site, read in a browser (the default), or an
+   * app on a phone, whose screens then play in a phone instead of a browser.
+   */
+  readonly platform?: 'web' | 'app';
   readonly live: { readonly href: string; readonly label: string } | null;
   /** Two or three sentences for the title card. */
   readonly summary: string;
@@ -1180,13 +1185,244 @@ const ishita: SystemStudy = {
   ],
 };
 
+const saaj: SystemStudy = {
+  title: 'Saaj',
+  kind: 'Bridal beauty · Android app & booking platform',
+  industry: 'Weddings',
+  year: '2026',
+  platform: 'app',
+  live: null,
+  summary:
+    'Everything she needs for her big day, in one app: bridal artists to discover through reels and portfolios, services to shape into a package of her own, and a date the artist really has free, held while she pays the advance.',
+  brief:
+    'A bridal beauty marketplace that needed brides to trust it with the most photographed day of their lives. We built an Android app that reads like a bridal magazine, and behind it an API that cannot double-book an artist: real availability, a held slot, an advance through Razorpay, refunds by the rules, and panels for the artists and the team.',
+  accent: '#ea95ab',
+  facts: [
+    { label: 'Product', value: 'SAJ Bridal Beauty, India' },
+    { label: 'Scope', value: 'Android app, booking API, artist and admin panels' },
+    { label: 'Platform', value: 'Expo · React Native · Hono · PostgreSQL' },
+    { label: 'Year', value: '2026' },
+  ],
+  stack: [
+    {
+      layer: 'App',
+      items: [
+        { name: 'Expo SDK 57', detail: 'React Native 0.86, Expo Router' },
+        { name: 'React 19', detail: 'With the React Compiler', icon: 'react' },
+        { name: 'TypeScript', detail: 'Strict, app and API', icon: 'typescript' },
+        { name: 'NativeWind', detail: 'Tailwind tokens, scaled to every phone', icon: 'tailwindcss' },
+      ],
+    },
+    {
+      layer: 'Feel',
+      items: [
+        { name: 'Reanimated 4', detail: 'Gentle entrances, press springs, petals' },
+        { name: 'expo-image', detail: 'Bridal photography, cached' },
+        { name: 'Glass & haptics', detail: 'Frosted where the platform can blur' },
+      ],
+    },
+    {
+      layer: 'Data & forms',
+      items: [
+        { name: 'TanStack Query', detail: 'The catalogue cached, refreshed on focus' },
+        { name: 'React Hook Form + Zod', detail: 'The API’s own words on every field', icon: 'zod' },
+        { name: 'Secure Store', detail: 'The refresh token; the access token never leaves memory' },
+      ],
+    },
+    {
+      layer: 'API',
+      items: [
+        { name: 'Hono 4', detail: '83 endpoints in 8 modules' },
+        { name: 'Drizzle ORM', detail: '21 tables, 3 migrations', icon: 'drizzle' },
+        { name: 'PostgreSQL', detail: 'An exclusion constraint against double bookings', icon: 'postgresql' },
+        { name: 'pg-boss', detail: 'Expiring holds every minute, reminders every hour' },
+        { name: 'Argon2 + JOSE', detail: 'Hashed passwords, rotating sign-in' },
+      ],
+    },
+    {
+      layer: 'Money & messages',
+      items: [
+        { name: 'Razorpay', detail: 'A 20% advance, verified webhooks, refunds', icon: 'razorpay' },
+        { name: 'Expo push + SMS', detail: 'Booking news and reset codes' },
+        { name: 'Cloudinary', detail: 'Signed portfolio uploads' },
+      ],
+    },
+    {
+      layer: 'Delivery',
+      items: [
+        { name: 'EAS Build', detail: 'Android APKs for testing, store builds' },
+        { name: 'Render', detail: 'The API and its database, in Singapore' },
+        { name: 'Vercel', detail: 'A web preview of every push', icon: 'vercel' },
+        { name: 'GitHub Actions', detail: 'Types, lint, Android styles and bundle', icon: 'githubactions' },
+        { name: 'Vitest', detail: '35 API tests', icon: 'vitest' },
+      ],
+    },
+  ],
+  architecture: {
+    tiers: [
+      {
+        label: 'People',
+        nodes: [
+          { id: 'bride', label: 'The bride’s app', detail: 'Android, 13 screens' },
+          { id: 'artist', label: 'Artists', detail: 'Services, hours, portfolio, earnings' },
+          { id: 'team', label: 'The Saaj team', detail: 'Approvals, catalogue, payments' },
+        ],
+      },
+      { label: 'One API', nodes: [{ id: 'api', label: 'Saaj API', detail: 'Hono on Node 22, three role walls' }] },
+      {
+        label: 'Inside',
+        nodes: [
+          { id: 'engine', label: 'Booking engine', detail: 'Slots, holds, prices from the database' },
+          { id: 'jobs', label: 'pg-boss jobs', detail: 'Free expired holds, send reminders' },
+        ],
+      },
+      { label: 'Data', nodes: [{ id: 'db', label: 'PostgreSQL', detail: '21 tables and an audit log' }] },
+      {
+        label: 'Outside',
+        nodes: [
+          { id: 'razorpay', label: 'Razorpay', detail: 'Advance, webhooks, refunds' },
+          { id: 'notify', label: 'Push and SMS', detail: 'Expo push, reset codes' },
+          { id: 'cloudinary', label: 'Cloudinary', detail: 'Portfolio photographs' },
+        ],
+      },
+    ],
+    links: [
+      ['bride', 'api'],
+      ['artist', 'api'],
+      ['team', 'api'],
+      ['api', 'engine'],
+      ['api', 'jobs'],
+      ['engine', 'db'],
+      ['jobs', 'db'],
+      ['engine', 'razorpay'],
+      ['jobs', 'notify'],
+      ['api', 'cloudinary'],
+    ],
+  },
+  plan: {
+    title: 'App map',
+    root: {
+      label: 'Saaj',
+      detail: 'The bride’s app, on Android',
+      children: [
+        {
+          label: 'Welcome',
+          detail: 'A cinematic start',
+          children: [{ label: 'The opening', detail: 'SAJ, then Begin' }, { label: 'Sign in', detail: 'Mobile number and password' }, { label: 'Create an account' }],
+        },
+        {
+          label: 'Discover',
+          detail: 'The work before the booking',
+          children: [
+            { label: 'Home', detail: 'Her next booking, search, trending looks' },
+            { label: 'Explore', detail: '24 reels to swipe, like and save' },
+            { label: 'An artist', detail: 'Portfolio by occasion, reviews' },
+            { label: 'A service', detail: 'What’s included, add-ons' },
+          ],
+        },
+        {
+          label: 'Book',
+          detail: 'Three steps and a receipt',
+          children: [
+            { label: 'Book your moment', detail: 'A package, a date and time, the advance' },
+            { label: 'Confirmation', detail: 'Your moment is booked' },
+            { label: 'Tracking', detail: 'Confirmed to completed' },
+          ],
+        },
+        {
+          label: 'Hers',
+          detail: 'The tabs',
+          children: [{ label: 'Bookings', detail: 'Upcoming, completed, cancelled' }, { label: 'Saved artists' }, { label: 'Profile' }],
+        },
+      ],
+    },
+  },
+  journeys: [
+    {
+      actor: 'Bride',
+      goal: 'From a look she loves to her booked moment.',
+      steps: [
+        { title: 'Reels and portfolios', detail: 'A bridal edit to swipe, then the artist’s work by occasion, her story and her reviews.' },
+        { title: 'Make it yours', detail: 'Add-ons, or a package of her own, priced by the server, never by the phone.' },
+        { title: 'A date, then a time', detail: 'Only slots the artist really has: her hours, her time off, travel buffers, 12 hours’ notice.' },
+        { title: 'Held while she pays', detail: 'The slot is hers for 15 minutes while a 20% advance goes through Razorpay.' },
+        { title: 'Confirmed', detail: 'Razorpay’s webhook is verified, the booking confirmed, and she and her artist are told.' },
+        { title: 'Followed to the day', detail: 'From confirmed to the artist assigned, in progress and completed.' },
+      ],
+      outcome: 'A booking no other bride can take, paid, confirmed and followed to the day.',
+    },
+    {
+      actor: 'Artist',
+      goal: 'Become bookable.',
+      steps: [
+        { title: 'Sign up as an artist', detail: 'Her studio, her speciality and her city.' },
+        { title: 'Her menu', detail: 'Services and prices from the catalogue, made her own.' },
+        { title: 'Her time', detail: 'Weekly working hours, never overlapping, and time off.' },
+        { title: 'Her work', detail: 'Portfolio photographs, uploaded straight to Cloudinary.' },
+        { title: 'Approved', detail: 'The team reviews the profile, and she goes live.' },
+      ],
+      outcome: 'Live in the app, with only her real hours on sale.',
+    },
+    {
+      actor: 'Saaj team',
+      goal: 'Keep it fair.',
+      steps: [
+        { title: 'Approve artists', detail: 'Approve, reject, suspend or reinstate, with a reason.' },
+        { title: 'Curate', detail: 'Categories, services and portfolio pieces.' },
+        { title: 'Watch the money', detail: 'Every booking and payment, and the refunds the rules decided.' },
+        { title: 'On the record', detail: 'Every action the team takes lands in the audit log.' },
+      ],
+      outcome: 'A marketplace run in the open, every change on record.',
+    },
+  ],
+  design: {
+    palette: [
+      { hex: '#75002E', name: 'Berry', role: 'The opening, primary buttons, the booking card' },
+      { hex: '#400314', name: 'Berry deep', role: 'Shade over photographs and reels' },
+      { hex: '#FBF6F1', name: 'Ivory', role: 'The app’s ground' },
+      { hex: '#F0DDD3', name: 'Nude', role: 'Soft panels and fields' },
+      { hex: '#FEBEC1', name: 'Blush', role: 'Chosen add-ons and badges' },
+      { hex: '#B36F82', name: 'Rose', role: 'Quiet accents' },
+    ],
+    faces: [
+      { family: 'DM Serif Display', role: 'Headlines, names and prices', sample: 'Everything she needs for her big day.', stack: "'DM Serif Display', Georgia, serif", google: 'DM+Serif+Display' },
+      { family: 'Manrope', role: 'Interface, labels and forms', sample: 'GOOD AFTERNOON, BRIDE-TO-BE', stack: "'Manrope', sans-serif", google: 'Manrope:wght@400;600' },
+    ],
+    notes: [
+      'Designed at 390 wide, with every size scaled to the phone: a small Android and a large one see the same composition.',
+      'Photography leads: portfolios and reels run edge to edge, and the interface floats over them in glass.',
+      'Glass where the platform can blur; a frosted stand-in on Android, where live blur is still experimental.',
+      'On a laptop the app draws itself in a 390 × 844 phone, so every review sees it as a bride will.',
+    ],
+  },
+  figures: [
+    { value: '13', label: 'screens in the bride’s app' },
+    { value: '83', label: 'API endpoints in 8 modules' },
+    { value: '21', label: 'database tables' },
+    { value: '6', label: 'booking states, from held to completed' },
+    { value: '35', label: 'API tests' },
+    { value: '12k', label: 'lines of TypeScript' },
+  ],
+  highlights: [
+    { title: 'Double booking, impossible', detail: 'A PostgreSQL exclusion constraint over each artist’s time, travel buffer included: of two brides racing for one slot, exactly one wins.' },
+    { title: 'Holds that let go', detail: 'A slot is held for 15 minutes while she pays; a job every minute frees expired holds for the next bride.' },
+    { title: 'Payments that can’t be forged', detail: 'Razorpay’s signature is checked when the app returns and on every webhook, and a repeated delivery changes nothing.' },
+    { title: 'Late money, returned', detail: 'A payment that lands after someone else took the slot is refunded in full, without anyone asking.' },
+    { title: 'Cancellations by the rules', detail: 'Cancel more than 72 hours ahead and the advance comes back in full; closer than that, the artist keeps it.' },
+    { title: 'Retries that don’t duplicate', detail: 'Each booking carries an idempotency key, so an app retrying on a weak signal gets the same booking back.' },
+    { title: 'Sign-in that notices theft', detail: 'Fifteen-minute access tokens kept in memory, refresh tokens rotated on every use; replaying an old one ends the whole chain.' },
+    { title: 'Accounts that keep quiet', detail: 'A wrong password and an unknown number get the same answer, five misses lock the account, and resets go by SMS.' },
+  ],
+};
+
 export const systems: Record<string, SystemStudy> = {
   'maple-furnishers': furnishers,
   'maple-studios': studios,
   shoku,
   keeri,
   'ishita-traders': ishita,
+  saaj,
 };
 
 /** The order the systems row shows them in. */
-export const systemOrder = ['maple-furnishers', 'maple-studios', 'shoku', 'keeri', 'ishita-traders'] as const;
+export const systemOrder = ['maple-furnishers', 'maple-studios', 'shoku', 'keeri', 'ishita-traders', 'saaj'] as const;

@@ -24,7 +24,7 @@ export function Story() {
         initial="hidden"
         animate={shown ? 'shown' : 'hidden'}
       >
-        <div className="min-w-[18rem] flex-[0_1_calc(50%-max(4vw,2rem))] md:pr-[min(10vw,2rem)]">
+        <div className="min-w-[min(18rem,100%)] flex-[0_1_calc(50%-max(4vw,2rem))] md:pr-[min(10vw,2rem)]">
           <FocusText
             as="h2"
             text={story.title}
@@ -34,7 +34,7 @@ export function Story() {
           />
         </div>
 
-        <div className="flex min-w-[18rem] flex-[0_1_calc(50%-max(4vw,2rem))] flex-col gap-[1.6em] md:pl-[min(10vw,2rem)]">
+        <div className="flex min-w-[min(18rem,100%)] flex-[0_1_calc(50%-max(4vw,2rem))] flex-col gap-[1.6em] md:pl-[min(10vw,2rem)]">
           {story.paragraphs.map((paragraph, p) => (
             <FocusText
               key={paragraph}

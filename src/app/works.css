@@ -253,6 +253,8 @@
     perspective: 1700px;
     perspective-origin: 50% 30%;
     pointer-events: none;
+    /* On a phone the arc runs past both edges; it is cut there, never scrolled to. */
+    overflow-x: clip;
   }
 
   .screening-stage {
