@@ -164,6 +164,17 @@
     display: block;
   }
 
+  /* An app's key visual: no browser around it, just its edge and its shadow. */
+  .sys-poster {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border-radius: 14px;
+    box-shadow:
+      0 0 0 1px rgb(255 255 255 / 0.1),
+      0 40px 90px -30px rgb(0 0 0 / 0.9);
+  }
+
   .sys-phone {
     position: relative;
     display: block;
@@ -1069,6 +1080,16 @@
     aspect-ratio: var(--ratio);
   }
 
+  /* An app's screens play in a phone, as tall as the screen allows. */
+  .sys-screens-phone {
+    justify-self: center;
+    width: min(100%, calc((100svh - var(--bar-h) - 6rem) * var(--ratio)));
+  }
+
+  .sys-screens-phone .sys-phone-view {
+    position: relative;
+  }
+
   .sys-screens-slide {
     position: absolute;
     inset: 0;
@@ -1095,6 +1116,22 @@
     font-size: 0.85rem;
     font-weight: 500;
     color: rgb(255 255 255 / 0.6);
+  }
+
+  /* An app's screens on a narrow screen: phones one under another, captioned beneath. */
+  .sys-screens-stack.is-app > li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .sys-screens-stack.is-app .sys-phone {
+    width: min(76vw, 19rem);
+  }
+
+  .sys-screens-stack.is-app .sys-screens-stack-caption {
+    max-width: 19rem;
+    text-align: center;
   }
 
   .sys-phones {

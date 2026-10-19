@@ -14,10 +14,11 @@ const words = works.system;
 /**
  * The brief, set large and focusing in as it arrives, beside the facts of the
  * job; then the product itself, in its browser, tipping up to face the reader
- * as it rises into view.
+ * as it rises into view (an app's key visual tips up the same way, unframed).
  */
 export function Brief({ study, host, cover }: { study: SystemCase; host: string; cover: Screen }) {
   const reduce = useReducedMotion() ?? false;
+  const shot = <ScreenShot screen={cover} sizes="(min-width: 1024px) min(1100px, 70vw), 100vw" alt={cover.caption} />;
   const scroller = useViewerScroll();
   const stageRef = useRef<HTMLDivElement>(null);
   // The scroller is an ancestor, attached after this mounts: measure in a passive effect.
@@ -60,9 +61,7 @@ export function Brief({ study, host, cover }: { study: SystemCase; host: string;
       <div ref={stageRef} className="sys-brief-stage">
         <motion.div className="sys-brief-tilt" style={reduce ? undefined : { rotateX, scale, y, transformPerspective: 1600 }}>
           <motion.span aria-hidden className="sys-brief-glow" style={reduce ? undefined : { opacity: glow }} />
-          <BrowserFrame host={host}>
-            <ScreenShot screen={cover} sizes="(min-width: 1024px) min(1100px, 70vw), 100vw" alt={cover.caption} />
-          </BrowserFrame>
+          {study.platform === 'app' ? <span className="sys-poster">{shot}</span> : <BrowserFrame host={host}>{shot}</BrowserFrame>}
         </motion.div>
       </div>
     </div>

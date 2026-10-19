@@ -45,7 +45,7 @@ src/
 ├─ app/
 │  ├─ layout.tsx          Font loading, intro boot script, cursor, smooth scroll, nav
 │  ├─ page.tsx            Section order — the entire page composition
-│  ├─ contact/page.tsx    Book a meeting (Cal.com, or requests by email)
+│  ├─ contact/page.tsx    Book a meeting (Calendly; Cal.com or requests by email as fallbacks)
 │  ├─ deck/page.tsx       The deck, read over the living gradient
 │  ├─ works/page.tsx      The work page: systems and design, after Studio Mirage's /works
 │  ├─ work/[slug]/page.tsx  A project on its own page (shared links, reloads)
@@ -57,7 +57,8 @@ src/
 │  └─ system.css          The system viewer's chapters
 ├─ components/
 │  ├─ layout/             Chrome that persists across the page
-│  │  ├─ Navbar.tsx       Mirage's header: two links, a glowing contact pill, graded blur
+│  │  ├─ Navbar.tsx       Mirage's header: the logo, two links, a glowing contact pill, graded
+│  │  │                   blur; on a phone the links fold into a menu that opens as a circle
 │  │  ├─ Cursor.tsx       16px spring-followed brand dot
 │  │  ├─ PageLight.tsx    The living gradient behind pages other than the landing
 │  │  └─ SmoothScroll.tsx Lenis instance + anchor interception
@@ -96,6 +97,7 @@ src/
 │  │  ├─ ViewerPage.tsx     One page (develops as it loads) and the ambient light
 │  │  └─ OpenProject.tsx    Rendered by the intercepted route: names the open project
 │  └─ ui/                 Primitives reused across sections
+│     ├─ AtlasLogo.tsx       The Atlas Studios lockup (wordmark over “STUDIOS”), as vectors
 │     ├─ GlassButton.tsx     Frosted pill with border shine and label sweep
 │     └─ FocusText.tsx       Text that focuses in character by character
 ├─ content/
@@ -113,7 +115,7 @@ src/
    ├─ reveal.ts           Cues a section's reveal as it comes on screen
    ├─ finale.ts           Hands the footer's scene geometry to the page light
    ├─ footage.ts          Hands the reel and the carousel clip to the page light
-   ├─ env.ts              Public build-time settings (the Cal.com link)
+   ├─ env.ts              Public build-time settings (the Calendly and Cal.com links)
    ├─ scroll.ts           Lenis registry + scroll locks for the landing
    ├─ intro.ts            Whether the landing reel is playing
    └─ utils.ts
@@ -216,6 +218,13 @@ place) and writes `public/work/systems/<slug>/NN.webp` (+ `NN-half.webp`) and
 take is the `SYSTEMS` list at the top of the script; the first desktop screen is
 the card and the title card's backdrop. Keeri's in-app screens are the
 screenshots its own docs publish, since the console sits behind a sign-in.
+
+Saaj is an Android app (`platform: 'app'` in `content/systems.ts`): its screens
+play in a phone instead of a browser, and its card is a key visual the script
+sets from three of its phone screens. It has no public web address, so its own
+web build is served on this machine with its staging API's demo catalogue,
+read-only, by `scripts/work/saaj-preview.mjs` (the script's header says how to
+make the build); then `node scripts/work/screens.mjs saaj`.
 
 To add a system: add its shots to `SYSTEMS` and run the script, import its JSON in
 `content/projects.ts`, and describe it in `content/systems.ts` (and add its slug to

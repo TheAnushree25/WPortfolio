@@ -8,7 +8,9 @@ import { useHeldReveal } from '@/lib/reveal';
 /**
  * The studio's fields, after Studio Mirage's expertise listing, filling one
  * screen: the title holds the first quarter, four columns spread over the rest.
- * Type scales with the viewport so the block holds the screen at any size.
+ * Type scales with the viewport so the block holds the screen at any size;
+ * tablets set the columns two by two under the title, and phones give each
+ * field a hairline row, its name on the left and its items beside it.
  * Every line focuses in like the landing statement — the title first, then the
  * columns from left to right, each heading leading its items down — while the
  * page holds the screen still until the last item lands. Items rest at 60%
@@ -19,12 +21,8 @@ export function Practice() {
 
   return (
     <section ref={ref} id="expertise" data-nav-tone="dark" className="screen-block relative z-10">
-      <motion.div
-        className="flex w-full flex-wrap justify-between"
-        initial="hidden"
-        animate={shown ? 'shown' : 'hidden'}
-      >
-        <div className="mb-12 w-full pr-8 md:mb-0 md:w-1/4">
+      <motion.div className="practice" initial="hidden" animate={shown ? 'shown' : 'hidden'}>
+        <div className="practice-head">
           <FocusText
             as="h2"
             text={practice.title}
@@ -34,18 +32,18 @@ export function Practice() {
           />
         </div>
 
-        {/* Columns take their longest item and share out the rest, so no entry wraps on desktop. */}
-        <div className="grid w-full grid-cols-[repeat(auto-fit,minmax(45%,1fr))] gap-x-16 gap-y-12 md:w-3/4 md:grid-cols-[repeat(4,max-content)] md:justify-between md:gap-x-8 md:pl-4">
+        {/* On desktop the columns take their longest item and share out the rest, so no entry wraps. */}
+        <div className="practice-columns">
           {practice.columns.map((column, c) => {
             const start = 0.45 + c * 0.14;
             return (
-              <div key={column.heading}>
+              <div key={column.heading} className="practice-column">
                 <FocusText
                   as="h3"
                   text={column.heading}
                   delay={start}
                   step={0.022}
-                  className="font-studio mb-[0.9em] text-[clamp(0.8rem,0.95vw,1.15rem)] leading-[1.2] font-semibold text-paper-soft/95 uppercase"
+                  className="practice-heading font-studio text-[clamp(0.8rem,0.95vw,1.15rem)] leading-[1.2] font-semibold text-paper-soft/95 uppercase"
                 />
                 <ul>
                   {column.items.map((item, i) => (

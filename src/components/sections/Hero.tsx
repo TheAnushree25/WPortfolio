@@ -138,7 +138,7 @@ export function HeroScene() {
       <AnimatePresence initial={false}>{slide === 'intro' && <IntroReel key="reel" onEnd={land} />}</AnimatePresence>
 
       <section ref={trackRef} className="relative z-10" style={{ height: `${(1 + HOLD) * 100}svh` }}>
-        <div className="sticky top-0 h-[100svh] min-h-[640px]">
+        <div className="sticky top-0 h-[100svh] min-h-[640px] [@media(max-height:480px)]:min-h-0">
           <Stage slide={slide} fromReel={fromReel} statementDelay={statementDelay} reduce={reduce} />
         </div>
       </section>

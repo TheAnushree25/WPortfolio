@@ -2,7 +2,6 @@ export const site = {
   name: 'Atlas Studios',
   owner: 'Gulafsan Shaheen',
   wordmark: 'Atlas',
-  brandSuffix: '*',
   year: '©2026',
   email: 'gulafsan.shaheen@gmail.com',
   linkedin: 'https://www.linkedin.com/in/gulafsan-shaheen/',
