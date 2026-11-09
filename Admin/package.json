@@ -1,0 +1,16 @@
+{
+  "name": "atlas-studios-admin",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The Atlas Studios admin: content, projects, media, enquiries, meetings, analytics and publishing for the portfolio in the folder above.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node --watch server.mjs",
+    "test": "node --test \"test/*.test.mjs\"",
+    "reset-password": "node server.mjs reset-password"
+  }
+}
