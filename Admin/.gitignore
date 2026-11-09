@@ -1,0 +1,4 @@
+# What the admin writes while it runs: its database (accounts, sessions,
+# enquiries), content backups and the media trash. Never commit these.
+data/
+.env

@@ -28,7 +28,7 @@ and the Atlas Studios palette are hers.
 
 ```bash
 npm install
-npm run dev      # http://localhost:3000
+npm run dev      # http://localhost:3000, and the admin at http://localhost:3000/admin
 npm run build    # production build
 npm run lint     # eslint
 npm run typecheck
@@ -52,6 +52,7 @@ src/
 │  ├─ @modal/             The slot a project fills when opened from the home or work page
 │  │  └─ (.)work/[slug]/page.tsx  Hands the project to the stage over the page
 │  ├─ api/booking/        Books a meeting (route.ts) and reports busy times (availability/)
+│  ├─ admin/[[...path]]/route.ts  The studio's admin at /admin, served from Admin/ (see "Admin")
 │  ├─ globals.css         Design tokens (@theme) + typography utilities
 │  ├─ works.css           The work page: filters, screening room, index rows, rows of cards
 │  └─ system.css          The system viewer's chapters
@@ -120,6 +121,16 @@ src/
    ├─ intro.ts            Whether the landing reel is playing
    └─ utils.ts
 ```
+
+## Admin
+
+`/admin` is the studio's admin: the site's words, projects and media, enquiries and
+meetings, visits, and publishing, with owner, editor and viewer accounts. It lives in
+`Admin/` and needs no packages of its own. It edits this repository's content files
+directly, so it runs where the repository is: open http://localhost:3000/admin while
+`npm run dev` runs (or `npm start` in `Admin/` to run it on its own, at :4310). The first
+visit, on this computer, creates the owner account. On the hosted site `/admin` says it
+isn't connected there yet. Everything else is in `Admin/README.md`.
 
 ## Design tokens
 
