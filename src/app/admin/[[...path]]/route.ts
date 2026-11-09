@@ -17,8 +17,18 @@ type Admin = { handleRequest: (request: Request, options: { basePath: string }) 
 
 let loading: Promise<Admin> | null = null;
 
+/**
+ * The site's folder, asked of the running process. Written as a plain call,
+ * `process.cwd()` is read by the build's file tracer as "this whole folder":
+ * it then copies the entire project into the server function (.git, .env
+ * files, every picture, and build files that are gone by the time Vercel
+ * packs the function, which fails the deploy). The admin is never part of
+ * the build, so its location stays out of the tracer's sight.
+ */
+const siteFolder = (): string => Reflect.apply(process.cwd, process, []);
+
 function load() {
-  const entry = pathToFileURL(join(process.cwd(), 'Admin', 'server', 'mount.mjs')).href;
+  const entry = pathToFileURL(join(siteFolder(), 'Admin', 'server', 'mount.mjs')).href;
   return import(/* webpackIgnore: true */ /* turbopackIgnore: true */ entry) as Promise<Admin>;
 }
 
