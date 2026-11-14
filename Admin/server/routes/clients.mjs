@@ -16,9 +16,9 @@ export const STATUS_LABELS = { new: 'New', contacted: 'Contacted', meeting: 'Mee
 export const SOURCES = ['website', 'calendly', 'email', 'instagram', 'linkedin', 'referral', 'whatsapp', 'other'];
 export const SERVICES = ['Brand identity', 'Packaging', 'Website', 'UX & product design', 'System / platform', 'Strategy', 'Other'];
 export const BUDGETS = ['Under ₹50k', '₹50k – ₹1.5L', '₹1.5L – ₹5L', '₹5L+', 'Not sure'];
-const MEETING_STATES = ['scheduled', 'completed', 'cancelled', 'no-show'];
+export const MEETING_STATES = ['scheduled', 'completed', 'cancelled', 'no-show'];
 
-function enquiryFields(body, existing = null) {
+export function enquiryFields(body, existing = null) {
   const pick = (key, read) => (key in body ? read(body[key]) : existing ? existing[key] : read(undefined));
   return {
     name: pick('name', (v) => text(v, { field: 'name', max: 120, required: true })),
@@ -36,7 +36,7 @@ function enquiryFields(body, existing = null) {
   };
 }
 
-const csvCell = (value) => {
+export const csvCell = (value) => {
   const out = String(value ?? '');
   // A leading =, +, - or @ would run as a formula in a spreadsheet.
   const safe = /^[=+\-@\t\r]/.test(out) ? `'${out}` : out;

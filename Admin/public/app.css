@@ -3222,6 +3222,16 @@ button.list-row {
 .change-row:first-child {
   border-top: 0;
 }
+.change-row .meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.change-row .meta .mono {
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
 .diff {
   font-family: var(--mono);
   font-size: 12.5px;
@@ -3280,16 +3290,21 @@ button.list-row {
 .step-row {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 14px;
   padding: 14px 0;
   border-top: 1px solid var(--line);
+}
+/* The step's action sits at the right, and drops below the words when the card is narrow. */
+.step-row > :last-child:not(.step-text) {
+  margin-left: auto;
 }
 .step-row:first-child {
   border-top: 0;
   padding-top: 0;
 }
 .step-row .step-text {
-  flex: 1;
+  flex: 1 1 160px;
   min-width: 0;
 }
 .step-row .step-text strong {

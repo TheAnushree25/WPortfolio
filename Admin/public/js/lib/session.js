@@ -10,6 +10,13 @@ const listeners = new Set();
 
 export const session = {
   user: null,
+  /** 'local' when the admin runs beside the site's files; 'hosted' when it's the backend (backend/), with the site on GitHub. */
+  mode: 'local',
+  /** What the server offers beyond the basics (two-step sign-in, email, uploads in pieces); the local admin offers none of these. */
+  features: {},
+  get hosted() {
+    return this.mode === 'hosted';
+  },
   badges: { enquiries: 0, changes: 0, meetingsToday: 0, sample: false },
   can(role) {
     return Boolean(this.user) && ROLES.indexOf(this.user.role) >= ROLES.indexOf(role);

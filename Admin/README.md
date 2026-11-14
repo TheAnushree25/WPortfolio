@@ -32,10 +32,14 @@ admin runs on (inside the site: from the development server, at a `localhost` ad
 “Show sample data” to explore with invented enquiries, meetings and visits; they're marked
 *Sample* everywhere and are cleared in one click from **Settings → Data**.
 
-**On the hosted site** (Vercel, Cloudflare) the site's files and git history aren't there for the
-admin to edit, so `/admin` shows a short “not connected here yet” page. Running it there needs a
-hosted database for accounts and enquiries and a GitHub token to commit content changes, which
-Vercel then deploys.
+**On the hosted site** (Vercel) the site's files and git history aren't there for the admin to
+edit, so these same pages are served by the **backend** in `../backend`: a database for the
+accounts, enquiries and visits, and GitHub for the site's content, where each save is a draft
+commit and publishing deploys it. It also adds two-step sign-in, email (enquiry alerts, password
+resets, invitations) and uploads in pieces. With `ADMIN_BACKEND_URL` set where the site is built,
+the site's `/admin` forwards to it; without it, `/admin` is this local admin. Setting it up is in
+`backend/README.md`. The pages tell the two apart from `/api/auth/state` (`mode: 'hosted'` and
+its `features`), so everything here keeps working unchanged on this computer.
 
 | Needs | For |
 | ----- | --- |

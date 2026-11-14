@@ -224,7 +224,7 @@ export default async function media({ query }) {
     const progress = h('div.stack.tight', [...files].map((file) => h('div.row.between.small', { dataset: { name: file.name } }, h('span.truncate', file.name), h('span.muted', bytes(file.size)))));
     modal({
       title: `Upload ${files.length} ${files.length === 1 ? 'file' : 'files'}`,
-      body: h('div.stack', h('div.field', h('label', 'Into folder'), target, h('div.field-hint', 'Names are tidied to lowercase-with-hyphens. Pictures up to 15 MB, video 300 MB, PDFs 120 MB.')), progress),
+      body: h('div.stack', h('div.field', h('label', 'Into folder'), target, h('div.field-hint', session.hosted ? 'Names are tidied to lowercase-with-hyphens. Pictures up to 15 MB, video and PDFs up to 95 MB (GitHub’s limit for one file). Each upload is saved as a draft until you publish.' : 'Names are tidied to lowercase-with-hyphens. Pictures up to 15 MB, video 300 MB, PDFs 120 MB.')), progress),
       actions: [
         { label: 'Cancel' },
         {

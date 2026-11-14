@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { booking } from '@/content/site';
 import { ease } from '@/lib/motion';
+import { sendEnquiry, track } from '@/lib/admin';
 import { MeetingDetails } from './MeetingDetails';
 
 type InlineWidget = {
@@ -168,7 +169,9 @@ export function CalendlyBooker({ url }: { url: string }) {
   // Calendly says when the visitor has booked; its frame then shows the confirmation.
   useEffect(() => {
     const scheduled = (event: MessageEvent) => {
-      if (fromCalendly(event, 'calendly.event_scheduled')) setStep('booked');
+      if (!fromCalendly(event, 'calendly.event_scheduled')) return;
+      setStep('booked');
+      track('Booked a meeting');
     };
     window.addEventListener('message', scheduled);
     return () => window.removeEventListener('message', scheduled);
@@ -178,8 +181,12 @@ export function CalendlyBooker({ url }: { url: string }) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const text = (key: string) => String(form.get(key) ?? '').trim();
-    setDetails({ name: text('name').replace(/\s+/g, ' '), email: text('email'), notes: text('notes') });
+    const given = { name: text('name').replace(/\s+/g, ' '), email: text('email'), notes: text('notes') };
+    setDetails(given);
     setStep('time');
+    // The studio's admin hears of them now, even if they leave before picking a time.
+    sendEnquiry({ name: given.name, email: given.email, message: given.notes });
+    track('Started a booking');
   };
 
   return (

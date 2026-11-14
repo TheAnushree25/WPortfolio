@@ -4,7 +4,7 @@ import { route, start, navigate, onRouteChange } from './lib/router.js';
 import { session, startBadges } from './lib/session.js';
 import { renderShell, refreshNav, NAV, signOut, toggleTheme } from './lib/shell.js';
 import { bindPaletteKeys, setPaletteCommands } from './lib/palette.js';
-import { renderSetup, renderLogin, renderPasswordChange } from './views/auth.js';
+import { renderSetup, renderLogin, renderPasswordChange, renderReset } from './views/auth.js';
 
 /**
  * Boots the admin: asks who is signed in, then shows setup (first run),
@@ -101,12 +101,21 @@ async function boot() {
     return;
   }
 
+  session.mode = state.mode === 'hosted' ? 'hosted' : 'local';
+  session.features = state.features ?? {};
+
+  // A link from an email (a password reset or an invitation) works whether or not anyone is signed in here.
+  if (withoutBase(location.pathname) === '/reset' && !state.needsSetup) {
+    renderReset(app, { token: new URLSearchParams(location.search).get('token') ?? '' });
+    return;
+  }
+
   if (state.needsSetup) {
     history.replaceState({}, '', withBase('/setup') + location.search);
     renderSetup(app, state);
     return;
   }
-  const atAuthPage = ['/login', '/setup'].includes(withoutBase(location.pathname));
+  const atAuthPage = ['/login', '/setup', '/reset'].includes(withoutBase(location.pathname));
   if (!state.user) {
     const next = atAuthPage ? new URLSearchParams(location.search).get('next') ?? '/' : here;
     history.replaceState({}, '', withBase('/login'));

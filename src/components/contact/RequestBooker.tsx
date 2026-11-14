@@ -6,6 +6,7 @@ import { booking } from '@/content/site';
 import { clashes, localDay, MEETING, slotsOn, type Busy } from '@/lib/booking';
 import { ease } from '@/lib/motion';
 import { cn } from '@/lib/utils';
+import { sendEnquiry, track } from '@/lib/admin';
 import { MeetingDetails } from './MeetingDetails';
 
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -164,6 +165,7 @@ export function RequestBooker({ onService }: { onService?: (live: boolean) => vo
       '',
       String(form.get('notes') ?? ''),
     ].join('\n');
+    sendEnquiry({ name: String(form.get('name') ?? ''), email: String(form.get('email') ?? ''), message: String(form.get('notes') ?? ''), trap: String(form.get('company') ?? '') });
     window.location.href = `mailto:${booking.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     onService?.(false);
     setStep('sent');
@@ -193,6 +195,8 @@ export function RequestBooker({ onService }: { onService?: (live: boolean) => vo
       if (response.ok) {
         setBooked({ start: slot, email, meet: data.meet ?? null });
         setStep('booked');
+        sendEnquiry({ name: String(form.get('name') ?? ''), email, message: String(form.get('notes') ?? ''), trap: String(form.get('company') ?? '') });
+        track('Booked a meeting');
       } else if (response.status === 409 || response.status === 422) {
         // Taken a moment ago: strike it out and send the visitor back to the times.
         setBusy((list) => [...list, { start: slot.getTime(), end: slot.getTime() + MEETING }]);

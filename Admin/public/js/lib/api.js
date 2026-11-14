@@ -1,4 +1,5 @@
 import { withBase } from './dom.js';
+import { session as who } from './session.js';
 
 /**
  * Talks to the admin's server. Every change carries the session's CSRF
@@ -56,11 +57,28 @@ export const put = (path, body, options) => api(path, { ...options, method: 'PUT
 export const patch = (path, body, options) => api(path, { ...options, method: 'PATCH', body });
 export const del = (path, options) => api(path, { ...options, method: 'DELETE' });
 
-/** Uploads one file as the request body, reporting progress. */
-export function upload(path, file, { onProgress } = {}) {
+/**
+ * Uploads one file, reporting progress. A hosted admin takes files larger
+ * than one request may carry in pieces: the upload is started, each piece
+ * sent, then finished as one file.
+ */
+export async function upload(path, file, { onProgress } = {}) {
+  const chunk = who.features?.chunkedUploads && who.features.chunkSize;
+  if (!chunk || file.size <= Math.min(chunk, 4_000_000)) return uploadWhole(path, file, { onProgress });
+  const query = new URL(path, location.origin).searchParams;
+  const started = await api('/api/media/uploads', { method: 'POST', body: { folder: query.get('folder') ?? 'images', name: query.get('name') ?? file.name, size: file.size, replace: query.get('replace') === '1' } });
+  for (let index = 0; index < started.chunks; index++) {
+    const piece = file.slice(index * started.chunkSize, Math.min(file.size, (index + 1) * started.chunkSize));
+    await uploadWhole(`/api/media/uploads/${started.id}/${index}`, piece, { method: 'PUT', onProgress: (ratio) => onProgress?.((index + ratio) / started.chunks) });
+  }
+  onProgress?.(1);
+  return api(`/api/media/uploads/${started.id}/finish`, { method: 'POST', body: {} });
+}
+
+function uploadWhole(path, file, { onProgress, method = 'POST' } = {}) {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', withBase(path));
+    xhr.open(method, withBase(path));
     xhr.withCredentials = true;
     if (session.csrf) xhr.setRequestHeader('x-csrf-token', session.csrf);
     xhr.setRequestHeader('content-type', 'application/octet-stream');

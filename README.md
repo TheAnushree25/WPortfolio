@@ -129,8 +129,14 @@ meetings, visits, and publishing, with owner, editor and viewer accounts. It liv
 `Admin/` and needs no packages of its own. It edits this repository's content files
 directly, so it runs where the repository is: open http://localhost:3000/admin while
 `npm run dev` runs (or `npm start` in `Admin/` to run it on its own, at :4310). The first
-visit, on this computer, creates the owner account. On the hosted site `/admin` says it
-isn't connected there yet. Everything else is in `Admin/README.md`.
+visit, on this computer, creates the owner account. Everything else is in `Admin/README.md`.
+
+On the live site, `/admin` is served by the **backend** in `backend/`, deployed as its own
+Vercel project with a Postgres database (Neon) and a GitHub token: saves become draft commits
+that Vercel previews, and publishing puts them on `main`. Set `ADMIN_BACKEND_URL` and
+`ADMIN_PROXY_SECRET` on this project and the site's `/admin` forwards to it; its pages then also
+send the admin their visits, bookings and enquiries (`src/lib/admin.ts`). Without
+`ADMIN_BACKEND_URL`, `/admin` is the local admin. Setting it up: `backend/README.md`.
 
 ## Design tokens
 
