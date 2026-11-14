@@ -1,8 +1,13 @@
 import { h, mount, withBase } from '../lib/dom.js';
 import { icon } from '../lib/icons.js';
-import { post, configureApi } from '../lib/api.js';
+import { get, post, configureApi } from '../lib/api.js';
+import { session } from '../lib/session.js';
 
-/** The screens before the admin: first-run setup, sign-in and a required new password. */
+/**
+ * The screens before the admin: first-run setup, sign-in (with a two-step
+ * code when it's on), a required new password, and, when the admin can send
+ * email, a forgotten password and the page its link opens.
+ */
 
 function passwordInput(id, autocomplete, placeholder = '') {
   const input = h('input.input', { type: 'password', id, name: id, autocomplete, required: true, placeholder });
@@ -68,7 +73,8 @@ export function renderLogin(root, { next = '/' } = {}) {
     submit.disabled = true;
     submit.replaceChildren(h('span.spinner'), 'Signing in…');
     try {
-      await post('/api/auth/login', { email: email.value, password: password.input.value }, { quiet: true });
+      const result = await post('/api/auth/login', { email: email.value, password: password.input.value }, { quiet: true });
+      if (result?.twoFactor) return renderCode(root, { challenge: result.challenge, next, email: email.value });
       location.href = withBase(next);
     } catch (err) {
       showError(error, err.message);
@@ -83,10 +89,121 @@ export function renderLogin(root, { next = '/' } = {}) {
       h('h1', 'Welcome back'),
       h('p.muted', 'Sign in to run the studio: the site’s words and work, clients, meetings and publishing.'),
       form,
-      h('p.auth-foot', 'Forgot your password? In the Admin folder, run ', h('code.mono', 'npm run reset-password -- you@email'), '.'),
+      session.features.passwordReset
+        ? h('p.auth-foot', h('a', { href: '/login', onClick: (event) => (event.preventDefault(), renderForgot(root, { email: email.value, next })) }, 'Forgot your password?'))
+        : session.hosted
+          ? h('p.auth-foot', 'Forgot your password? Ask the studio owner to reset it from Team.')
+          : h('p.auth-foot', 'Forgot your password? In the Admin folder, run ', h('code.mono', 'npm run reset-password -- you@email'), '.'),
     ),
   );
   requestAnimationFrame(() => email.focus());
+}
+
+/** The second step of signing in: the six digits from the authenticator app, or one recovery code. */
+function renderCode(root, { challenge, next, email }) {
+  document.title = 'Two-step sign-in · Atlas Studios Admin';
+  let recovery = false;
+  const input = h('input.input', { type: 'text', id: 'code', name: 'code', inputMode: 'numeric', autocomplete: 'one-time-code', required: true, placeholder: '123 456', maxLength: 12 });
+  const label = h('label', { for: 'code' }, 'Code from your authenticator app');
+  const error = errorBox();
+  const submit = h('button.btn.primary.block', { type: 'submit' }, 'Sign in', icon('arrowRight'));
+  const swapMode = h('a', { href: '/login' }, 'Use a recovery code instead');
+  swapMode.addEventListener('click', (event) => {
+    event.preventDefault();
+    recovery = !recovery;
+    label.textContent = recovery ? 'One of your recovery codes' : 'Code from your authenticator app';
+    input.inputMode = recovery ? 'text' : 'numeric';
+    input.placeholder = recovery ? 'abcd-efgh' : '123 456';
+    swapMode.textContent = recovery ? 'Use the app’s code instead' : 'Use a recovery code instead';
+    input.value = '';
+    input.focus();
+  });
+  const form = h('form', { novalidate: true }, error, h('div.field', label, h('div.input-group', icon('shield'), input)), submit);
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    error.classList.add('hidden');
+    if (!input.value.trim()) return showError(error, 'Enter the code.');
+    submit.disabled = true;
+    submit.replaceChildren(h('span.spinner'), 'Checking…');
+    try {
+      await post('/api/auth/login/verify', { challenge, code: input.value.trim() }, { quiet: true });
+      location.href = withBase(next);
+    } catch (err) {
+      if (err.code === 'challenge') return renderLogin(root, { next });
+      showError(error, err.message);
+      submit.disabled = false;
+      submit.replaceChildren('Sign in', icon('arrowRight'));
+      input.select();
+    }
+  });
+  mount(root, authFrame(h('h1', 'One more step'), h('p.muted', `${email} has two-step sign-in on. Open your authenticator app and type the code shown for Atlas Studios.`), form, h('p.auth-foot', swapMode)));
+  requestAnimationFrame(() => input.focus());
+}
+
+/** Asks for a reset link by email. The answer is the same whether or not the address has an account. */
+function renderForgot(root, { email = '', next = '/' } = {}) {
+  document.title = 'Forgot password · Atlas Studios Admin';
+  const address = h('input.input', { type: 'email', id: 'email', autocomplete: 'username', required: true, inputMode: 'email', value: email });
+  const error = errorBox();
+  const submit = h('button.btn.primary.block', { type: 'submit' }, 'Email me a link', icon('mail'));
+  const back = h('a', { href: '/login', onClick: (event) => (event.preventDefault(), renderLogin(root, { next })) }, 'Back to sign in');
+  const form = h('form', { novalidate: true }, error, field('Your email', h('div.input-group', icon('mail'), address)), submit);
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    error.classList.add('hidden');
+    if (!address.value.trim()) return showError(error, 'Enter the email you sign in with.');
+    submit.disabled = true;
+    try {
+      await post('/api/auth/forgot', { email: address.value }, { quiet: true });
+      mount(root, authFrame(h('h1', 'Check your email'), h('p.muted', `If ${address.value.trim()} has an account here, a link to choose a new password is on its way. It works once, for an hour.`), h('p.auth-foot', back)));
+    } catch (err) {
+      showError(error, err.message);
+      submit.disabled = false;
+    }
+  });
+  mount(root, authFrame(h('h1', 'Forgot your password?'), h('p.muted', 'We’ll email you a link to choose a new one.'), form, h('p.auth-foot', back)));
+  requestAnimationFrame(() => address.focus());
+}
+
+/** The page a reset or invitation email opens: choose a password, then sign in with it. */
+export async function renderReset(root, { token }) {
+  document.title = 'Choose a password · Atlas Studios Admin';
+  const toLogin = () => {
+    history.replaceState({}, '', withBase('/login'));
+    renderLogin(root);
+  };
+  let link;
+  try {
+    link = await get(`/api/auth/reset?token=${encodeURIComponent(token)}`, { quiet: true });
+  } catch (err) {
+    mount(root, authFrame(h('h1', 'This link has run out'), h('p.muted', err.message), h('div', h('button.btn.primary.block', { type: 'button', onClick: toLogin }, 'Go to sign in'))));
+    return;
+  }
+  const password = passwordInput('password', 'new-password');
+  const error = errorBox();
+  const submit = h('button.btn.primary.block', { type: 'submit' }, link.kind === 'invite' ? 'Save my password' : 'Save the new password');
+  const form = h('form', { novalidate: true }, error, field('New password', h('div.stack.tight', password.el, strengthMeter(password.input))), submit);
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    error.classList.add('hidden');
+    submit.disabled = true;
+    try {
+      await post('/api/auth/reset', { token, password: password.input.value }, { quiet: true });
+      mount(root, authFrame(h('h1', 'Password saved'), h('p.muted', `Sign in as ${link.email} with your new password.`), h('div', h('button.btn.primary.block', { type: 'button', onClick: toLogin }, 'Sign in'))));
+    } catch (err) {
+      showError(error, err.message);
+      submit.disabled = false;
+    }
+  });
+  mount(
+    root,
+    authFrame(
+      h('h1', link.kind === 'invite' ? `Welcome, ${link.name.split(' ')[0]}` : 'Choose a new password'),
+      h('p.muted', link.kind === 'invite' ? `Choose a password for ${link.email} to finish setting up your account.` : `For ${link.email}. Every device signed in with the old one is signed out.`),
+      form,
+    ),
+  );
+  requestAnimationFrame(() => password.input.focus());
 }
 
 export function renderSetup(root, state) {
@@ -96,8 +213,10 @@ export function renderSetup(root, state) {
     mount(
       root,
       authFrame(
-        h('h1', 'Set up on the studio’s computer'),
-        h('p.muted', 'For safety, the first account can only be created on the computer the admin runs on. Open the admin there (http://localhost:4310), or add ADMIN_SETUP_TOKEN to Admin/.env and open /setup?token=… here.'),
+        h('h1', session.hosted ? 'Open the setup link' : 'Set up on the studio’s computer'),
+        session.hosted
+          ? h('p.muted', 'For safety, the first account is created from the setup link: open /admin/setup?token=… with the ADMIN_SETUP_TOKEN set for the backend.')
+          : h('p.muted', 'For safety, the first account can only be created on the computer the admin runs on. Open the admin there (http://localhost:4310), or add ADMIN_SETUP_TOKEN to Admin/.env and open /setup?token=… here.'),
       ),
     );
     return;

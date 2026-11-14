@@ -1,0 +1,6 @@
+# Installed packages, local settings, the built-in database's files, and what `npm run build` writes.
+node_modules/
+.env
+.data/
+.ui/
+static/

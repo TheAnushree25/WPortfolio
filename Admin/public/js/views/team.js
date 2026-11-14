@@ -71,6 +71,16 @@ export default async function team() {
                   const { password } = await post(`/api/users/${user.id}/reset`, {});
                   passwordReveal(user.name, password);
                 } },
+                user.twoFactor && user.id !== session.user.id && { label: 'Turn off two-step sign-in', icon: 'shield', onClick: async () => {
+                  if (!(await confirm({ title: `Turn off ${user.name}’s two-step sign-in?`, message: 'For someone who has lost their phone and their recovery codes. They sign in with just their password until they set it up again, and are signed out now.', confirmLabel: 'Turn off', danger: true }))) return;
+                  try {
+                    await post(`/api/users/${user.id}/two-factor-reset`, {});
+                    toast(`${user.name} can sign in with their password and set it up again.`);
+                    await reload();
+                  } catch (error) {
+                    toastError(error);
+                  }
+                } },
                 user.id !== session.user.id && { label: user.disabled ? 'Turn on' : 'Turn off', icon: user.disabled ? 'check' : 'lock', onClick: async () => {
                   try {
                     await patch(`/api/users/${user.id}`, { disabled: !user.disabled });
@@ -98,7 +108,9 @@ export default async function team() {
               h('span.avatar', initials(user.name)),
               h('div.meta', h('strong', user.name, user.id === session.user.id ? h('span.muted', ' (you)') : ''), h('span', `${user.email} · ${user.lastLoginAt ? `signed in ${relative(user.lastLoginAt)}` : 'hasn’t signed in yet'}`)),
               user.disabled && h('span.pill.danger', 'Off'),
+              user.twoFactor && h('span.pill.success', { title: 'Signs in with a code from their phone too' }, icon('shield', { size: 13 }), 'Two-step'),
               user.mustChangePassword && h('span.pill.warning', 'Temporary password'),
+              !user.lastLoginAt && !user.mustChangePassword && session.hosted && h('span.pill', 'Invited'),
               roleSelect(user),
               more,
             );
@@ -118,18 +130,26 @@ export default async function team() {
     const name = h('input.input', { type: 'text', autocomplete: 'off' });
     const email = h('input.input', { type: 'email', inputMode: 'email', autocomplete: 'off' });
     const role = h('select.select', Object.entries(ROLE_INFO).map(([value, info]) => h('option', { value, selected: value === 'editor' }, `${info.label} — ${info.text}`)));
+    const invite = h('input', { type: 'checkbox', checked: Boolean(session.features.invites) });
     modal({
       title: 'Add a person',
-      body: h('div.stack', h('div.field', h('label', 'Name'), name), h('div.field', h('label', 'Email'), email, h('div.field-hint', 'They sign in with this.')), h('div.field', h('label', 'Role'), role)),
+      body: h(
+        'div.stack',
+        h('div.field', h('label', 'Name'), name),
+        h('div.field', h('label', 'Email'), email, h('div.field-hint', 'They sign in with this.')),
+        h('div.field', h('label', 'Role'), role),
+        session.features.invites && h('label.check', invite, h('span', h('b', 'Email them an invitation'), h('br'), h('span.small.muted', 'They choose their own password from the link (valid for three days). Untick to get a temporary password to share yourself.'))),
+      ),
       actions: [
         { label: 'Cancel' },
         {
           label: 'Add',
           kind: 'primary',
           onClick: async () => {
-            const result = await post('/api/users', { name: name.value, email: email.value, role: role.value });
+            const result = await post('/api/users', { name: name.value, email: email.value, role: role.value, invite: session.features.invites && invite.checked });
             await reload();
-            passwordReveal(result.user.name, result.password);
+            if (result.invited) toast(`Invitation sent to ${result.user.email}.`);
+            else setTimeout(() => passwordReveal(result.user.name, result.password), 0);
           },
         },
       ],

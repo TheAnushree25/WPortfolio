@@ -11,4 +11,6 @@ export const env = {
   calendlyUrl: calendly.startsWith('https://calendly.com/') ? calendly : '',
   /** Cal.com booking link for /contact, as "username/event-slug"; empty takes requests by email. */
   calLink: (process.env.NEXT_PUBLIC_CAL_LINK ?? '').trim().replace(/^https?:\/\/(app\.)?cal\.com\//, ''),
+  /** Whether /admin is the hosted admin (next.config sets it from ADMIN_BACKEND_URL): the site then sends it enquiries and visits. */
+  adminConnected: process.env.NEXT_PUBLIC_ADMIN_CONNECTED === '1',
 } as const;

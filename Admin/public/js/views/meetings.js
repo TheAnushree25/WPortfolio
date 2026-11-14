@@ -246,4 +246,18 @@ export default async function meetings({ query }) {
     const e = enquiries.items.find((item) => item.id === query.enquiry);
     editMeeting(null, e ? { enquiryId: e.id, attendeeName: e.name, attendeeEmail: e.email } : {});
   }
+
+  // With Calendly connected, bookings made since the last look are brought in quietly on opening the page.
+  const stale = !data.calendly.lastSync || Date.now() - Date.parse(data.calendly.lastSync) > 15 * 60_000;
+  if (canEdit && data.calendly.connected && stale) {
+    post('/api/meetings/sync', {}, { quiet: true })
+      .then(async (result) => {
+        if (!result.added && !result.updated && !result.enquiries) return;
+        await reload();
+        if (result.added || result.enquiries) toast(`Calendly: ${result.added} new booking${result.added === 1 ? '' : 's'}${result.enquiries ? `, ${result.enquiries} new ${result.enquiries === 1 ? 'person' : 'people'} in Enquiries` : ''}.`);
+      })
+      .catch(() => {
+        /* Sync now on the Calendly card says why, if it's asked */
+      });
+  }
 }

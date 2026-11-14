@@ -7,11 +7,15 @@ import path from 'node:path';
  * visitor (placeholder testimonials, a legal notice naming the old host),
  * and housekeeping (unused files, heavy images, changes not yet live).
  * Each finding says where to fix it.
+ *
+ * Where the site is hosted and how /contact books are read from the site's
+ * folder unless the caller knows better: the hosted backend has no folder, so
+ * it passes `host` (the provider serving the live site) and `calendly`.
  */
 
 const WEIGHT = { error: 15, warning: 7, info: 2, ok: 0 };
 
-export function siteHealth({ values, library, changes, siteRoot, analytics, packages, now = new Date() }) {
+export function siteHealth({ values, library, changes, siteRoot, analytics, packages, host, calendly, hosted = false, now = new Date() }) {
   const checks = [];
   const add = (level, id, title, detail, href = null, action = null) => checks.push({ id, level, title, detail, href, action });
   const year = String(now.getFullYear());
@@ -22,11 +26,12 @@ export function siteHealth({ values, library, changes, siteRoot, analytics, pack
     add('warning', 'testimonials', `${placeholders.length} testimonial${placeholders.length > 1 ? 's are' : ' is'} still a placeholder`, 'Visitors see “Client name” and “Company name” in the testimonial cards. Replace them with real client words before sharing the site.', '/content/testimonials', 'Edit testimonials');
   } else add('ok', 'testimonials', 'Testimonials are real client words', '', '/content/testimonials');
 
-  // The legal notice names the host; the site moved from Vercel to Cloudflare.
+  // The legal notice names the host, which has to be the one actually serving the site.
   const legal = (values.footer?.legal?.lines ?? []).join(' ');
-  const onCloudflare = fs.existsSync(path.join(siteRoot, 'wrangler.jsonc')) || fs.existsSync(path.join(siteRoot, 'wrangler.toml'));
-  if (onCloudflare && /vercel/i.test(legal)) {
-    add('warning', 'legal-host', 'The legal notice names the wrong host', 'It says the site is hosted by Vercel, but it is now served by Cloudflare. Hosting providers must be named correctly in a legal notice.', '/content/footer', 'Edit the footer');
+  const provider = host !== undefined ? host : fs.existsSync(path.join(siteRoot, 'wrangler.jsonc')) || fs.existsSync(path.join(siteRoot, 'wrangler.toml')) ? 'Cloudflare' : null;
+  const other = { Cloudflare: 'Vercel', Vercel: 'Cloudflare' }[provider];
+  if (other && new RegExp(other, 'i').test(legal) && !new RegExp(provider, 'i').test(legal)) {
+    add('warning', 'legal-host', 'The legal notice names the wrong host', `It says the site is hosted by ${other}, but it is served by ${provider}. Hosting providers must be named correctly in a legal notice.`, '/content/footer', 'Edit the footer');
   }
 
   // Search and sharing.
@@ -66,18 +71,20 @@ export function siteHealth({ values, library, changes, siteRoot, analytics, pack
   if (stale.length) add('warning', 'copyright', 'The copyright year is out of date', `The site says ${[...new Set(stale)].join(', ')}; it’s ${year}.`, '/content/studio', 'Update the year');
 
   // Bookings.
-  let calendly = '';
-  try {
-    calendly = /^\s*NEXT_PUBLIC_CALENDLY_URL\s*=\s*(\S+)/m.exec(fs.readFileSync(path.join(siteRoot, '.env.local'), 'utf8'))?.[1] ?? '';
-  } catch {
-    /* no local settings */
+  if (calendly === undefined) {
+    calendly = '';
+    try {
+      calendly = /^\s*NEXT_PUBLIC_CALENDLY_URL\s*=\s*(\S+)/m.exec(fs.readFileSync(path.join(siteRoot, '.env.local'), 'utf8'))?.[1] ?? '';
+    } catch {
+      /* no local settings */
+    }
   }
-  if (calendly) add('ok', 'bookings', 'Bookings go through Calendly', `/contact books into ${calendly}. Make sure the same link is set where the site is built.`);
-  else add('warning', 'bookings', 'Bookings fall back to email', 'No Calendly link is set in the site’s .env.local, so /contact opens the visitor’s email app instead of booking a time.', '/meetings', 'See meetings');
+  if (calendly) add('ok', 'bookings', 'Bookings go through Calendly', hosted ? `/contact on the live site books into ${calendly}.` : `/contact books into ${calendly}. Make sure the same link is set where the site is built.`);
+  else if (calendly !== null) add('warning', 'bookings', 'Bookings fall back to email', hosted ? 'The live /contact page has no Calendly calendar, so it opens the visitor’s email app instead of booking a time. Set NEXT_PUBLIC_CALENDLY_URL where the site is built.' : 'No Calendly link is set in the site’s .env.local, so /contact opens the visitor’s email app instead of booking a time.', '/meetings', 'See meetings');
 
   // Publishing.
-  if (changes.length) add('info', 'unpublished', `${changes.length} change${changes.length > 1 ? 's aren’t' : ' isn’t'} live yet`, 'Edits made here are saved in the site’s files. They reach visitors once the site is built and deployed.', '/publish', 'Review and publish');
-  if (!packages) add('warning', 'packages', 'The site’s packages aren’t installed', 'Checks, builds and the local preview need them. Install them from the publish page.', '/publish', 'Install packages');
+  if (changes.length) add('info', 'unpublished', `${changes.length} change${changes.length > 1 ? 's aren’t' : ' isn’t'} live yet`, hosted ? 'Edits made here are saved as drafts on GitHub. They reach visitors once they’re published.' : 'Edits made here are saved in the site’s files. They reach visitors once the site is built and deployed.', '/publish', 'Review and publish');
+  if (!hosted && !packages) add('warning', 'packages', 'The site’s packages aren’t installed', 'Checks, builds and the local preview need them. Install them from the publish page.', '/publish', 'Install packages');
   if (!analytics.hasData) add('info', 'analytics', 'Visits aren’t being counted yet', 'Add the admin’s visit counter to the site to see which projects people open.', '/analytics', 'Set up visit counting');
 
   const score = Math.max(0, 100 - checks.reduce((sum, check) => sum + WEIGHT[check.level], 0));

@@ -13,15 +13,15 @@ import { HttpError, within } from './http.mjs';
  * can't be removed at all.
  */
 
-const KINDS = {
+export const KINDS = {
   image: ['.png', '.jpg', '.jpeg', '.webp', '.avif', '.gif', '.svg', '.ico'],
   video: ['.mp4', '.webm', '.mov'],
   document: ['.pdf'],
 };
-const kindOf = (ext) => Object.keys(KINDS).find((kind) => KINDS[kind].includes(ext)) ?? 'other';
+export const kindOf = (ext) => Object.keys(KINDS).find((kind) => KINDS[kind].includes(ext)) ?? 'other';
 
 /** What may be uploaded, how large, and the bytes each must start with. */
-const UPLOADS = {
+export const UPLOADS = {
   '.png': { max: 15e6, magic: (b) => b.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])) },
   '.jpg': { max: 15e6, magic: (b) => b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff },
   '.jpeg': { max: 15e6, magic: (b) => b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff },
@@ -38,7 +38,7 @@ export const UPLOAD_LIMIT = 300e6;
  * Reading dimensions from file headers.
  * ------------------------------------------------------------------ */
 
-function dimensions(buffer, ext) {
+export function dimensions(buffer, ext) {
   try {
     if (ext === '.png' && buffer.toString('latin1', 12, 16) === 'IHDR') return { width: buffer.readUInt32BE(16), height: buffer.readUInt32BE(20) };
     if (ext === '.gif') return { width: buffer.readUInt16LE(6), height: buffer.readUInt16LE(8) };
@@ -101,12 +101,12 @@ async function headerOf(file, size) {
  * Where the site uses each file.
  * ------------------------------------------------------------------ */
 
-const PATH_IN_SOURCE = /["'`(]\s*(\/(?:images|work|video|docs|deck|fonts|media)\/[^"'`)\s?#]+)/g;
+export const PATH_IN_SOURCE = /["'`(]\s*(\/(?:images|work|video|docs|deck|fonts|media)\/[^"'`)\s?#]+)/g;
 /** A path to a file (it has an extension), not a page route or a template still to be filled in. */
-const FILE_LIKE = /^\/[^\s'"`$&{}[\]<>,;]+\.[a-z0-9]{2,5}$/i;
-const SOURCE_EXTS = new Set(['.ts', '.tsx', '.js', '.mjs', '.jsx', '.css', '.json']);
+export const FILE_LIKE = /^\/[^\s'"`$&{}[\]<>,;]+\.[a-z0-9]{2,5}$/i;
+export const SOURCE_EXTS = new Set(['.ts', '.tsx', '.js', '.mjs', '.jsx', '.css', '.json']);
 
-function labelFor(rel) {
+export function labelFor(rel) {
   const name = path.basename(rel);
   if (rel === 'src/content/site.ts') return 'Site content';
   if (rel === 'src/content/work.ts') return 'Case studies';

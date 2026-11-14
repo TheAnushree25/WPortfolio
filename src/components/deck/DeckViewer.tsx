@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { motion } from 'motion/react';
 import { deck } from '@/content/site';
 import { ease } from '@/lib/motion';
+import { track } from '@/lib/admin';
 import { FocusText } from '@/components/ui/FocusText';
 
 /**
@@ -44,10 +45,10 @@ export function DeckViewer() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, ease: ease.expo, delay: 0.7 }}
         >
-          <a href={deck.pdf} target="_blank" rel="noreferrer" className="glass-button is-outlined">
+          <a href={deck.pdf} target="_blank" rel="noreferrer" className="glass-button is-outlined" onClick={() => track('Opened the deck')}>
             <span>{deck.open}</span>
           </a>
-          <a href={deck.pdf} download="The-Atlas-Studio.pdf" className="glow-button">
+          <a href={deck.pdf} download="The-Atlas-Studio.pdf" className="glow-button" onClick={() => track('Downloaded the deck')}>
             <span className="glow-button-label">
               {deck.download}
               <svg viewBox="0 0 12 14" fill="none" aria-hidden className="w-3">

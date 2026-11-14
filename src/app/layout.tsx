@@ -4,6 +4,7 @@ import './globals.css';
 import { SmoothScroll } from '@/components/layout/SmoothScroll';
 import { Cursor } from '@/components/layout/Cursor';
 import { Navbar } from '@/components/layout/Navbar';
+import { env } from '@/lib/env';
 
 /**
  * The reference ships Framer's "Inter Display". Inter's variable release
@@ -63,6 +64,8 @@ export default function RootLayout({ children, modal }: { children: React.ReactN
     <html lang="en" className={`${inter.variable} ${redHat.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: introBootScript }} />
+        {/* The hosted admin's visit counter: one beacon per page, no cookies (backend/README.md). */}
+        {env.adminConnected ? <script defer src="/admin/beacon.js" /> : null}
       </head>
       <body>
         <SmoothScroll />

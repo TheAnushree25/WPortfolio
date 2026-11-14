@@ -1,6 +1,7 @@
 import { h, withBase } from '../lib/dom.js';
 import { icon } from '../lib/icons.js';
 import { get } from '../lib/api.js';
+import { session } from '../lib/session.js';
 import { show, setTitle } from '../lib/shell.js';
 import { card, cardHead, codeBlock, notice, pageHead, pageSkeleton, toastError } from '../lib/ui.js';
 import { bars, chart, donut } from '../lib/charts.js';
@@ -42,7 +43,15 @@ export default async function analytics({ query }) {
   const setup = () =>
     card(
       cardHead('Count visits to the site'),
-      h(
+      session.hosted
+        ? h(
+            'div.card-body.stack',
+            h('p.small.muted', 'The admin counts page views itself: no cookies, no third party, and visitors aren’t followed from one day to the next.'),
+            notice('No visits yet. The site counts them once it’s connected to this backend: set ADMIN_BACKEND_URL (and ADMIN_PROXY_SECRET) where the site is built and redeploy it. Its pages then load the counter, and bookings and deck downloads are counted too.', { glyph: 'info' }),
+            h('p.small.muted', 'Another site can count into the same place with this tag, once its address is allowed in Settings → Integrations:'),
+            codeBlock(`<script defer src="${location.origin}${withBase('/beacon.js')}"></script>`),
+          )
+        : h(
         'div.card-body.stack',
         h('p.small.muted', 'The admin counts page views itself: no cookies, no third party, and visitors aren’t followed from one day to the next. Add this line to the site’s <head> (in src/app/layout.tsx) once the admin is reachable from the internet:'),
         codeBlock(`<script defer src="${location.origin}${withBase('/beacon.js')}"></script>`),

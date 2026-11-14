@@ -9,26 +9,26 @@ import { randomToken, sha256 } from './security.mjs';
  * cookie is set.
  */
 
-const BOT = /bot|crawl|spider|slurp|headless|lighthouse|pingdom|preview|facebookexternalhit|embedly|curl|wget|python|node-fetch/i;
+export const BOT = /bot|crawl|spider|slurp|headless|lighthouse|pingdom|preview|facebookexternalhit|embedly|curl|wget|python|node-fetch/i;
 
 export function dayKey(date = new Date(), timeZone = 'Asia/Kolkata') {
   return new Intl.DateTimeFormat('en-CA', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' }).format(date);
 }
 
-const blankDay = () => ({ views: 0, visitors: 0, paths: {}, refs: {}, devices: {}, countries: {}, events: {} });
+export const blankDay = () => ({ views: 0, visitors: 0, paths: {}, refs: {}, devices: {}, countries: {}, events: {} });
 const bump = (bucket, key, by = 1) => {
   if (!key) return;
   bucket[key] = (bucket[key] ?? 0) + by;
 };
 
-function device(width, ua) {
+export function device(width, ua) {
   if (/iPad|Tablet/i.test(ua) || (width >= 600 && width < 1024 && /Mobi|Android/i.test(ua))) return 'Tablet';
   if (/Mobi|iPhone|Android/i.test(ua) || (width && width < 768)) return 'Phone';
   if (width && width < 1024) return 'Tablet';
   return 'Desktop';
 }
 
-function referrerHost(referrer, ownHosts) {
+export function referrerHost(referrer, ownHosts) {
   if (!referrer) return 'Direct';
   try {
     const host = new URL(referrer).hostname.replace(/^www\./, '');

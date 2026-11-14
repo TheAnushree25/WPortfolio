@@ -17,10 +17,114 @@ import { checkSection, FILES, SECTIONS } from './sections.mjs';
  * checked three ways before it lands: the section's rules, a re-read of the
  * rewritten file (it must parse and hold exactly the value asked for), and
  * the old file is kept in Admin/data/backups first.
+ *
+ * The reading and planning steps are plain functions of a file's text, so
+ * the hosted backend (backend/), which keeps the files on GitHub rather than
+ * on disk, saves through exactly the same checks.
  */
 
-const versionOf = (value) => crypto.createHash('sha1').update(JSON.stringify(value ?? null)).digest('hex').slice(0, 12);
+export const versionOf = (value) => crypto.createHash('sha1').update(JSON.stringify(value ?? null)).digest('hex').slice(0, 12);
 const KEEP_BACKUPS = 40;
+
+/** A content file's text, parsed and worked out: `valueOf(name)` is a declaration's value as the build sees it. */
+export function readContent(fileKey, src) {
+  const file = FILES[fileKey];
+  const text = src.replace(/\r\n/g, '\n');
+  const mod = parseModule(text, { only: file.only });
+  const values = file.only ? null : evaluateModule(text, mod);
+  const valueOf = (name) => {
+    const decl = mod.decls.get(name);
+    if (!decl?.init) return undefined;
+    return values && name in values ? values[name] : clean(literalValue(decl.init, mod));
+  };
+  return { src, mod, values, valueOf };
+}
+
+/** One section as the admin shows it, from its file as `readContent` returned it. */
+export function sectionOf(id, read) {
+  const meta = SECTIONS[id];
+  if (!meta) throw new HttpError(404, 'not_found', 'There’s no such section.');
+  const decl = read.mod.decls.get(meta.name);
+  if (!decl?.init) throw new HttpError(503, 'site_changed', `${FILES[meta.file].path} no longer has “${meta.name}”.`);
+  const value = read.valueOf(meta.name);
+  return { id, ...meta, path: FILES[meta.file].path, value, computed: computedPaths(decl.init, read.mod), version: versionOf(value) };
+}
+
+/** Several sections' values, reading each file once. `read(fileKey)` resolves to `readContent`'s result. */
+export async function valuesOf(ids, read) {
+  const out = {};
+  const files = new Map();
+  for (const id of ids) {
+    const meta = SECTIONS[id];
+    if (!files.has(meta.file)) files.set(meta.file, await read(meta.file));
+    out[id] = files.get(meta.file).valueOf(meta.name);
+  }
+  return out;
+}
+
+export const listSections = () => Object.entries(SECTIONS).map(([id, meta]) => ({ id, ...meta, path: FILES[meta.file].path }));
+
+/**
+ * Works out a save without writing anything: each changed file's text before
+ * and after, every change checked against its section's rules and its version,
+ * and every rewritten file read back to prove it holds exactly what was asked.
+ * `changes`: [{ id, value, version }]; `read(fileKey)` resolves to `readContent`'s
+ * result; `rulesContext()` supplies what the rules check against.
+ */
+export async function planSave(changes, { read, rulesContext }) {
+  if (!Array.isArray(changes) || !changes.length) throw new HttpError(400, 'invalid', 'Nothing to save.');
+  const byFile = new Map();
+  for (const change of changes) {
+    const meta = SECTIONS[change?.id];
+    if (!meta) throw new HttpError(404, 'not_found', `There’s no section “${change?.id}”.`);
+    if (!byFile.has(meta.file)) byFile.set(meta.file, []);
+    byFile.get(meta.file).push({ ...change, meta });
+  }
+
+  // Rules see the batch as it will be: a card and its case study can arrive together.
+  const ctx = await rulesContext();
+  for (const change of changes) {
+    if (change.id === 'works') ctx.cardSlugs = (clean(change.value).projects ?? []).map((card) => card.slug);
+    if (change.id === 'systems') ctx.systemSlugs = Object.keys(clean(change.value));
+  }
+  const writes = [];
+  for (const [fileKey, list] of byFile) {
+    const file = FILES[fileKey];
+    const current = await read(fileKey);
+    let source = current.src;
+    for (const change of list) {
+      const before = current.valueOf(change.meta.name);
+      if (change.version && change.version !== versionOf(before)) {
+        throw new HttpError(409, 'conflict', `“${change.meta.label}” was changed somewhere else since you opened it. Reload to see the latest, then make your change again.`, { id: change.id });
+      }
+      const next = clean(change.value);
+      const problems = checkSection(change.id, next, ctx, before);
+      if (problems.length) throw new HttpError(422, 'rules', problems[0].message, { id: change.id, problems });
+      try {
+        source = rewriteSource(source, change.meta.name, change.value, { only: file.only }).source;
+      } catch (error) {
+        if (error instanceof ContentError) throw new HttpError(422, error.code, error.message, { id: change.id, ...error.details });
+        throw error;
+      }
+    }
+    if (source === current.src) continue;
+
+    // Read the result back: it must parse and hold exactly what was asked for.
+    let reread;
+    try {
+      reread = readContent(fileKey, source).valueOf;
+    } catch (error) {
+      throw new HttpError(500, 'verify', `The rewritten ${file.path} didn’t read back (${error.message}); nothing was written.`);
+    }
+    for (const change of list) {
+      if (!equal(reread(change.meta.name), clean(change.value))) {
+        throw new HttpError(500, 'verify', `The rewritten “${change.meta.label}” didn’t read back as saved; nothing was written.`);
+      }
+    }
+    writes.push({ fileKey, path: file.path, before: current.src, after: source });
+  }
+  return writes;
+}
 
 export class ContentStore {
   constructor({ siteRoot, dataDir }) {
@@ -34,54 +138,27 @@ export class ContentStore {
   }
 
   async readFile(fileKey) {
-    const file = FILES[fileKey];
     let src;
     try {
       src = await fsp.readFile(this.abs(fileKey), 'utf8');
     } catch (error) {
-      throw new HttpError(503, 'site_missing', `The site file ${file.path} can’t be read (${error.code ?? error.message}). Is SITE_ROOT right?`);
+      throw new HttpError(503, 'site_missing', `The site file ${FILES[fileKey].path} can’t be read (${error.code ?? error.message}). Is SITE_ROOT right?`);
     }
-    const text = src.replace(/\r\n/g, '\n');
-    const mod = parseModule(text, { only: file.only });
-    const values = file.only ? null : evaluateModule(text, mod);
-    const valueOf = (name) => {
-      const decl = mod.decls.get(name);
-      if (!decl?.init) return undefined;
-      return values && name in values ? values[name] : clean(literalValue(decl.init, mod));
-    };
-    return { src, mod, values, valueOf };
+    return readContent(fileKey, src);
   }
 
   async section(id) {
     const meta = SECTIONS[id];
     if (!meta) throw new HttpError(404, 'not_found', 'There’s no such section.');
-    const { mod, valueOf } = await this.readFile(meta.file);
-    const decl = mod.decls.get(meta.name);
-    if (!decl?.init) throw new HttpError(503, 'site_changed', `${FILES[meta.file].path} no longer has “${meta.name}”.`);
-    const value = valueOf(meta.name);
-    return {
-      id,
-      ...meta,
-      path: FILES[meta.file].path,
-      value,
-      computed: computedPaths(decl.init, mod),
-      version: versionOf(value),
-    };
+    return sectionOf(id, await this.readFile(meta.file));
   }
 
-  async values(ids) {
-    const out = {};
-    const files = new Map();
-    for (const id of ids) {
-      const meta = SECTIONS[id];
-      if (!files.has(meta.file)) files.set(meta.file, await this.readFile(meta.file));
-      out[id] = files.get(meta.file).valueOf(meta.name);
-    }
-    return out;
+  values(ids) {
+    return valuesOf(ids, (fileKey) => this.readFile(fileKey));
   }
 
   list() {
-    return Object.entries(SECTIONS).map(([id, meta]) => ({ id, ...meta, path: FILES[meta.file].path }));
+    return listSections();
   }
 
   /**
@@ -96,60 +173,7 @@ export class ContentStore {
   }
 
   async #save(changes, rulesContext, actor) {
-    if (!Array.isArray(changes) || !changes.length) throw new HttpError(400, 'invalid', 'Nothing to save.');
-    const byFile = new Map();
-    for (const change of changes) {
-      const meta = SECTIONS[change?.id];
-      if (!meta) throw new HttpError(404, 'not_found', `There’s no section “${change?.id}”.`);
-      if (!byFile.has(meta.file)) byFile.set(meta.file, []);
-      byFile.get(meta.file).push({ ...change, meta });
-    }
-
-    // Rules see the batch as it will be: a card and its case study can arrive together.
-    const ctx = await rulesContext();
-    for (const change of changes) {
-      if (change.id === 'works') ctx.cardSlugs = (clean(change.value).projects ?? []).map((card) => card.slug);
-      if (change.id === 'systems') ctx.systemSlugs = Object.keys(clean(change.value));
-    }
-    const writes = [];
-    for (const [fileKey, list] of byFile) {
-      const file = FILES[fileKey];
-      const current = await this.readFile(fileKey);
-      let source = current.src;
-      for (const change of list) {
-        const before = current.valueOf(change.meta.name);
-        if (change.version && change.version !== versionOf(before)) {
-          throw new HttpError(409, 'conflict', `“${change.meta.label}” was changed somewhere else since you opened it. Reload to see the latest, then make your change again.`, { id: change.id });
-        }
-        const next = clean(change.value);
-        const problems = checkSection(change.id, next, ctx, before);
-        if (problems.length) throw new HttpError(422, 'rules', problems[0].message, { id: change.id, problems });
-        try {
-          source = rewriteSource(source, change.meta.name, change.value, { only: file.only }).source;
-        } catch (error) {
-          if (error instanceof ContentError) throw new HttpError(422, error.code, error.message, { id: change.id, ...error.details });
-          throw error;
-        }
-      }
-      if (source === current.src) continue;
-
-      // Read the result back: it must parse and hold exactly what was asked for.
-      const text = source.replace(/\r\n/g, '\n');
-      let reread;
-      try {
-        const mod = parseModule(text, { only: file.only });
-        const values = file.only ? null : evaluateModule(text, mod);
-        reread = (name) => (values && name in values ? values[name] : clean(literalValue(mod.decls.get(name)?.init, mod)));
-      } catch (error) {
-        throw new HttpError(500, 'verify', `The rewritten ${file.path} didn’t read back (${error.message}); nothing was written.`);
-      }
-      for (const change of list) {
-        if (!equal(reread(change.meta.name), clean(change.value))) {
-          throw new HttpError(500, 'verify', `The rewritten “${change.meta.label}” didn’t read back as saved; nothing was written.`);
-        }
-      }
-      writes.push({ fileKey, abs: this.abs(fileKey), before: current.src, after: source });
-    }
+    const writes = (await planSave(changes, { read: (fileKey) => this.readFile(fileKey), rulesContext })).map((write) => ({ ...write, abs: this.abs(write.fileKey) }));
 
     const done = [];
     try {
@@ -165,7 +189,7 @@ export class ContentStore {
 
     const saved = [];
     for (const change of changes) saved.push(await this.section(change.id));
-    return { saved, files: writes.map((write) => FILES[write.fileKey].path) };
+    return { saved, files: writes.map((write) => write.path) };
   }
 
   async #backup(fileKey, text, actor) {

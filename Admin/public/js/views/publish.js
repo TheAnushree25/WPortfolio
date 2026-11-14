@@ -26,6 +26,8 @@ export default async function publish() {
     toastError(error);
     return;
   }
+  // The hosted admin publishes through GitHub and the hosting provider instead of local builds.
+  if (data.mode === 'hosted') return (await import('./publish-hosted.js')).default(data);
   const canEdit = session.can('editor');
   const isOwner = session.can('owner');
   let stream = null;

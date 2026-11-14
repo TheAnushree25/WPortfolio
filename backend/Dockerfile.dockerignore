@@ -1,0 +1,11 @@
+# Only what the image needs goes into the build (the site's videos and packages stay out).
+*
+!Admin/package.json
+!Admin/public
+!Admin/server
+!backend
+backend/node_modules
+backend/.data
+backend/.env
+backend/.ui
+backend/static

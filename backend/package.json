@@ -1,0 +1,26 @@
+{
+  "name": "atlas-studios-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The hosted backend of the Atlas Studios site: the admin's accounts, clients, meetings and visits in Postgres, and the site's content and media edited on GitHub, so /admin works on the live site.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "build": "node scripts/build.mjs",
+    "demo": "node dev/demo.mjs",
+    "migrate": "node server.mjs migrate",
+    "doctor": "node server.mjs doctor",
+    "reset-password": "node server.mjs reset-password",
+    "test": "node --test --test-concurrency=1 --test-timeout=180000 \"test/*.test.mjs\""
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "^0.5.16",
+    "pg": "^8.23.1"
+  },
+  "devDependencies": {
+    "jsqr": "^1.4.0"
+  }
+}
