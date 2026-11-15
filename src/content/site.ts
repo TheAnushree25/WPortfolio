@@ -240,9 +240,9 @@ export const testimonials = {
     {
       quote:
         'Atlas found the idea we had been circling for months and gave it a shape. The new identity finally feels like us, and people notice it.',
-      name: 'Client name',
-      role: 'Founder — Company name',
-      initials: 'CN',
+      name: 'Siddhart',
+      role: 'Founder — FreightEasy',
+      initials: 'S',
     },
     {
       quote:
