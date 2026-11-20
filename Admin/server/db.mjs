@@ -23,6 +23,8 @@ export const empty = () => ({
   archive: { projects: [] },
   trash: [],
   jobs: [],
+  /** Details page research runs (prospects looked up on the public web). */
+  research: [],
   settings: {
     calendlyToken: '',
     calendlyUser: null,
@@ -30,6 +32,8 @@ export const empty = () => ({
     siteUrl: '',
     siteOrigins: [],
     notifyEmail: '',
+    /** The Details page's free API keys, offers and how long research is kept. */
+    research: {},
   },
   sample: false,
 });

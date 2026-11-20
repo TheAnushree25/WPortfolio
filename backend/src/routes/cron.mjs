@@ -11,9 +11,11 @@ export function cronRoutes(router, app) {
     const secret = app.config.cronSecret;
     const given = (ctx.request.headers.get('authorization') ?? '').replace(/^Bearer\s+/i, '');
     if (!secret || !safeEqual(given, secret)) throw new HttpError(401, 'cron', 'Not allowed.');
-    const outcome = { housekeeping: false, calendly: null };
+    const outcome = { housekeeping: false, calendly: null, research: null };
     await app.housekeeping({ force: true });
     outcome.housekeeping = true;
+    // Research older than Settings → Integrations → “Keep research for” is deleted.
+    outcome.research = await app.research?.sweep().catch((error) => ({ error: error.message }));
     if (await app.calendlyToken()) {
       try {
         outcome.calendly = await app.syncCalendly();

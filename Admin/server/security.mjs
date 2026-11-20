@@ -119,7 +119,8 @@ const CSP = [
   "script-src 'self'",
   "connect-src 'self'",
   "font-src 'self' data:",
-  "frame-src 'none'",
+  // Only the Details page's document previews, served by the admin itself and sandboxed.
+  "frame-src 'self'",
   "frame-ancestors 'none'",
   // The page's <base> names where the admin is mounted (/admin/), so it may only point at this site.
   "base-uri 'self'",

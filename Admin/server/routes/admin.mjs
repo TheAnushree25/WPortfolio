@@ -235,7 +235,8 @@ export function adminRoutes(router, app) {
   router.get('/api/settings/export', { auth: 'owner' }, (ctx) => {
     const rest = { ...db.data };
     delete rest.sessions;
-    const data = { ...rest, users: rest.users.map(publicUser), settings: { ...rest.settings, calendlyToken: '' }, exportedAt: new Date().toISOString(), exportedBy: ctx.user.email };
+    const keys = rest.settings.research ?? {};
+    const data = { ...rest, users: rest.users.map(publicUser), settings: { ...rest.settings, calendlyToken: '', research: { ...keys, geminiKey: '', tavilyKey: '', serpapiKey: '', pagespeedKey: '' } }, exportedAt: new Date().toISOString(), exportedBy: ctx.user.email };
     app.audit(ctx.user, 'settings.export', 'Exported the admin’s data');
     ctx.res.writeHead(200, {
       'content-type': 'application/json; charset=utf-8',
