@@ -16,6 +16,7 @@ import { mediaRoutes } from './routes/media.mjs';
 import { clientRoutes } from './routes/clients.mjs';
 import { siteRoutes } from './routes/site.mjs';
 import { adminRoutes } from './routes/admin.mjs';
+import { researchRoutes } from './routes/research.mjs';
 
 /**
  * The admin as one request handler. Every /api route declares who may call
@@ -98,7 +99,7 @@ export async function createApp(config) {
   });
 
   const router = new Router();
-  for (const register of [authRoutes, contentRoutes, mediaRoutes, clientRoutes, siteRoutes, adminRoutes]) register(router, app);
+  for (const register of [authRoutes, contentRoutes, mediaRoutes, clientRoutes, siteRoutes, adminRoutes, researchRoutes]) register(router, app);
 
   const clientIp = (req) => {
     if (config.trustProxy) {
@@ -267,6 +268,7 @@ export async function createApp(config) {
     handle,
     async close() {
       clearInterval(sweep);
+      app.research?.close();
       app.jobs.stopAll();
       await db.flush();
     },

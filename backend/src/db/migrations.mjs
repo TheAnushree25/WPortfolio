@@ -192,4 +192,23 @@ CREATE TABLE meta (
 );
 `,
   },
+  {
+    // The Details page: one row per business looked up. The run itself is one JSON document
+    // (its input, checks, facts and written documents); a few columns are kept beside it for
+    // the list, counting and the lease that stops two open tabs doing the same step.
+    version: '002_research',
+    sql: `
+CREATE TABLE research_runs (
+  id TEXT PRIMARY KEY,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  status TEXT NOT NULL,
+  sample BOOLEAN NOT NULL DEFAULT false,
+  business TEXT NOT NULL DEFAULT '',
+  lease_until TIMESTAMPTZ,
+  data JSONB NOT NULL
+);
+CREATE INDEX research_runs_created_idx ON research_runs (created_at DESC);
+`,
+  },
 ];

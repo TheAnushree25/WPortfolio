@@ -29,6 +29,7 @@ export const NAV = [
     items: [
       { href: '/enquiries', label: 'Enquiries', icon: 'inbox', badge: 'enquiries' },
       { href: '/meetings', label: 'Meetings', icon: 'calendar', badge: 'meetingsToday' },
+      { href: '/details', label: 'Details', icon: 'target' },
     ],
   },
   {

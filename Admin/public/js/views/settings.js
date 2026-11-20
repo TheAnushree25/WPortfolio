@@ -285,6 +285,9 @@ export default async function settings({ params }) {
   }
 
   if (tab === 'integrations') {
+    const { researchSettingsCard } = await import('./research-settings.js');
+    const research = await researchSettingsCard();
+    if (research) body.append(research);
     const token = h('input.input', { type: 'password', placeholder: data.calendly.connected ? `Saved (${data.calendly.hint}). Paste a new one to replace it.` : 'Paste a Personal Access Token', autocomplete: 'off', disabled: !isOwner });
     const origins = h('textarea.textarea', { rows: 3, value: data.siteOrigins.join('\n'), disabled: !isOwner, placeholder: 'https://theatlasstudio.com' });
     const siteUrl = h('input.input', { type: 'url', value: data.siteUrl, placeholder: 'https://theatlasstudio.com', disabled: !isOwner });

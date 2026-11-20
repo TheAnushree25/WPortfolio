@@ -40,6 +40,8 @@ export { KINDS, kindOf, UPLOADS, dimensions, PATH_IN_SOURCE, FILE_LIKE, SOURCE_E
 export { calendlyMeetings } from '../../Admin/server/calendly.mjs';
 export { STATUSES, STATUS_LABELS, SOURCES, SERVICES, BUDGETS, MEETING_STATES, enquiryFields, csvCell } from '../../Admin/server/routes/clients.mjs';
 export { MANAGED, isManaged } from '../../Admin/server/git.mjs';
+export { researchService } from '../../Admin/server/research/service.mjs';
+export { researchApi } from '../../Admin/server/routes/research.mjs';
 
 /**
  * The admin's pages. A deployment that ships only this folder carries a copy

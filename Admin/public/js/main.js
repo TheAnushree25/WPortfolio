@@ -23,6 +23,7 @@ const views = {
   media: lazy(() => import('./views/media.js')),
   enquiries: lazy(() => import('./views/enquiries.js')),
   meetings: lazy(() => import('./views/meetings.js')),
+  details: lazy(() => import('./views/details.js')),
   publish: lazy(() => import('./views/publish.js')),
   activity: lazy(() => import('./views/activity.js')),
   team: lazy(() => import('./views/team.js')),
@@ -42,6 +43,8 @@ function registerRoutes() {
   route('/enquiries', views.enquiries);
   route('/enquiries/:id', views.enquiries);
   route('/meetings', views.meetings);
+  route('/details', views.details);
+  route('/details/:id', views.details);
   route('/publish', views.publish);
   route('/activity', views.activity);
   route('/team', views.team);
@@ -61,6 +64,7 @@ function paletteCommands() {
   const actions = [
     session.can('editor') && { group: 'Actions', title: 'Add an enquiry', href: '/enquiries?new=1', icon: 'plus', keywords: 'lead client new' },
     session.can('editor') && { group: 'Actions', title: 'Add a meeting', href: '/meetings?new=1', icon: 'calendar', keywords: 'book call' },
+    session.can('editor') && { group: 'Actions', title: 'Look up a business', href: '/details', icon: 'target', keywords: 'details research prospect lead pitch summary pdf' },
     session.can('editor') && { group: 'Actions', title: 'Add a project card', href: '/projects/new', icon: 'briefcase', keywords: 'work card new' },
     session.can('editor') && { group: 'Actions', title: 'Upload media', href: '/media?upload=1', icon: 'upload', keywords: 'image picture file' },
     { group: 'Actions', title: 'Review and publish changes', href: '/publish', icon: 'rocket', keywords: 'deploy build live' },
