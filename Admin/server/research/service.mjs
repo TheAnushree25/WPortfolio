@@ -8,6 +8,7 @@ import { DEFAULT_OFFERS } from './write.mjs';
 import { fileNames, onePagerHtml, summaryHtml } from './templates.mjs';
 import { renderPdfs } from './pdf.mjs';
 import { sampleRun } from './sample.mjs';
+import { readPrompt } from './prompt.mjs';
 
 /**
  * The Details page's work, the same for the local admin and the hosted one:
@@ -201,6 +202,18 @@ export function researchService({ store, settings, audit: record = () => {}, mod
     setTimeout(() => sweep().catch(() => {}), 1_500).unref?.();
   }
 
+  /** A Gemini client for one quick request made while the person waits (reading the box or a card). */
+  const geminiFor = (values) => gemini({ key: values.geminiKey, model: values.geminiModel || '', prefer: values.geminiModelUsed || '', fetchImpl, ...(bases.gemini && { base: bases.gemini }) });
+
+  /** A service's problem as an answer the page can show. */
+  const asHttp = (error) => {
+    if (!(error instanceof ProviderError)) return error;
+    if (error.code === 'key') return new HttpError(400, 'gemini', error.message);
+    if (error.code === 'limit' || error.code === 'busy') return new HttpError(429, 'gemini_limit', 'Gemini asked to wait a moment. Try again in a minute.', { retryAfter: Math.ceil((error.retryAfterMs || 30_000) / 1000) });
+    if (error.code === 'quota') return new HttpError(429, 'gemini_quota', error.message);
+    return new HttpError(502, 'gemini', error.message);
+  };
+
   async function settingsView() {
     const values = await config();
     return {
@@ -234,13 +247,36 @@ export function researchService({ store, settings, audit: record = () => {}, mod
       };
     },
 
+    /**
+     * Starts a run. `body.prompt` is the Details page's one box (everything
+     * known, typed any way); the separate fields of `researchInput` work too.
+     */
     async create(body, user) {
       const values = await config();
       if (!values.geminiKey || !values.tavilyKey) throw new HttpError(400, 'not_ready', 'Add the free Gemini and Tavily keys in Settings → Integrations first.');
       const since = new Date(Date.now() - 86_400_000).toISOString();
       const recent = store.countSince ? await store.countSince(since) : (await store.list()).filter((run) => !run.sample && run.createdAt > since).length;
       if (recent >= 25) throw new HttpError(429, 'limited', 'That’s 25 research runs in a day, enough to use up the free allowances. Try again tomorrow.');
-      const run = newRun(researchInput(body), user);
+      let input;
+      if (typeof body.prompt === 'string') {
+        const text = cleanText(body.prompt, { field: 'prompt', max: 3000, required: true, multiline: true });
+        let fields;
+        try {
+          fields = await readPrompt(text, geminiFor(values));
+        } catch (error) {
+          throw asHttp(error);
+        }
+        try {
+          input = researchInput({ ...fields, depth: body.depth });
+        } catch (error) {
+          if (!(error instanceof HttpError) || error.status !== 400) throw error;
+          const field = error.extra?.field;
+          const message = field === 'business' ? 'Couldn’t tell which business to look up. Start with its name, e.g. “Debayan Hospital, Kashipur, Kolkata”.' : field === 'city' ? 'Add where it is (the town or area), or a phone number or website, so the right business is found.' : error.message;
+          throw badRequest(message, { field: 'prompt', understood: fields });
+        }
+        input.prompt = text;
+      } else input = researchInput(body);
+      const run = newRun(input, user);
       await store.put(run);
       audit(user, 'research.create', `Started researching ${run.input.business}`, { target: run.id });
       drive(run.id);
@@ -413,7 +449,7 @@ export function researchService({ store, settings, audit: record = () => {}, mod
       const match = /^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=]+)$/.exec(String(body.image ?? ''));
       if (!match) throw badRequest('Send the card as a JPEG, PNG or WebP picture.');
       if (match[2].length > 7_000_000) throw badRequest('That picture is too large; try a smaller one.');
-      const ai = gemini({ key: values.geminiKey, model: values.geminiModel || '', prefer: values.geminiModelUsed || '', fetchImpl, ...(bases.gemini && { base: bases.gemini }) });
+      const ai = geminiFor(values);
       const schema = {
         type: 'object',
         properties: {
@@ -438,8 +474,7 @@ export function researchService({ store, settings, audit: record = () => {}, mod
         });
         return result.data ?? {};
       } catch (error) {
-        if (error instanceof ProviderError) throw new HttpError(error.code === 'key' ? 400 : 502, 'gemini', error.message);
-        throw error;
+        throw asHttp(error);
       }
     },
 

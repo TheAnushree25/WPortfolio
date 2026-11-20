@@ -8,15 +8,17 @@ import { button, busy, card, cardHead, confirm, empty, modal, notice, pageHead, 
 import { dateTime, relative } from '../lib/format.js';
 
 /**
- * Details: type in a business (and the person to talk to), or read a
- * visiting card; the admin researches it on the public web, you check what
- * it found, and it writes a two-page summary and a one-page pitch as PDFs.
+ * Details: one box for everything you know about a business (the person,
+ * the town, phones, emails, links; a visiting card adds its text), read by
+ * code and Gemini into the details the research needs; the admin researches
+ * it on the public web, you check what it found, and it writes a two-page
+ * summary and a one-page pitch as PDFs.
  * A run moves through code checks, web searches, reading pages and checking
  * every quote; this page follows it live, then shows the facts to review and
  * finally the two documents.
  */
 
-const INDUSTRIES = [
+const INDUSTRY_LABELS = Object.fromEntries([
   ['hospital', 'Hospital, clinic or nursing home'],
   ['doctor', 'Doctor, dentist or diagnostic lab'],
   ['restaurant', 'Restaurant, café or caterer'],
@@ -29,7 +31,7 @@ const INDUSTRIES = [
   ['professional', 'CA, lawyer or consultant'],
   ['ngo', 'Trust, NGO or temple'],
   ['other', 'Something else'],
-];
+]);
 const SECTIONS = {
   contact: 'Who to contact',
   business: 'The business',
@@ -89,11 +91,11 @@ async function listPage(query) {
   show(
     pageHead({
       title: 'Details',
-      text: 'Type in a business and the person you’d talk to. The admin looks them up on the public web, you check what it found, and it writes a two-page summary and a one-page pitch.',
+      text: 'Tell it everything you know about a business in one go. The admin looks it up on the public web, you check what it found, and it writes a two-page summary and a one-page pitch.',
       actions: [canEdit && button('See an example', { glyph: 'sparkles', onClick: example })].filter(Boolean),
     }),
     !ready && setupNotice(state.ready),
-    canEdit ? researchForm({ ready, query }) : null,
+    canEdit ? promptBox({ ready, query }) : null,
     runList(state.items),
   );
 }
@@ -115,9 +117,6 @@ function setupNotice(ready) {
   );
 }
 
-const fieldBox = (label, control, { hint = null, required = false, span = false, name = '' } = {}) =>
-  h(`div.field${span ? '.span-2' : ''}`, { dataset: { name } }, h('label', label, required && h('span.req', ' *')), control, hint && h('div.field-hint', hint), h('div.field-error', { hidden: true }));
-
 /** Reads a picture into a JPEG data address no wider or taller than 1600 pixels. */
 async function shrink(file) {
   const bitmap = await createImageBitmap(file);
@@ -127,109 +126,120 @@ async function shrink(file) {
   return canvas.toDataURL('image/jpeg', 0.86);
 }
 
-function researchForm({ ready, query }) {
-  const input = (name, placeholder = '', type = 'text') => h('input.input', { type, name, placeholder, value: query?.[name] ?? '', autocomplete: 'off' });
-  const fields = {
-    business: input('business', 'e.g. Debayan Hospital'),
-    city: input('city', 'e.g. Kashipur, Kolkata'),
-    person: input('person', 'e.g. Netai Kr. Deb'),
-    role: input('role', 'e.g. Director'),
-    phones: input('phones', 'e.g. 94330 81123, 87774 80739'),
-    emails: input('emails', 'e.g. name@gmail.com'),
-    website: input('website', 'e.g. example.com'),
-    address: input('address', 'Street, area, pincode'),
-    links: h('textarea.textarea', { name: 'links', rows: 2, placeholder: 'Facebook, Instagram, LinkedIn or Google Maps links, one per line', value: query?.links ?? '' }),
-    industry: h('select.select', { name: 'industry' }, INDUSTRIES.map(([key, label]) => h('option', { value: key, selected: key === (query?.industry ?? 'other') }, label))),
-    notes: h('textarea.textarea', { name: 'notes', rows: 2, placeholder: 'Anything that helps find them, e.g. “near the police station”, or what you want to know' }),
+/** What a visiting card says, as lines for the box. */
+const cardLines = (found) =>
+  [found.business, found.person && `${found.person}${found.role ? `, ${found.role}` : ''}`, (found.phones ?? []).join(', '), (found.emails ?? []).join(', '), found.website, found.address || found.city]
+    .filter((line) => line && String(line).trim())
+    .join('\n');
+
+/** The details of an earlier research as text for the box, for looking it up again. */
+const promptOf = (input) =>
+  input.prompt ||
+  [input.business, [input.address || input.city, input.pincode && !String(input.address).includes(input.pincode) ? input.pincode : ''].filter(Boolean).join(' '), input.person && `${input.person}${input.role ? `, ${input.role}` : ''}`, input.phones.join(', '), input.emails.join(', '), input.website, ...input.links]
+    .filter(Boolean)
+    .join('\n');
+
+const EXAMPLE = 'For example: Debayan Hospital, Kashipur, Kolkata 700135. Director Netai Kr. Deb, 94330 81123 / 87774 80739, debayanhospital@gmail.com, facebook.com/debayanhospital. A 60-bed hospital; I got his card at a fair.';
+
+/** The one box: everything you know about the business, typed any way you like. */
+function promptBox({ ready, query }) {
+  const area = h('textarea.textarea.prompt-box', {
+    rows: 6,
+    value: query?.prompt ?? '',
+    placeholder: `Everything you know about them, in any order: the business, the person and their role, the town, phone numbers, emails, website, links, anything else.\n\n${EXAMPLE}`,
+    'aria-label': 'What you know about the business',
+  });
+  const error = h('div.field-error', { hidden: true, role: 'alert' });
+  const showProblem = (message) => {
+    error.textContent = message;
+    error.hidden = false;
+    area.classList.add('has-error');
+    area.focus();
   };
-  let depth = 'quick';
-  const depthToggle = h('div.segmented', { role: 'group', 'aria-label': 'How deep' });
-  const drawDepth = () =>
-    depthToggle.replaceChildren(
-      ...[
-        ['quick', 'Quick (about 12 searches)'],
-        ['thorough', 'Thorough (about 22)'],
-      ].map(([key, label]) => h(`button${depth === key ? '.active' : ''}`, { type: 'button', 'aria-pressed': String(depth === key), onClick: () => ((depth = key), drawDepth()) }, label)),
-    );
-  drawDepth();
+  area.addEventListener('input', () => {
+    error.hidden = true;
+    area.classList.remove('has-error');
+  });
+  const deeper = h('input', { type: 'checkbox', style: { accentColor: 'var(--brand)' } });
 
   const fileInput = h('input', { type: 'file', accept: 'image/*', capture: 'environment', hidden: true });
-  const cardButton = button('Read a visiting card', { glyph: 'image', onClick: () => fileInput.click(), disabled: !ready });
+  const cardButton = button('Add a visiting card', { glyph: 'image', onClick: () => fileInput.click(), disabled: !ready });
   fileInput.addEventListener('change', async () => {
     const file = fileInput.files?.[0];
     fileInput.value = '';
     if (!file) return;
     await busy(cardButton, async () => {
-      const image = await shrink(file);
-      const found = await post('/api/research/read-card', { image });
-      const put = (name, value) => {
-        if (value && !fields[name].value.trim()) fields[name].value = value;
-      };
-      put('business', found.business);
-      put('person', found.person);
-      put('role', found.role);
-      put('phones', (found.phones ?? []).join(', '));
-      put('emails', (found.emails ?? []).join(', '));
-      put('website', found.website);
-      put('address', found.address);
-      put('city', found.city);
-      if (found.industry && fields.industry.value === 'other') fields.industry.value = found.industry;
-      toast('Read the card. Check the fields before you start.');
+      const found = await post('/api/research/read-card', { image: await shrink(file) });
+      const lines = cardLines(found);
+      if (!lines) return toast('Couldn’t read anything on that card. Try a sharper photo.', { type: 'error' });
+      area.value = [area.value.trim(), lines].filter(Boolean).join('\n');
+      area.dispatchEvent(new Event('input'));
+      toast('Added what the card says. Add anything else you know, then start.');
+      area.focus();
     });
   });
 
-  const form = h('form', { noValidate: true });
   const start = button('Start research', { kind: 'primary', glyph: 'search', type: 'submit', disabled: !ready });
-  form.append(
+  const form = h(
+    'form',
+    { noValidate: true },
+    area,
+    error,
     h(
-      'div.form-grid.cols-2',
-      fieldBox('Business or organisation', fields.business, { required: true, name: 'business' }),
-      fieldBox('City or area', fields.city, { required: true, name: 'city', hint: 'Or give a phone number, website or address.' }),
-      fieldBox('Person’s name', fields.person, { name: 'person' }),
-      fieldBox('Their role', fields.role, { name: 'role' }),
-      fieldBox('Phone numbers', fields.phones, { name: 'phones', hint: 'The surest way to find the right business. Separate with commas.' }),
-      fieldBox('Email addresses', fields.emails, { name: 'emails' }),
-      fieldBox('Website', fields.website, { name: 'website' }),
-      fieldBox('Address or pincode', fields.address, { name: 'address' }),
-      fieldBox('Links', fields.links, { span: true, name: 'links' }),
-      fieldBox('Kind of business', fields.industry, { name: 'industry', hint: 'Adds the places that matter for it, like health schemes for a hospital.' }),
-      h('div.field', h('label', 'How deep'), depthToggle, h('div.field-hint', 'Thorough also looks at registrations, the person’s professional profile and directories.')),
-      fieldBox('Notes for the research', fields.notes, { span: true, name: 'notes', hint: 'Sent to Gemini with the details, so don’t write anything private.' }),
+      'div.row.wrap.between',
+      { style: { marginTop: '14px', gap: '10px' } },
+      h('div.row.wrap', { style: { gap: '10px' } }, start, cardButton, fileInput),
+      h('label.row.small.muted', { style: { gap: '8px', cursor: 'pointer' } }, deeper, 'Search deeper (about 22 searches instead of 12)'),
     ),
-    h('div.row.wrap', { style: { marginTop: '18px', gap: '10px' } }, start, cardButton, fileInput),
-    h('p.tiny.muted', { style: { marginTop: '12px' } }, 'Only public pages, read without signing in. Home addresses, family, personal posts and court records are left out. What you type goes to Google (Gemini), Tavily and SerpApi; on their free plans Google may use it to improve its products.'),
+    h('p.tiny.muted', { style: { marginTop: '12px' } }, 'Phone numbers and emails matter most: they’re how the right business is told apart from others with the same name. Only public pages are read, without signing in; home addresses, family, personal posts and court records are left out. What you type goes to Google (Gemini), Tavily and SerpApi; on their free plans Google may use it to improve its products.'),
   );
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
-    for (const box of form.querySelectorAll('.field.has-error')) {
-      box.classList.remove('has-error');
-      box.querySelector('.field-error').hidden = true;
-    }
-    const body = Object.fromEntries(Object.entries(fields).map(([name, el]) => [name, el.value]));
-    body.depth = depth;
-    if (!body.business.trim()) return showError(form, 'business', 'Type the business’s name.');
+    if (!area.value.trim()) return showProblem('Type what you know about the business first.');
     await busy(start, async () => {
       try {
-        const run = await post('/api/research', body);
+        const run = await post('/api/research', { prompt: area.value, depth: deeper.checked ? 'thorough' : 'quick' });
         navigate(`/details/${run.id}`);
-      } catch (error) {
-        if (error.data?.field && showError(form, error.data.field, error.message) !== false) return;
-        throw error;
+      } catch (problem) {
+        if (problem.data?.field === 'prompt' || problem.status === 429) return showProblem(problem.message);
+        throw problem;
       }
     });
+  });
+  // Ctrl+Enter (⌘+Enter on a Mac) starts it from the box.
+  area.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey) && !start.disabled) form.requestSubmit();
   });
   return card(cardHead('Who should we look up?'), h('div.card-body', form));
 }
 
-function showError(form, name, message) {
-  const box = form.querySelector(`.field[data-name="${name}"]`);
-  if (!box) return false;
-  box.classList.add('has-error');
-  const line = box.querySelector('.field-error');
-  line.textContent = message;
-  line.hidden = false;
-  box.querySelector('input, textarea, select')?.focus();
-  return true;
+/** What was typed, and how it was read, at the top of a run. */
+function understoodCard(run, canEdit) {
+  const i = run.input;
+  const place = [i.address || i.city, i.pincode && !String(i.address).includes(i.pincode) ? i.pincode : ''].filter(Boolean).join(' ');
+  const rows = [
+    ['Business', i.business],
+    ['Where', place],
+    ['Person', i.person && `${i.person}${i.role ? `, ${i.role}` : ''}`],
+    ['Phones', i.phones.join(', ')],
+    ['Email', i.emails.join(', ')],
+    ['Website', i.website],
+    ['Links', i.links.join(' · ')],
+    ['Kind', INDUSTRY_LABELS[i.industry]],
+  ].filter(([, value]) => value);
+  return card(
+    h(
+      'details',
+      { open: ['running', 'waiting'].includes(run.status) },
+      h('summary.card-head', { style: { cursor: 'pointer', paddingBottom: '16px' } }, h('h2', 'What you told us'), h('span.small.muted', 'and how it was read')),
+      h(
+        'div.card-body.stack',
+        h('blockquote', { style: { margin: '0', padding: '10px 14px', borderLeft: '3px solid var(--line-strong)', color: 'var(--text-2)', whiteSpace: 'pre-wrap' } }, i.prompt),
+        h('dl.kv', rows.flatMap(([label, value]) => [h('dt', label), h('dd', value)])),
+        canEdit && h('div', button('Fix and look up again', { small: true, glyph: 'pencil', href: `/details?prompt=${encodeURIComponent(i.prompt)}` })),
+      ),
+    ),
+  );
 }
 
 function runList(items) {
@@ -305,7 +315,7 @@ async function runPage(id) {
     const more = h('button.icon-btn', { type: 'button', 'aria-label': 'More' }, icon('more'));
     more.addEventListener('click', () =>
       popMenu(more, [
-        { label: 'Look up again with these details', icon: 'refresh', onClick: () => navigate(`/details?${new URLSearchParams(Object.fromEntries(Object.entries({ ...input, phones: input.phones.join(', '), emails: input.emails.join(', '), links: input.links.join('\n') }).filter(([, value]) => typeof value === 'string' && value)))}`) },
+        { label: 'Look up again with these details', icon: 'refresh', onClick: () => navigate(`/details?prompt=${encodeURIComponent(promptOf(input))}`) },
         canEdit && '-',
         canEdit && {
           label: 'Delete this research',
@@ -332,6 +342,7 @@ async function runPage(id) {
     const subtitle = [[input.city, input.pincode].filter(Boolean).join(' '), input.person && `${input.person}${input.role ? `, ${input.role}` : ''}`, `started ${relative(run.createdAt)} by ${run.createdBy?.name ?? 'someone'}`].filter(Boolean).join(' · ');
 
     const blocks = [pageHead({ title: input.business, text: subtitle, crumbs: [{ label: 'Details', href: '/details' }, { label: input.business }], actions })];
+    if (input.prompt) blocks.push(understoodCard(run, canEdit));
     if (run.sample) blocks.push(notice('This is a made-up example: the hospital, people, numbers and pages are invented. It shows what a finished research looks like.', { glyph: 'sparkles' }));
     if (run.status === 'waiting') blocks.push(notice(h('span', h('b', 'Waiting. '), run.waitReason || 'A free limit was reached.', run.notBefore ? ` Carries on by itself at ${dateTime(run.notBefore)}.` : ''), { kind: 'warning', glyph: 'clock' }));
     if (run.status === 'failed') blocks.push(notice(h('span', h('b', 'Stopped by a problem. '), run.error), { kind: 'danger', glyph: 'alertCircle' }));

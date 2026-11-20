@@ -14,7 +14,7 @@ import { pathToFileURL } from 'node:url';
  *     RESEARCH_GEMINI_BASE=http://127.0.0.1:4339/gemini/v1beta
  *     RESEARCH_TAVILY_BASE=http://127.0.0.1:4339/tavily
  *     RESEARCH_SERPAPI_BASE=http://127.0.0.1:4339/serpapi
- *     and type “Sunrise Clinic (test)”, “Testpur”, phone 90000 11111.
+ *     and type “Sunrise Clinic (test), Testpur. Dr. Test Person, Director, 90000 11111”.
  */
 
 export const PAGES = {
@@ -109,6 +109,22 @@ function onepagerDoc() {
   };
 }
 
+/** The Details box read the way Gemini would: the first part names the business, the second the town. */
+function readNote(prompt) {
+  const note = (/"""\n([\s\S]*?)\n"""/.exec(prompt)?.[1] ?? prompt).replace(/\b(Dr|Mr|Mrs|Ms|St)\.\s/g, '$1 ');
+  const parts = note.split(/[,\n]+|\.\s+|\.$/).map((part) => part.trim()).filter(Boolean);
+  const words = parts.filter((part) => !/\d|@|\.example|www\./i.test(part));
+  const person = parts.find((part) => /\b(Dr|Mr|Mrs|Ms)\b/.test(part)) ?? '';
+  return {
+    business: /^(it|they|the)\b/i.test(words[0] ?? '') ? '' : (words[0] ?? ''),
+    city: words[1] && words[1] !== person && !/director|owner/i.test(words[1]) ? words[1] : '',
+    person: person.replace(/^(Director|Owner)\s+/i, ''),
+    role: /director/i.test(note) ? 'Director' : '',
+    address: '',
+    industry: /clinic|hospital/i.test(note) ? 'hospital' : 'other',
+  };
+}
+
 function gemini(method, path, body) {
   if (method === 'GET' && path.endsWith('/models')) return json(200, { models: [{ name: 'models/gemini-9.9-flash', supportedGenerationMethods: ['generateContent'] }, { name: 'models/gemini-9.9-flash-image', supportedGenerationMethods: ['generateContent'] }] });
   if (method !== 'POST' || !/:generateContent$/.test(path)) return json(404, { error: { code: 404, message: 'not found' } });
@@ -118,6 +134,7 @@ function gemini(method, path, body) {
   let answer;
   if (parts.some((part) => part.inlineData)) answer = { business: 'Sunrise Clinic (test)', person: 'Dr. Test Person', role: 'Director', phones: ['90000 11111'], emails: [], website: '', address: 'Station Road, Testpur 700001', city: 'Testpur', industry: 'hospital' };
   else if (props.ok) answer = { ok: true };
+  else if (props.business && props.industry && !props.phones) answer = readNote(prompt);
   else if (props.facts) answer = { facts: extractFacts(prompt) };
   else if (props.keyFact) answer = summaryDoc(prompt);
   else if (props.issues) answer = onepagerDoc(prompt);

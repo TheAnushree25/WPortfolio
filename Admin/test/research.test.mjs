@@ -13,6 +13,7 @@ import { onePagerHtml, summaryHtml, fileNames } from '../server/research/templat
 import { findBrowser, renderPdfs } from '../server/research/pdf.mjs';
 import { sampleRun } from '../server/research/sample.mjs';
 import { standinFetch, standinLookup } from './research-standin.mjs';
+import { extractContacts } from '../server/research/prompt.mjs';
 
 /**
  * The Details page's research: the form's checks, matching pages to the
@@ -36,6 +37,49 @@ test('the form: phones, emails, website and pincode are cleaned; bad values name
   assert.throws(() => researchInput({ business: 'X', city: 'Y', emails: 'nope' }), (error) => error.extra?.field === 'emails');
   assert.throws(() => researchInput({ business: 'X' }), (error) => error.extra?.field === 'city');
   assert.throws(() => researchInput({ city: 'Y' }), (error) => error.extra?.field === 'business');
+});
+
+test('the one box: phones, emails, website, links and pincode are read by code from free text', () => {
+  const found = extractContacts(
+    'Debayan Hospital, Kashipur, Kolkata 700135. Director Netai Kr. Deb, 94330 81123 / 87774 80739, debayanhospital@gmail.com, facebook.com/debayanhospital, www.debayanhospitals.com. Pvt.Ltd., 60 beds, asking ₹13 crore (2026 - 2027). Landline: 2440 1234. Old office 033 2440 5678',
+  );
+  assert.deepEqual(found.phones, ['94330 81123', '87774 80739', '2440 1234', '033 2440 5678']);
+  assert.deepEqual(found.emails, ['debayanhospital@gmail.com']);
+  assert.equal(found.website, 'https://www.debayanhospitals.com/');
+  assert.deepEqual(found.links, ['https://facebook.com/debayanhospital']);
+  assert.equal(found.pincode, '700135');
+  assert.deepEqual(extractContacts('Call 9433081123 9777480739 today').phones, ['94330 81123', '97774 80739'], 'two numbers written one after the other');
+  assert.deepEqual(extractContacts('Open 2019 - 2026, 20 beds').phones, [], 'years and counts are not phone numbers');
+});
+
+test('the one box: a note becomes the research input, and a note without a business says so', async () => {
+  const runs = new Map();
+  let saved = { geminiKey: 'gemini-test-key-123', tavilyKey: 'tavily-test-key-123' };
+  const service = researchService({
+    store: { list: () => [...runs.values()], get: (id) => runs.get(id) ?? null, put: (run) => runs.set(run.id, run), remove: (id) => runs.delete(id), lease: () => true, release: () => {} },
+    settings: { get: () => saved, set: (patch) => (saved = { ...saved, ...patch }) },
+    mode: 'hosted',
+    fetchImpl: standinFetch,
+    lookup: standinLookup,
+  });
+  try {
+    const note = 'Sunrise Clinic (test), Testpur. Dr. Test Person, Director. 90000 11111, sunrise@clinic.example';
+    const run = await service.create({ prompt: note, depth: 'thorough' }, { id: 'u1', name: 'Tester' });
+    assert.equal(run.input.business, 'Sunrise Clinic (test)');
+    assert.equal(run.input.city, 'Testpur');
+    assert.match(run.input.person, /Test Person/);
+    assert.equal(run.input.role, 'Director');
+    assert.deepEqual(run.input.phones, ['90000 11111']);
+    assert.deepEqual(run.input.emails, ['sunrise@clinic.example']);
+    assert.equal(run.input.industry, 'hospital');
+    assert.equal(run.input.depth, 'thorough');
+    assert.equal(run.input.prompt, note, 'what was typed is kept, to show and to look up again');
+    assert.ok(run.input.notes.includes('Dr. Test Person'), 'the whole note goes to the research as notes');
+    await assert.rejects(service.create({ prompt: 'they are on 90000 11111' }, null), (error) => error.extra?.field === 'prompt' && /which business/.test(error.message));
+    await assert.rejects(service.create({ prompt: '   ' }, null), (error) => error.extra?.field === 'prompt');
+  } finally {
+    service.close();
+  }
 });
 
 test('pages are matched to the business by phone, email or website first, the name only after', () => {
