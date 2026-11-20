@@ -67,7 +67,8 @@ const csp = (mediaOrigins = []) => [
   "script-src 'self'",
   "connect-src 'self'",
   "font-src 'self' data:",
-  "frame-src 'none'",
+  // Only the Details page's document previews, served by the admin itself and sandboxed.
+  "frame-src 'self'",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",

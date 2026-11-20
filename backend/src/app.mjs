@@ -20,6 +20,7 @@ import { contentRoutes } from './routes/content.mjs';
 import { mediaRoutes } from './routes/media.mjs';
 import { siteRoutes } from './routes/site.mjs';
 import { cronRoutes } from './routes/cron.mjs';
+import { researchRoutes } from './routes/research.mjs';
 
 /**
  * The backend as one web-standard handler, `fetch(Request) → Response`:
@@ -176,7 +177,7 @@ export async function createBackend(config, { db: givenDb = null, fetch: fetcher
   /* ---------------------------------------------- Routes ---------------------------------------------- */
 
   const router = new Router();
-  for (const register of [authRoutes, adminRoutes, clientRoutes, contentRoutes, mediaRoutes, siteRoutes, cronRoutes]) register(router, app);
+  for (const register of [authRoutes, adminRoutes, clientRoutes, contentRoutes, mediaRoutes, siteRoutes, cronRoutes, researchRoutes]) register(router, app);
 
   /** Changes must come from the admin's own pages, never another site. */
   const checkOrigin = (ctx) => {
