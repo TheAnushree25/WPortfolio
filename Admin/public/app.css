@@ -3610,3 +3610,12 @@ details[open] > summary.card-head::after {
   border: 0;
   background: #e9edf3;
 }
+.prompt-box {
+  min-height: 160px;
+  font-size: 15px;
+  line-height: 1.55;
+  resize: vertical;
+}
+.prompt-box.has-error {
+  border-color: var(--danger);
+}
