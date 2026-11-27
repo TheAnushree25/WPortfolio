@@ -222,7 +222,7 @@ test('reordering the system order, an `as const` list of slugs', () => {
     order.reverse();
   });
   assert.deepEqual(valuesOf(source).systemOrder, clean(next));
-  assert.ok(lf(source).includes("export const systemOrder = ['saaj', 'ishita-traders', 'keeri', 'shoku', 'maple-studios', 'maple-furnishers'] as const;"));
+  assert.ok(lf(source).includes("export const systemOrder = ['the-last-tempo', 'saaj', 'ishita-traders', 'keeri', 'shoku', 'maple-studios', 'maple-furnishers'] as const;"));
 });
 
 test('chapters: moved, edited, added and removed in one save', () => {

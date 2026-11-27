@@ -1415,6 +1415,225 @@ const saaj: SystemStudy = {
   ],
 };
 
+const tempo: SystemStudy = {
+  title: 'The Last Tempo',
+  kind: 'Football tribute · WebGL point-cloud site',
+  industry: 'Sport',
+  year: '2026',
+  live: { href: 'https://tango-woad.vercel.app', label: 'tango-woad.vercel.app' },
+  summary:
+    'A football tribute drawn entirely in points: eight goals to watch from up to three cameras, scrub with the wheel and push apart with the cursor, and ten records that gather into figures, all to live commentary, a crowd and a tango score.',
+  brief:
+    'A studio concept and WebGL study: what if a player’s final tournament were made of the people who watched it? We drew a fictional player’s last eight goals and ten records as clouds of light on one stage that never reloads, and made every picture, clip and sound for it: a procedural 3D match, depth estimated from still images, a synthesised score and a synthetic commentator.',
+  accent: '#dcbf6a',
+  facts: [
+    { label: 'Client', value: 'Studio concept, every name fictional' },
+    { label: 'Scope', value: 'Interactive site, WebGL engine, media pipelines' },
+    { label: 'Platform', value: 'Next.js 16 · three.js · GLSL · GSAP' },
+    { label: 'Year', value: '2026' },
+  ],
+  stack: [
+    {
+      layer: 'Site',
+      items: [
+        { name: 'Next.js 16', detail: 'App Router, prerendered pages', icon: 'nextdotjs' },
+        { name: 'React 19', icon: 'react' },
+        { name: 'TypeScript', icon: 'typescript' },
+        { name: 'Tailwind CSS 4', detail: '@theme tokens', icon: 'tailwindcss' },
+        { name: 'Zustand', detail: 'Shared interface state' },
+      ],
+    },
+    {
+      layer: 'Stage',
+      items: [
+        { name: 'three.js', detail: 'Point clouds, terrain, dust and bloom', icon: 'threedotjs' },
+        { name: 'GLSL', detail: 'Hand-written point, terrain and trail shaders', icon: 'webgl' },
+        { name: 'GSAP + SplitText', detail: 'The whole opening as one timeline', icon: 'greensock' },
+        { name: 'Lenis', detail: 'Smooth scroll on the text pages' },
+      ],
+    },
+    {
+      layer: 'Sound',
+      items: [
+        { name: 'Howler', detail: 'Music, crowd, commentary and interface ticks' },
+        { name: 'Synthesised score', detail: 'Music, crowd beds and interface sounds, made in code' },
+        { name: 'Chatterbox', detail: 'A synthetic commentator, voiced on the CPU' },
+      ],
+    },
+    {
+      layer: 'Media pipeline',
+      items: [
+        { name: 'Procedural match', detail: 'Every play rendered in 3D, from every camera' },
+        { name: 'ONNX Runtime', detail: 'BiRefNet mattes, Depth Anything V2 depth', icon: 'onnx' },
+        { name: 'FLUX', detail: 'The still images' },
+        { name: 'FFmpeg', detail: 'Colour, depth and class map in one video', icon: 'ffmpeg' },
+      ],
+    },
+    {
+      layer: 'Delivery',
+      items: [
+        { name: 'Vercel', detail: 'Static pages, media cached for a day', icon: 'vercel' },
+        { name: 'GitHub Actions', detail: 'Lint, build and type check on every push', icon: 'githubactions' },
+      ],
+    },
+  ],
+  architecture: {
+    tiers: [
+      { label: 'People', nodes: [{ id: 'fan', label: 'The visitor', detail: 'Mouse and wheel, or a tilted phone' }] },
+      { label: 'Interface', nodes: [{ id: 'ui', label: 'React interface', detail: 'Rings, statistics, cameras, ENG and ESP' }] },
+      {
+        label: 'Engines',
+        nodes: [
+          { id: 'stage', label: 'WebGL stage', detail: 'One canvas above the routes, never reloaded' },
+          { id: 'sound', label: 'Sound engine', detail: 'Music, crowd and the call, kept in step' },
+        ],
+      },
+      {
+        label: 'Media',
+        nodes: [
+          { id: 'clips', label: '15 goal clips', detail: 'Colour, depth, class map and tracking' },
+          { id: 'atlases', label: '11 figure atlases', detail: 'The gate, the records, the 404' },
+          { id: 'audio', label: '16 sound files', detail: 'Score, crowd beds, 8 goal calls' },
+        ],
+      },
+      {
+        label: 'Made offline',
+        nodes: [
+          { id: 'match', label: '3D match renderer', detail: 'Plays and cameras from one match' },
+          { id: 'vision', label: 'Matte and depth', detail: 'BiRefNet, Depth Anything V2' },
+          { id: 'voice', label: 'Voice and synth', detail: 'Commentary, score and crowd' },
+        ],
+      },
+    ],
+    links: [
+      ['fan', 'ui'],
+      ['ui', 'stage'],
+      ['ui', 'sound'],
+      ['stage', 'clips'],
+      ['stage', 'atlases'],
+      ['sound', 'audio'],
+      ['clips', 'match'],
+      ['atlases', 'vision'],
+      ['audio', 'voice'],
+    ],
+  },
+  plan: {
+    title: 'Website plan',
+    root: {
+      label: 'tango-woad.vercel.app',
+      detail: 'One screen, and a stage that never reloads',
+      children: [
+        {
+          label: 'The gate',
+          detail: 'Before the first sound',
+          children: [{ label: 'Grid and dotted ring' }, { label: 'The figure gathers', detail: '640 × 420 points' }, { label: 'Enter', detail: 'Sound may start' }],
+        },
+        {
+          label: 'Goals',
+          detail: '8 goals, 15 clips',
+          children: [
+            { label: 'The ring of goals', detail: 'A gold arc follows' },
+            { label: 'TV, Goal Cam, Follow' },
+            { label: 'Minute, distance, possession' },
+            { label: 'The live call, then the replay' },
+          ],
+        },
+        {
+          label: 'Records',
+          detail: '10 records',
+          children: [{ label: 'The turning wheel', detail: 'Always the short way round' }, { label: 'Nine figures in points' }, { label: 'Odometer counters' }],
+        },
+        { label: 'About', detail: 'The tribute, in words', children: [{ label: 'English and Spanish' }] },
+        { label: 'Legal notice' },
+        { label: '404', detail: 'Back to the pitch', children: [{ label: 'A figure of its own' }] },
+      ],
+    },
+  },
+  journeys: [
+    {
+      actor: 'Fan',
+      goal: 'Relive the final tournament.',
+      steps: [
+        { title: 'The gate', detail: 'Grid lines open, a dotted ring draws itself and the player gathers out of points; the cursor tears through him.' },
+        { title: 'Enter', detail: 'The one click browsers ask for before sound: the music starts, the ring opens and the goals pop in from the middle.' },
+        { title: 'The opening goal', detail: 'The play runs as a cloud of points, the call live over the crowd.' },
+        { title: 'Pick a camera', detail: 'TV, Goal Cam or Follow, all rendered from the same match, so they agree.' },
+        { title: 'Scrub it', detail: 'The wheel never scrolls the page; it runs the play back and forth.' },
+      ],
+      outcome: 'Each goal relived from the angle they choose, with the replay call on the next pass.',
+    },
+    {
+      actor: 'Stats lover',
+      goal: 'Walk around the records.',
+      steps: [
+        { title: 'See more', detail: 'The ring of goals gives way to a wheel of ten records.' },
+        { title: 'Turn the wheel', detail: 'It always turns the short way to the record chosen.' },
+        { title: 'A figure gathers', detail: 'The player celebrates in points while the number rolls up like an odometer.' },
+      ],
+      outcome: 'Ten records, each with a moment of its own.',
+    },
+    {
+      actor: 'Phone visitor',
+      goal: 'Take it along.',
+      steps: [
+        { title: 'Tilt to look', detail: 'Tilting the phone stands in for the mouse, once iOS has asked.' },
+        { title: 'Arrows and a pill', detail: 'The ring of goals becomes a pill between two arrows.' },
+        { title: 'A lighter stage', detail: 'Fewer points and a lower pixel ratio, picked for the phone.' },
+      ],
+      outcome: 'The same tribute, sized for one hand.',
+    },
+    {
+      actor: 'Studio team',
+      goal: 'Change what it shows.',
+      steps: [
+        { title: 'The words', detail: 'Every line, goal and record, in English and Spanish, in one file.' },
+        { title: 'The scenes', detail: 'Which clip or figure each scene uses, and its framing, in another.' },
+        { title: 'New media', detail: 'Re-render a play, rebuild an atlas, or re-voice only the lines that changed.' },
+      ],
+      outcome: 'New goals and records without touching the engine.',
+    },
+  ],
+  design: {
+    palette: [
+      { hex: '#030C1C', name: 'Floodlit night', role: 'The stage and every page' },
+      { hex: '#D2B55D', name: 'Gold', role: 'The goal arc, the buttons, the cursor’s star' },
+      { hex: '#F5F5F5', name: 'Chalk', role: 'Type, lines and points' },
+      { hex: '#65A9E7', name: 'Sky', role: 'The home side’s possession' },
+      { hex: '#5D89E7', name: 'Record blue', role: 'Each record’s line' },
+      { hex: '#FFEBB3', name: 'Ball light', role: 'The trail the ball leaves' },
+    ],
+    faces: [
+      { family: 'Cormorant Garamond', role: 'The title, the brand and page headings', sample: 'The Last Tempo', stack: "'Cormorant Garamond', Georgia, serif", google: 'Cormorant+Garamond:wght@400;500' },
+      { family: 'Darker Grotesque', role: 'Buttons, labels and the text pages', sample: 'ENTER · SEE MORE · RECORDS', stack: "'Darker Grotesque', sans-serif", google: 'Darker+Grotesque:wght@500;900' },
+      { family: 'DM Sans', role: 'Statistics and camera names', sample: 'MINUTE 92 · DISTANCE 8 M', stack: "'DM Sans', sans-serif", google: 'DM+Sans:wght@400;600' },
+    ],
+    notes: [
+      'Everything is drawn in points: the figures, the pitch, even the dust in the air.',
+      'Each point stands for somebody: rest the cursor on the figure and a fan’s name appears.',
+      'Numbers roll like an odometer, each digit the short way round.',
+      'Under reduced motion, the opening runs twenty times faster.',
+    ],
+  },
+  figures: [
+    { value: '8', label: 'goals, from up to three cameras' },
+    { value: '15', label: 'clips rendered from one 3D match' },
+    { value: '1.17M', label: 'points sampled from each goal frame' },
+    { value: '10', label: 'records on the wheel' },
+    { value: '55', label: 'lines of synthetic commentary' },
+    { value: '8.3k', label: 'lines of code' },
+  ],
+  highlights: [
+    { title: 'Video as geometry', detail: 'Each clip packs colour, depth and a class map into one video; every sample becomes a point lifted to its depth, re-read on every frame.' },
+    { title: 'A class map for the star and the ball', detail: 'Grey levels mark the ball, the star, the other players and the pitch, each with its own density, size and brightness; the ball leaves a trail of light.' },
+    { title: 'Cameras that agree', detail: 'Every play is rendered from one procedural 3D match, so TV, Goal Cam and Follow show the same moment, and tracking data keeps the camera on the star and the ball.' },
+    { title: 'A cursor that moves people', detail: 'Points swirl and clear around the pointer and settle back; a low-resolution render of the figure alone tells when the cursor rests on it, to name a fan.' },
+    { title: 'Commentary on the playhead', detail: 'Each goal’s sound holds the live call and the replay; the engine reads which pass of the clip is playing, and pulls the sound back if it strays.' },
+    { title: 'Quality that picks itself', detail: 'The graphics chip’s name and texture limit set the tier, and the pixel ratio steps down whenever frames run long.' },
+    { title: 'No moiré', detail: 'Each point wanders a little inside its own cell, so the lattice never beats against the screen’s pixels.' },
+    { title: 'Every asset made for it', detail: 'FLUX images, mattes and depth from BiRefNet and Depth Anything V2 run on our own machine, a synthesised score and crowd, and a synthetic commentator.' },
+  ],
+};
+
 export const systems: Record<string, SystemStudy> = {
   'maple-furnishers': furnishers,
   'maple-studios': studios,
@@ -1422,7 +1641,8 @@ export const systems: Record<string, SystemStudy> = {
   keeri,
   'ishita-traders': ishita,
   saaj,
+  'the-last-tempo': tempo,
 };
 
 /** The order the systems row shows them in. */
-export const systemOrder = ['maple-furnishers', 'maple-studios', 'shoku', 'keeri', 'ishita-traders', 'saaj'] as const;
+export const systemOrder = ['maple-furnishers', 'maple-studios', 'shoku', 'keeri', 'ishita-traders', 'saaj', 'the-last-tempo'] as const;

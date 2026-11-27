@@ -12,7 +12,8 @@
  * It drives a headless Google Chrome over the DevTools protocol (Node 18+, no
  * packages; set CHROME_PATH if Chrome isn't in the usual place). Pages are
  * scrolled with real wheel events, so scroll-driven films reach the frame
- * asked for. Pictures are resized and encoded in the browser itself.
+ * asked for. A WebGL film can run on the stepped clock instead (see
+ * STEP_MS). Pictures are resized and encoded in the browser itself.
  *
  * Usage
  *   node scripts/work/screens.mjs                  all systems
@@ -36,13 +37,32 @@ const QUALITY = 0.86;
 const PREVIEW_WIDTH = 24;
 
 /**
+ * The stepped clock, for WebGL films (a shot's `clock: 'stepped'`):
+ * stepped-clock.js replaces the page's own clock, and its time moves one
+ * 30 fps frame at a time, only when this script steps it. Every frame is drawn
+ * at the page's best quality however long this machine takes over it, and each
+ * is followed by a rest as long as it took, so the graphics chip is never kept
+ * flat out. On a stepped page, `wait`, `hold` and the pause after each click are
+ * the page's own milliseconds.
+ */
+const STEP_MS = 1000 / 30;
+const STEPPED_CLOCK = join(ROOT, 'scripts', 'work', 'stepped-clock.js');
+
+/**
  * What to capture, in order. `y` scrolls the page there first (desktop pages
  * with wheel events); `click` presses the button or link with that text, and
- * `clicks` a sequence of them (by their text, `{ label }` by aria-label, or
- * `{ css }`); `image` takes a screenshot the product already publishes, `crop`
- * trims it. An app's shots can carry an `id`, for `compose`: a key visual of
- * three of its phone screens, set in its own phone frames by KEY_VISUAL
- * (made once the rest are captured, and kept in its place in the list).
+ * `clicks` a sequence of them (by their text, `{ label }` by aria-label,
+ * `{ css }`, or `{ js }`, an expression for the element); `image` takes a
+ * screenshot the product already publishes, `crop` trims it. An app's shots can
+ * carry an `id`, for `compose`: a key visual of three of its phone screens, set
+ * in its own phone frames by KEY_VISUAL (made once the rest are captured, and
+ * kept in its place in the list). On the stepped clock, `until` (an expression)
+ * runs the page on until it holds and `hold` a while after it; a shot that says
+ * `stay` carries on from the page the shot before it left, and `pointer` rests
+ * the mouse at that point (fractions of the screen) first. `scriptDpr` tells the
+ * page's own scripts a lower device pixel ratio than the screenshot's, for a film
+ * that sizes its points in device pixels: its canvas then has the density it was
+ * designed at, while the type around it stays sharp.
  */
 
 /**
@@ -76,6 +96,21 @@ const KEY_VISUAL = (left, centre, right) => `<!doctype html><html><head><style>
   <figure class="centre"><img src="${centre}"></figure>
   <figure class="side right"><img src="${right}"></figure>
 </div></body></html>`;
+
+/**
+ * The Last Tempo draws its goals and records as WebGL point clouds, so it is
+ * filmed on the stepped clock, its desktop canvas at the 1.2 pixel ratio its own
+ * recording used (at 2, each point covers a quarter of the area and the clouds
+ * thin out). TEMPO_AT holds once a scene of its stage (window.__stage) has faded
+ * fully in and its clip has played that far.
+ */
+const TEMPO = 'https://tango-woad.vercel.app';
+const TEMPO_AT = (scene, seconds = 0) =>
+  `((stage) => stage?.current?.spec.id === '${scene}' && stage.fade >= 1 && (stage.current.video?.currentTime ?? 0) >= ${seconds})(window.__stage)`;
+const TEMPO_PREVIOUS = { css: '.ctrl-shell > :nth-child(1) .js-hover-sound' };
+const TEMPO_SEE_MORE = {
+  js: `[...document.querySelectorAll('.js-hover-sound')].find((node) => node.getClientRects().length && node.textContent.includes('See more'))`,
+};
 
 const SYSTEMS = {
   'maple-furnishers': [
@@ -165,6 +200,26 @@ const SYSTEMS = {
     },
     { id: 'date', url: `${SAAJ}/book?artist=${SAAJ_ARTIST}`, device: 'phone', wait: 9000, clicks: ['Continue'], caption: 'A date, then a time the artist really has free' },
   ],
+  'the-last-tempo': [
+    { url: `${TEMPO}/`, clock: 'stepped', scriptDpr: 1.2, until: TEMPO_AT('cover'), hold: 1500, caption: 'The gate: one figure, gathered from points' },
+    { stay: true, clicks: [{ label: 'Enter' }], until: TEMPO_AT('g0', 3), caption: 'Nineteen minutes: the opening goal on the TV camera' },
+    { stay: true, clicks: ['Goal cam'], until: TEMPO_AT('g0-goal', 3.3), caption: 'The same attack from behind the goal' },
+    { stay: true, clicks: ['Follow'], until: TEMPO_AT('g0-follow', 5), caption: 'Follow: the ball at his feet, the defence giving chase' },
+    { stay: true, clicks: [TEMPO_PREVIOUS, 'Follow'], until: TEMPO_AT('g7-follow', 7.3), caption: 'The last goal, struck from thirty metres' },
+    { stay: true, clicks: [TEMPO_SEE_MORE], until: TEMPO_AT('record-0'), hold: 2000, caption: 'Records: 41 goals and assists, on a turning wheel' },
+    {
+      stay: true,
+      clicks: [{ label: 'Go to record 2940' }],
+      pointer: [0.46, 0.46],
+      until: TEMPO_AT('record-4'),
+      hold: 2400,
+      caption: '2,940 minutes played; rest the cursor and a point gives its name',
+    },
+    { url: `${TEMPO}/no-such-page`, clock: 'stepped', scriptDpr: 1.2, clicks: [{ label: 'Enter' }], until: TEMPO_AT('not-found'), hold: 1500, caption: 'Even the 404 is drawn in points' },
+    { url: `${TEMPO}/`, device: 'phone', clock: 'stepped', until: TEMPO_AT('cover'), hold: 1500, caption: 'The gate on a phone, where tilting stands in for the mouse' },
+    { stay: true, device: 'phone', clicks: [{ label: 'Enter' }, 'Follow'], until: TEMPO_AT('g0-follow', 5), caption: 'A goal on a phone, between its arrows' },
+    { stay: true, device: 'phone', clicks: [TEMPO_SEE_MORE], until: TEMPO_AT('record-0'), hold: 2000, caption: 'The records wheel, turned to the top of the screen' },
+  ],
 };
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -232,12 +287,17 @@ async function launch(work) {
       ws.send(JSON.stringify({ id: msgId, method, params, ...(sessionId && { sessionId }) }));
     });
 
-  const open = async (device) => {
+  const open = async (device, { stepped = false, scriptDpr } = {}) => {
     const { targetId } = await send('Target.createTarget', { url: 'about:blank', newWindow: true });
     const { sessionId } = await send('Target.attachToTarget', { targetId, flatten: true });
     const call = (method, params) => send(method, params, sessionId);
     await call('Page.enable');
     await call('Runtime.enable');
+    if (scriptDpr) {
+      const source = `Object.defineProperty(window, 'devicePixelRatio', { configurable: true, get: () => ${Number(scriptDpr)} });`;
+      await call('Page.addScriptToEvaluateOnNewDocument', { source });
+    }
+    if (stepped) await call('Page.addScriptToEvaluateOnNewDocument', { source: readFileSync(STEPPED_CLOCK, 'utf8') });
     if (device) {
       const mobile = device === PHONE;
       await call('Emulation.setDeviceMetricsOverride', { width: device.width, height: device.height, deviceScaleFactor: device.dpr, mobile });
@@ -248,10 +308,26 @@ async function launch(work) {
       if (res.exceptionDetails) throw new Error(res.exceptionDetails.exception?.description ?? res.exceptionDetails.text);
       return res.result.value;
     };
+    /** Moves a stepped page on by one frame, then rests as long as the frame took. */
+    const step = async () => {
+      const started = Date.now();
+      await evaluate(`window.__clock.step(${STEP_MS})`);
+      await sleep(Math.max(10, Date.now() - started));
+    };
     return {
       call,
       evaluate,
       touch: device === PHONE,
+      stepped,
+      step,
+      /** Steps a page through `ms` of its own time, then on until `until` holds. */
+      async advance(ms, until) {
+        for (let spent = 0; ; spent += STEP_MS) {
+          if (spent >= ms && (!until || (await evaluate(until)))) return;
+          if (spent > ms + 60000) throw new Error(`Still not true after a minute of the page's time: ${until}`);
+          await step();
+        }
+      },
       close: () => send('Target.closeTarget', { targetId }).catch(() => {}),
       async go(url) {
         await call('Page.navigate', { url });
@@ -300,21 +376,29 @@ async function wheelSteps(page, count) {
 }
 
 /**
- * Presses a control: the button or link whose text starts with `target`, the one
- * labelled `{ label }`, or the first `{ css }` match. It is brought into view first,
- * and pressed with a tap on a phone, a click on a desktop.
+ * Presses a control: the shown button or link whose text starts with `target`, the
+ * one labelled `{ label }`, the first `{ css }` match, or the element `{ js }`
+ * evaluates to. It is brought into view first, and pressed with a tap on a phone, a
+ * click on a desktop. On the stepped clock the page runs on until the control can
+ * really be pressed: nothing covers it, and it isn't still fading in.
  */
 async function clickText(page, target) {
   const find =
     typeof target === 'string'
-      ? `[...document.querySelectorAll('button, a, [role=tab]')].find((node) => (node.innerText || '').trim().toLowerCase().startsWith(${JSON.stringify(target.toLowerCase())}))`
-      : target.label
-        ? `document.querySelector(${JSON.stringify(`[aria-label="${target.label}"]`)})`
-        : `document.querySelector(${JSON.stringify(target.css)})`;
-  const at = await page.evaluate(
-    `(() => { const el = ${find}; if (!el) return null; el.scrollIntoView({ block: 'center', inline: 'center' }); const r = el.getBoundingClientRect(); return [r.x + r.width / 2, r.y + r.height / 2]; })()`,
-  );
-  if (!at) throw new Error(`Nothing to click: ${JSON.stringify(target)}.`);
+      ? `[...document.querySelectorAll('button, a, [role=tab]')].find((node) => node.getClientRects().length && (node.innerText || '').trim().toLowerCase().startsWith(${JSON.stringify(target.toLowerCase())}))`
+      : target.js
+        ? `(${target.js})`
+        : target.label
+          ? `document.querySelector(${JSON.stringify(`[aria-label="${target.label}"]`)})`
+          : `document.querySelector(${JSON.stringify(target.css)})`;
+  const locate = `(() => { const el = ${find}; if (!el) return null; el.scrollIntoView({ block: 'center', inline: 'center' }); const r = el.getBoundingClientRect(); const x = r.x + r.width / 2; const y = r.y + r.height / 2; return { at: [x, y], free: el.contains(document.elementFromPoint(x, y)) }; })()`;
+  let found = await page.evaluate(locate);
+  for (let waited = 0; page.stepped && !found?.free && waited < 20000; waited += STEP_MS) {
+    await page.step();
+    found = await page.evaluate(locate);
+  }
+  if (!found || (page.stepped && !found.free)) throw new Error(`Nothing to click: ${JSON.stringify(target)}.`);
+  const { at } = found;
   if (page.touch) {
     await page.call('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: at[0], y: at[1] }] });
     await page.call('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
@@ -440,23 +524,35 @@ async function main(only) {
           writeFileSync(raw, Buffer.from(await response.arrayBuffer()));
         } else {
           // Shots of the same page share one visit, scrolling further down it each time;
-          // an app's screens (seeded, or reached by pressing through it) each get their own.
+          // an app's screens (seeded, or reached by pressing through it) each get their own,
+          // unless a shot says to `stay` where the one before it left off.
           const key = `${shot.device ?? 'desktop'} ${shot.url}`;
-          const fresh = !page || at !== key || (shot.y ?? 0) < (page.y ?? 0) || shot.click || shot.wheel || shot.clicks;
+          const fresh = !(shot.stay && page) && (!page || at !== key || (shot.y ?? 0) < (page.y ?? 0) || shot.click || shot.wheel || shot.clicks);
           if (fresh) {
             await page?.close();
-            page = await browser.open(device);
+            page = await browser.open(device, { stepped: shot.clock === 'stepped', scriptDpr: shot.scriptDpr });
             page.y = 0;
             await page.go(shot.url);
-            await sleep(shot.wait ?? 4500);
-            await settleImages(page);
+            if (page.stepped) await page.advance(shot.wait ?? 4500);
+            else {
+              await sleep(shot.wait ?? 4500);
+              await settleImages(page);
+            }
             at = key;
           }
           for (const target of shot.clicks ?? []) {
             await clickText(page, target);
-            await sleep(1400);
+            if (page.stepped) await page.advance(1400);
+            else await sleep(1400);
           }
-          if (shot.clicks?.length) {
+          if (shot.pointer) {
+            const [x, y] = shot.pointer;
+            await page.call('Input.dispatchMouseEvent', { type: 'mouseMoved', x: x * device.width, y: y * device.height });
+          }
+          if (page.stepped) {
+            await page.advance(0, shot.until);
+            await page.advance(shot.hold ?? 0);
+          } else if (shot.clicks?.length) {
             await settleImages(page);
             await sleep(600);
           }

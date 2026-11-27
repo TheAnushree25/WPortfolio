@@ -15,6 +15,7 @@ import shokuScreens from './screens/shoku.json';
 import keeriScreens from './screens/keeri.json';
 import ishitaScreens from './screens/ishita-traders.json';
 import saajScreens from './screens/saaj.json';
+import tempoScreens from './screens/the-last-tempo.json';
 
 /**
  * Joins each card with its study and the pages or screens rendered for it.
@@ -40,6 +41,7 @@ const screens = {
   keeri: keeriScreens,
   'ishita-traders': ishitaScreens,
   saaj: saajScreens,
+  'the-last-tempo': tempoScreens,
 } as Record<string, { screens: Screen[] }>;
 
 /** The design cards that open a deck, in the order the row shows them. */

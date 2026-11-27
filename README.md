@@ -243,6 +243,16 @@ web build is served on this machine with its staging API's demo catalogue,
 read-only, by `scripts/work/saaj-preview.mjs` (the script's header says how to
 make the build); then `node scripts/work/screens.mjs saaj`.
 
+The Last Tempo draws its goals and records as WebGL point clouds, which a slow
+graphics chip would render at a reduced resolution. Its shots run on the stepped
+clock instead (`clock: 'stepped'`): `scripts/work/stepped-clock.js` replaces the
+page's own clock, so its time moves one frame at a time, every frame is drawn at
+the site's best quality on any machine, and the chip rests between frames. On a
+stepped page, `until` waits for the moment to capture (a scene loaded, a clip
+played this far) and `stay` carries on from the page the shot before left. The
+site sizes its points in device pixels, so `scriptDpr: 1.2` tells its scripts the
+pixel ratio it was designed at: at the screenshot's 2 its clouds would thin out.
+
 To add a system: add its shots to `SYSTEMS` and run the script, import its JSON in
 `content/projects.ts`, and describe it in `content/systems.ts` (and add its slug to
 `systemOrder`).
